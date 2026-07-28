@@ -1,6 +1,7 @@
 import type { AppState, TimeBlock, Weekday } from './types'
-import { GOAL_COLORS } from './types'
+import { GOAL_COLORS, PRIORITY_LABELS } from './types'
 import { hhmmToMin } from './dates'
+import { migrateV1toV2, type AppStateV1 } from './migrate'
 
 export interface BlockInput {
   id?: string
@@ -48,70 +49,121 @@ type ValidationResult = { ok: true; state: AppState } | { ok: false; error: stri
 const isStr = (v: unknown): v is string => typeof v === 'string'
 const isWeekday = (v: unknown): v is Weekday => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 6
 
-/** Valida um JSON importado antes de substituir o estado — import inválido nunca sobrescreve nada. */
-export function validateAppState(data: unknown): ValidationResult {
-  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-    return { ok: false, error: 'O arquivo não contém um objeto JSON válido.' }
-  }
-  const d = data as Record<string, unknown>
-  if (d.schemaVersion !== 1) {
-    return {
-      ok: false,
-      error: `Versão de dados desconhecida (${String(d.schemaVersion)}). Este app entende a versão 1 — o arquivo pode ser de uma versão mais nova do Lume.`,
-    }
-  }
+/** Valida goals/blocks/checkIns (núcleo comum v1/v2). Retorna mensagem de erro ou null. */
+function validateCore(d: Record<string, unknown>, requirePriority: boolean): string | null {
   if (!Array.isArray(d.goals) || !Array.isArray(d.blocks)) {
-    return { ok: false, error: 'Estrutura inválida: esperado "goals" e "blocks" como listas.' }
+    return 'Estrutura inválida: esperado "goals" e "blocks" como listas.'
   }
   if (typeof d.checkIns !== 'object' || d.checkIns === null || Array.isArray(d.checkIns)) {
-    return { ok: false, error: 'Estrutura inválida: esperado "checkIns" como objeto.' }
+    return 'Estrutura inválida: esperado "checkIns" como objeto.'
   }
 
   const goalIds = new Set<string>()
   for (const g of d.goals as unknown[]) {
     const goal = g as Record<string, unknown>
     if (!isStr(goal.id) || !isStr(goal.title) || !isStr(goal.emoji) || !Array.isArray(goal.milestones)) {
-      return { ok: false, error: 'Objetivo com estrutura inválida no arquivo.' }
+      return 'Objetivo com estrutura inválida no arquivo.'
     }
     if (!isStr(goal.color) || !(goal.color in GOAL_COLORS)) {
-      return { ok: false, error: `Objetivo "${goal.title}" com cor desconhecida.` }
+      return `Objetivo "${goal.title}" com cor desconhecida.`
     }
+    if (requirePriority && (!isStr(goal.priority) || !(goal.priority in PRIORITY_LABELS))) {
+      return `Objetivo "${goal.title}" com prioridade inválida.`
+    }
+    if (goal.estimatedHours !== undefined && (typeof goal.estimatedHours !== 'number' || goal.estimatedHours <= 0)) {
+      return `Objetivo "${goal.title}" com estimativa de horas inválida.`
+    }
+    if (goal.afterGoalId !== undefined && !isStr(goal.afterGoalId)) {
+      return `Objetivo "${goal.title}" com fila inválida.`
+    }
+    // afterGoalId órfão é ACEITO — o domínio trata como "liberado"
     for (const m of goal.milestones as unknown[]) {
       const ms = m as Record<string, unknown>
       if (!isStr(ms.id) || !isStr(ms.title) || typeof ms.done !== 'boolean') {
-        return { ok: false, error: `Etapa inválida no objetivo "${goal.title}".` }
+        return `Etapa inválida no objetivo "${goal.title}".`
       }
     }
     goalIds.add(goal.id)
   }
 
-  const blockIds = new Set<string>()
   for (const b of d.blocks as unknown[]) {
     const block = b as Record<string, unknown>
-    if (!isStr(block.id) || !isStr(block.title)) {
-      return { ok: false, error: 'Bloco com estrutura inválida no arquivo.' }
-    }
+    if (!isStr(block.id) || !isStr(block.title)) return 'Bloco com estrutura inválida no arquivo.'
     if (block.goalId !== null && !isStr(block.goalId)) {
-      return { ok: false, error: `Bloco "${block.title}" com vínculo de objetivo inválido.` }
+      return `Bloco "${block.title}" com vínculo de objetivo inválido.`
     }
     if (isStr(block.goalId) && !goalIds.has(block.goalId)) {
-      return { ok: false, error: `Bloco "${block.title}" aponta para um objetivo que não existe no arquivo.` }
+      return `Bloco "${block.title}" aponta para um objetivo que não existe no arquivo.`
     }
     if (!isStr(block.start) || !isStr(block.end) || !HHMM_RE.test(block.start) || !HHMM_RE.test(block.end)) {
-      return { ok: false, error: `Bloco "${block.title}" com horários inválidos.` }
+      return `Bloco "${block.title}" com horários inválidos.`
     }
     if (!Array.isArray(block.weekdays) || !block.weekdays.every(isWeekday)) {
-      return { ok: false, error: `Bloco "${block.title}" com dias da semana inválidos.` }
+      return `Bloco "${block.title}" com dias da semana inválidos.`
     }
-    blockIds.add(block.id)
   }
 
   for (const [key, c] of Object.entries(d.checkIns as Record<string, unknown>)) {
     const ci = c as Record<string, unknown>
     if (!isStr(ci.date) || !ISODATE_RE.test(ci.date) || !isStr(ci.blockId)) {
-      return { ok: false, error: `Check-in inválido no arquivo (chave "${key}").` }
+      return `Check-in inválido no arquivo (chave "${key}").`
     }
   }
+  return null
+}
 
-  return { ok: true, state: d as unknown as AppState }
+const REWARD_KINDS = new Set(['goal', 'streak', 'hours', 'perfectWeek'])
+
+function validateRewardsAndProfile(d: Record<string, unknown>): string | null {
+  if (!Array.isArray(d.rewards)) return 'Estrutura inválida: esperado "rewards" como lista.'
+  for (const r of d.rewards as unknown[]) {
+    const reward = r as Record<string, unknown>
+    if (!isStr(reward.id) || !isStr(reward.title) || !isStr(reward.emoji) || !isStr(reward.category)) {
+      return 'Premiação com estrutura inválida no arquivo.'
+    }
+    const t = reward.trigger as Record<string, unknown> | undefined
+    if (!t || !isStr(t.kind) || !REWARD_KINDS.has(t.kind)) {
+      return `Premiação "${reward.title}" com gatilho inválido.`
+    }
+    if (t.kind === 'goal' && !isStr(t.goalId)) return `Premiação "${reward.title}" sem objetivo do gatilho.`
+    if (t.kind === 'streak' && (typeof t.days !== 'number' || t.days <= 0)) {
+      return `Premiação "${reward.title}" com dias de sequência inválidos.`
+    }
+    if (t.kind === 'hours' && (typeof t.hours !== 'number' || t.hours <= 0)) {
+      return `Premiação "${reward.title}" com horas inválidas.`
+    }
+  }
+  const p = d.profile as Record<string, unknown> | undefined
+  if (!p || !isStr(p.name) || !isStr(p.avatarEmoji)) {
+    return 'Estrutura inválida: esperado "profile" com nome e emoji.'
+  }
+  return null
+}
+
+/**
+ * Valida um JSON importado antes de substituir o estado — import inválido nunca sobrescreve nada.
+ * Aceita backups v1 (migrados na hora) e v2; retorna sempre estado v2.
+ */
+export function validateAppState(data: unknown): ValidationResult {
+  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    return { ok: false, error: 'O arquivo não contém um objeto JSON válido.' }
+  }
+  const d = data as Record<string, unknown>
+
+  if (d.schemaVersion === 1) {
+    const coreError = validateCore(d, false)
+    if (coreError) return { ok: false, error: coreError }
+    return { ok: true, state: migrateV1toV2(d as unknown as AppStateV1) }
+  }
+
+  if (d.schemaVersion === 2) {
+    const error = validateCore(d, true) ?? validateRewardsAndProfile(d)
+    if (error) return { ok: false, error }
+    return { ok: true, state: d as unknown as AppState }
+  }
+
+  return {
+    ok: false,
+    error: `Versão de dados desconhecida (${String(d.schemaVersion)}). Este app entende as versões 1 e 2 — o arquivo pode ser de uma versão mais nova do Lume.`,
+  }
 }

@@ -14,10 +14,12 @@ export interface DayActivity {
   endMin: number
 }
 
-/** Blocos visíveis: exclui os de objetivos arquivados. */
+/** Blocos visíveis: exclui os de objetivos arquivados ou na fila (ainda não começaram). */
 export function visibleBlocks(state: Pick<AppState, 'goals' | 'blocks'>): TimeBlock[] {
-  const archived = new Set(state.goals.filter((g) => g.archivedAt).map((g) => g.id))
-  return state.blocks.filter((b) => b.goalId === null || !archived.has(b.goalId))
+  const hidden = new Set(
+    state.goals.filter((g) => g.archivedAt || g.afterGoalId).map((g) => g.id),
+  )
+  return state.blocks.filter((b) => b.goalId === null || !hidden.has(b.goalId))
 }
 
 export function getDayActivities(state: AppState, date: ISODate, now: Date): DayActivity[] {

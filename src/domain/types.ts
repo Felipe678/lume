@@ -13,15 +13,62 @@ export interface Milestone {
   doneAt?: ISODate
 }
 
+export type GoalPriority = 'alta' | 'media' | 'baixa'
+
+export const PRIORITY_LABELS: Record<GoalPriority, string> = {
+  alta: 'Alta',
+  media: 'Média',
+  baixa: 'Baixa',
+}
+
+export const PRIORITY_COLORS: Record<GoalPriority, string> = {
+  alta: '#f43f5e',
+  media: '#f59e0b',
+  baixa: '#0ea5e9',
+}
+
 export interface Goal {
   id: ID
   title: string
   emoji: string
   color: GoalColor
+  /** O porquê — a razão de existir do objetivo. */
   description?: string
+  priority: GoalPriority
+  /** Estimativa total de horas para concluir (projeção no detalhe). */
+  estimatedHours?: number
+  /** Presente => "na fila": começa após esse objetivo ser concluído. */
+  afterGoalId?: ID
   milestones: Milestone[]
   createdAt: ISODate
+  /** Carimbado quando as etapas chegam a 100% (galeria de conquistas). */
+  completedAt?: ISODate
   archivedAt?: ISODate
+}
+
+export type RewardTrigger =
+  | { kind: 'goal'; goalId: ID }
+  | { kind: 'streak'; days: number }
+  | { kind: 'hours'; hours: number; goalId?: ID }
+  | { kind: 'perfectWeek' }
+
+export interface Reward {
+  id: ID
+  title: string
+  emoji: string
+  /** Categoria livre para organização (material, experiência, lazer, descanso...). */
+  category: string
+  trigger: RewardTrigger
+  createdAt: ISODate
+  /** Carimbado uma única vez quando o gatilho é satisfeito. */
+  unlockedAt?: ISODate
+  /** Carimbado quando o usuário resgata o prêmio. */
+  redeemedAt?: ISODate
+}
+
+export interface Profile {
+  name: string
+  avatarEmoji: string
 }
 
 export interface TimeBlock {
@@ -43,12 +90,25 @@ export interface CheckIn {
 }
 
 export interface AppState {
-  schemaVersion: 1
+  schemaVersion: 2
   goals: Goal[]
   blocks: TimeBlock[]
   /** Chave lógica "AAAA-MM-DD:blockId" — idempotente por construção. */
   checkIns: Record<string, CheckIn>
+  rewards: Reward[]
+  profile: Profile
 }
+
+/** Rascunho de bloco antes de ganhar id/createdAt (wizard, sugestões, store). */
+export interface BlockDraft {
+  title: string
+  goalId: ID | null
+  weekdays: Weekday[]
+  start: HHMM
+  end: HHMM
+}
+
+export const defaultProfile = (): Profile => ({ name: '', avatarEmoji: '🔥' })
 
 export const checkInKey = (date: ISODate, blockId: ID) => `${date}:${blockId}`
 
@@ -68,8 +128,10 @@ export type GoalColor = keyof typeof GOAL_COLORS
 export const OBLIGATORY_COLOR = '#78716c'
 
 export const emptyState = (): AppState => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   goals: [],
   blocks: [],
   checkIns: {},
+  rewards: [],
+  profile: defaultProfile(),
 })

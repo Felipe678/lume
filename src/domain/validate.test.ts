@@ -65,8 +65,41 @@ describe('validateAppState', () => {
   })
 
   it('recusa versões de schema desconhecidas (arquivo de app mais novo)', () => {
-    const result = validateAppState({ ...valid, schemaVersion: 2 })
+    const result = validateAppState({ ...valid, schemaVersion: 3 })
     expect(result.ok).toBe(false)
+  })
+
+  it('aceita backup v1 e migra para v2 (check-ins são sagrados)', () => {
+    const v1 = JSON.parse(JSON.stringify(valid)) as Record<string, unknown>
+    v1.schemaVersion = 1
+    delete v1.rewards
+    delete v1.profile
+    for (const g of v1.goals as Array<Record<string, unknown>>) delete g.priority
+    const result = validateAppState(v1)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.state.schemaVersion).toBe(2)
+      expect(result.state.goals[0].priority).toBe('media')
+      expect(result.state.rewards).toEqual([])
+    }
+  })
+
+  it('v2 exige prioridade válida e aceita afterGoalId órfão', () => {
+    const badPriority = JSON.parse(JSON.stringify(valid))
+    badPriority.goals[0].priority = 'urgentíssima'
+    expect(validateAppState(badPriority).ok).toBe(false)
+
+    const orphanQueue = JSON.parse(JSON.stringify(valid))
+    orphanQueue.goals[0].afterGoalId = 'fantasma'
+    expect(validateAppState(orphanQueue).ok).toBe(true)
+  })
+
+  it('valida premiações: gatilho desconhecido recusado', () => {
+    const bad = JSON.parse(JSON.stringify(valid))
+    bad.rewards = [
+      { id: 'r1', title: 'Prêmio', emoji: '🎁', category: 'Lazer', trigger: { kind: 'loteria' }, createdAt: '2026-01-01' },
+    ]
+    expect(validateAppState(bad).ok).toBe(false)
   })
 
   it('recusa não-objetos e estruturas erradas', () => {
