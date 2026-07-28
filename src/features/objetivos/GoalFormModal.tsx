@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import Modal from '../../components/Modal'
 import { useAppStore } from '../../store/useAppStore'
-import { GOAL_COLORS, type Goal, type GoalColor } from '../../domain/types'
+import { PRIORITY_PRESETS } from '../../domain/suggest'
+import {
+  GOAL_COLORS,
+  PRIORITY_LABELS,
+  type Goal,
+  type GoalColor,
+  type GoalPriority,
+} from '../../domain/types'
 
 const inputClass = 'w-full rounded-lg bg-ink-3 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-flame'
 
@@ -13,16 +20,21 @@ export default function GoalFormModal({ goal, onClose }: { goal?: Goal; onClose:
   const [emoji, setEmoji] = useState(goal?.emoji ?? '🎯')
   const [color, setColor] = useState<GoalColor>(goal?.color ?? 'amber')
   const [description, setDescription] = useState(goal?.description ?? '')
+  const [priority, setPriority] = useState<GoalPriority>(goal?.priority ?? 'media')
+  const [estimatedHours, setEstimatedHours] = useState(goal?.estimatedHours ? String(goal.estimatedHours) : '')
   const [tried, setTried] = useState(false)
 
   const save = () => {
     setTried(true)
     if (!title.trim()) return
+    const hours = Number(estimatedHours)
     const input = {
       title: title.trim(),
       emoji: emoji.trim() || '🎯',
       color,
       description: description.trim() || undefined,
+      priority,
+      estimatedHours: hours > 0 ? hours : undefined,
     }
     if (goal) updateGoal(goal.id, input)
     else addGoal(input)
@@ -80,6 +92,37 @@ export default function GoalFormModal({ goal, onClose }: { goal?: Goal; onClose:
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={200}
+          />
+        </label>
+
+        <div className="flex flex-col gap-1 text-sm">
+          <span className="text-muted">Prioridade</span>
+          <div className="flex gap-2">
+            {(['alta', 'media', 'baixa'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPriority(p)}
+                className={`flex-1 rounded-lg border p-2 text-left text-xs ${
+                  priority === p ? 'border-flame bg-flame/10 text-flame' : 'border-ink-3 text-muted'
+                }`}
+                title={PRIORITY_PRESETS[p].label}
+              >
+                <span className="font-bold">{PRIORITY_LABELS[p]}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted">Estimativa de horas para concluir (opcional)</span>
+          <input
+            type="number"
+            min={1}
+            className={inputClass}
+            value={estimatedHours}
+            onChange={(e) => setEstimatedHours(e.target.value)}
+            placeholder="ex.: 120"
           />
         </label>
 

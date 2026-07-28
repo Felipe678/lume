@@ -1,7 +1,7 @@
 import type { AppState, ISODate, Reward } from './types'
 import { addDaysISO, startOfWeekISO, toISODate } from './dates'
 import { computeStreak } from './streak'
-import { investedMinutes, longestStreak, periodProgress, scheduledBlocksOn } from './stats'
+import { investedMinutes, longestStreak, periodProgress } from './stats'
 import { isGoalCompleted } from './goals'
 
 export interface Badge {
