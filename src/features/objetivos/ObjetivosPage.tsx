@@ -28,7 +28,7 @@ export default function ObjetivosPage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-3xl p-4">
+      <main className="mx-auto max-w-4xl p-4">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">Objetivos</h1>

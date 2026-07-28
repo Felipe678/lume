@@ -45,7 +45,7 @@ export default function PerfilPage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-2xl p-4">
+      <main className="mx-auto max-w-3xl p-4">
         <h1 className="mb-4 text-xl font-bold">Perfil</h1>
 
         <section className="mb-6 flex items-center gap-4 rounded-2xl border border-ink-3 bg-ink-2/60 p-5">

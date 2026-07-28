@@ -14,6 +14,14 @@
   color-scheme: dark;
 }
 
+/*
+ * Todo o layout em rem acompanha a escala do modo Foco (que usa vmin):
+ * em telas maiores a fonte-raiz cresce e as páginas inteiras crescem junto.
+ */
+html {
+  font-size: clamp(15px, 1.6vmin + 7px, 28px);
+}
+
 html,
 body,
 #root {

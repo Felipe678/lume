@@ -56,7 +56,7 @@ export default function ConquistasPage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-3xl p-4">
+      <main className="mx-auto max-w-4xl p-4">
         <h1 className="mb-1 text-xl font-bold">Conquistas</h1>
         <p className="mb-5 text-sm text-muted">
           Cada objetivo terminado do começo ao fim vira um troféu — e destrava o que você prometeu a si.

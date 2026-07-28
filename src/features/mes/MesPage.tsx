@@ -68,7 +68,7 @@ export default function MesPage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-2xl p-4">
+      <main className="mx-auto max-w-3xl p-4">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Plano mensal</h1>
           <div className="flex items-center gap-2">

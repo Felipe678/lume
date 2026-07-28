@@ -33,7 +33,7 @@ export default function ConfigPage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-2xl p-4">
+      <main className="mx-auto max-w-3xl p-4">
         <h1 className="mb-4 text-xl font-bold">Configurações</h1>
 
         {/* Premiações */}

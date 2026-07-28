@@ -76,7 +76,7 @@ export default function GoalDetailOverlay({ goalId }: { goalId: string }) {
       transition={{ duration: 0.25 }}
       className="fixed inset-0 z-50 overflow-y-auto bg-ink"
     >
-      <div className="mx-auto max-w-2xl p-5">
+      <div className="mx-auto max-w-3xl p-5">
         <header className="mb-5 flex items-start justify-between">
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-extrabold">

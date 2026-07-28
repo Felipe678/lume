@@ -107,7 +107,7 @@ export default function HomePage() {
   return (
     <div className="min-h-dvh">
       <NavBar />
-      <main className="mx-auto max-w-3xl p-4">
+      <main className="mx-auto max-w-5xl p-4">
         <div className="mb-4 flex items-end justify-between">
           <div>
             <h1 className="text-xl font-bold">
