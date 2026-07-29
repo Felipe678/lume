@@ -1,17 +1,21 @@
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import {
   CalendarDays,
   CalendarRange,
+  ChevronDown,
   Flame,
+  ListChecks,
   Settings,
   Target,
   TrendingUp,
   Trophy,
   User,
 } from 'lucide-react'
+import FocoView from '../foco/FocoView'
+import { splitRoutine } from '../../domain/routine'
 import NavBar from '../../components/NavBar'
 import DonutChart from '../../components/DonutChart'
 import ProgressBar from '../../components/ProgressBar'
@@ -72,6 +76,7 @@ function AppCard({
 export default function HomePage() {
   const navigate = useNavigate()
   const openDetail = useOverlays((s) => s.openDetail)
+  const [scrolled, setScrolled] = useState(false)
   const now = useNow()
   const store = useAppStore()
   const state = useMemo(
@@ -104,10 +109,20 @@ export default function HomePage() {
     .sort((a, b) => (b.f ?? -1) - (a.f ?? -1))
     .slice(0, 3)
 
+  const { routine } = splitRoutine(activities)
+  const routineDone = routine.filter((a) => a.status === 'done').length
+
   return (
-    <div className="min-h-dvh">
+    <div
+      className="h-dvh snap-y snap-mandatory overflow-y-auto"
+      onScroll={(e) => {
+        if (!scrolled && e.currentTarget.scrollTop > 40) setScrolled(true)
+      }}
+    >
+      {/* Seção 1 — dashboard */}
+      <section className="relative flex min-h-dvh snap-start flex-col">
       <NavBar />
-      <main className="mx-auto max-w-5xl p-4">
+      <main className="mx-auto w-full max-w-5xl p-4">
         <div className="mb-4 flex items-end justify-between">
           <div>
             <h1 className="text-xl font-bold">
@@ -206,6 +221,22 @@ export default function HomePage() {
             )}
           </AppCard>
 
+          <AppCard title="Rotina" Icon={ListChecks} onClick={() => navigate('/grade')}>
+            {routine.length === 0 ? (
+              <>
+                <div className="text-2xl">🧺</div>
+                <div className="text-xs text-muted">crie suas rotinas diárias</div>
+              </>
+            ) : (
+              <>
+                <div className="text-2xl font-bold tabular-nums">
+                  {routineDone}/{routine.length}
+                </div>
+                <div className="text-xs text-muted">tarefas do dia a dia</div>
+              </>
+            )}
+          </AppCard>
+
           <AppCard title="Plano semanal" Icon={CalendarDays} onClick={() => navigate('/grade')}>
             <div className="text-2xl font-bold tabular-nums">{activities.length}</div>
             <div className="text-xs text-muted">blocos hoje</div>
@@ -247,6 +278,23 @@ export default function HomePage() {
           </AppCard>
         </motion.div>
       </main>
+
+      {!scrolled && (
+        <motion.div
+          animate={{ y: [0, 6, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ repeat: Infinity, duration: 1.8 }}
+          className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 flex-col items-center text-xs text-muted"
+        >
+          <span>deslize para o Foco</span>
+          <ChevronDown size={18} />
+        </motion.div>
+      )}
+      </section>
+
+      {/* Seção 2 — Foco embutido (rolar para baixo revela) */}
+      <section className="h-dvh snap-start">
+        <FocoView embedded />
+      </section>
     </div>
   )
 }

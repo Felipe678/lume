@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check, X } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
+import { toISODate } from '../../domain/dates'
 import { suggestBlocks, PRIORITY_PRESETS } from '../../domain/suggest'
 import { PRIORITY_LABELS, type BlockDraft, type Goal } from '../../domain/types'
 import FitEditor, { allDraftsValid } from './FitEditor'
@@ -10,7 +11,10 @@ import FitEditor, { allDraftsValid } from './FitEditor'
 export default function ActivateGoalFlow({ goal, onClose }: { goal: Goal; onClose: () => void }) {
   const activateGoal = useAppStore((s) => s.activateGoal)
   const activateGoalWithBlocks = useAppStore((s) => s.activateGoalWithBlocks)
-  const [drafts, setDrafts] = useState<BlockDraft[]>(() => suggestBlocks(goal.priority, goal.title))
+  const workSchedule = useAppStore((s) => s.workSchedule)
+  const [drafts, setDrafts] = useState<BlockDraft[]>(() =>
+    suggestBlocks(goal.priority, goal.title, { workSchedule, refDate: toISODate(new Date()) }),
+  )
 
   return (
     <motion.div

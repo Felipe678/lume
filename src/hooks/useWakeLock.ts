@@ -12,8 +12,9 @@ type NavigatorWithWakeLock = Navigator & {
  * Mantém a tela do tablet acesa enquanto o Painel está visível.
  * Sem suporte (ou sem permissão), degrada em silêncio.
  */
-export function useWakeLock() {
+export function useWakeLock(enabled = true) {
   useEffect(() => {
+    if (!enabled) return
     let sentinel: WakeLockSentinelLike | null = null
     let disposed = false
 
@@ -39,5 +40,5 @@ export function useWakeLock() {
       document.removeEventListener('visibilitychange', onVisibility)
       void sentinel?.release().catch(() => {})
     }
-  }, [])
+  }, [enabled])
 }

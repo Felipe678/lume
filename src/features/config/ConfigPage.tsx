@@ -1,5 +1,19 @@
 import { useMemo, useRef, useState } from 'react'
-import { BarChart3, Download, Gift, Pencil, PieChart, Plus, Sparkles, Trash2, Upload } from 'lucide-react'
+import {
+  BarChart3,
+  Bell,
+  Download,
+  Gift,
+  Pencil,
+  PieChart,
+  Plus,
+  Sparkles,
+  Trash2,
+  Upload,
+  Volume2,
+} from 'lucide-react'
+import { ensureNotificationPermission, notificationSupport } from '../../lib/notify'
+import { speak, speechAvailable } from '../../lib/speech'
 import NavBar from '../../components/NavBar'
 import Modal from '../../components/Modal'
 import ConfirmDialog from '../../components/ConfirmDialog'
@@ -21,6 +35,11 @@ export default function ConfigPage() {
   const setChartStyle = useUiPrefs((s) => s.setChartStyle)
   const startScreen = useUiPrefs((s) => s.startScreen)
   const setStartScreen = useUiPrefs((s) => s.setStartScreen)
+  const voiceEnabled = useUiPrefs((s) => s.voiceEnabled)
+  const setVoiceEnabled = useUiPrefs((s) => s.setVoiceEnabled)
+  const notificationsEnabled = useUiPrefs((s) => s.notificationsEnabled)
+  const setNotificationsEnabled = useUiPrefs((s) => s.setNotificationsEnabled)
+  const notifStatus = notificationSupport()
 
   const state = useMemo(
     () => selectAppState(store),
@@ -126,6 +145,66 @@ export default function ConfigPage() {
                 Foco (tablet na parede)
               </button>
             </div>
+          </div>
+        </section>
+
+        {/* Alertas */}
+        <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
+          <h2 className="mb-1 text-sm font-semibold tracking-widest text-muted uppercase">
+            Alertas de atividade (neste aparelho)
+          </h2>
+          <p className="mb-3 text-xs text-muted">
+            No início e no fim de cada atividade, o Lume avisa com frases motivacionais. Integração com
+            Alexa está no radar — por ora, voz e notificação locais.
+          </p>
+
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-1.5">
+              <Volume2 size={15} /> Voz (anúncio falado)
+            </span>
+            <button
+              onClick={() => {
+                const on = !voiceEnabled
+                setVoiceEnabled(on)
+                if (on) speak('Alertas de voz ativados. Bora acender essa chama!')
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${voiceEnabled ? 'bg-flame text-ink' : 'bg-ink-3 text-muted'}`}
+            >
+              {voiceEnabled ? 'Ligado' : 'Desligado'}
+            </button>
+          </div>
+          {!speechAvailable() && (
+            <p className="mt-1 text-xs text-amber-300/80">
+              Este navegador não expôs nenhuma voz — o anúncio falado ficará mudo aqui.
+            </p>
+          )}
+
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="flex items-center gap-1.5">
+              <Bell size={15} /> Notificações do navegador
+            </span>
+            <button
+              disabled={notifStatus === 'denied' || notifStatus === 'unsupported'}
+              onClick={async () => {
+                if (notificationsEnabled) {
+                  setNotificationsEnabled(false)
+                  return
+                }
+                const perm = await ensureNotificationPermission()
+                setNotificationsEnabled(perm === 'granted')
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-40 ${
+                notificationsEnabled ? 'bg-flame text-ink' : 'bg-ink-3 text-muted'
+              }`}
+            >
+              {notifStatus === 'denied'
+                ? 'Bloqueado no navegador'
+                : notifStatus === 'unsupported'
+                  ? 'Sem suporte'
+                  : notificationsEnabled
+                    ? 'Ligado'
+                    : 'Desligado'}
+            </button>
           </div>
         </section>
 
