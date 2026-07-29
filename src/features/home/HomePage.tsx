@@ -14,8 +14,10 @@ import {
   Trophy,
   User,
 } from 'lucide-react'
+import { Cloud, CloudOff, RefreshCw } from 'lucide-react'
 import FocoView from '../foco/FocoView'
 import { splitRoutine } from '../../domain/routine'
+import { useSyncStatus } from '../../store/sync'
 import NavBar from '../../components/NavBar'
 import DonutChart from '../../components/DonutChart'
 import ProgressBar from '../../components/ProgressBar'
@@ -40,6 +42,26 @@ const gridVariants = {
 const cardVariants = {
   hidden: { opacity: 0, y: 16, scale: 0.97 },
   show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
+}
+
+/** Pontinho de status da nuvem — discreto, leva à Config. */
+function SyncBadge({ onClick }: { onClick: () => void }) {
+  const status = useSyncStatus((s) => s.status)
+  if (status === 'guest') return null
+  const map = {
+    saved: { Icon: Cloud, cls: 'text-emerald-500/70', title: 'Sincronizado' },
+    saving: { Icon: RefreshCw, cls: 'animate-spin text-muted', title: 'Sincronizando…' },
+    offline: { Icon: CloudOff, cls: 'text-muted/60', title: 'Offline — dados seguros neste aparelho' },
+    conflict: { Icon: Cloud, cls: 'text-amber-400', title: 'Outro aparelho salvou depois — versão mais recente carregada' },
+    error: { Icon: CloudOff, cls: 'text-red-400/80', title: 'Erro de sincronização' },
+  }[status]
+  if (!map) return null
+  const { Icon, cls, title } = map
+  return (
+    <button onClick={onClick} title={title} className="p-1">
+      <Icon size={18} className={cls} />
+    </button>
+  )
 }
 
 function AppCard({
@@ -130,9 +152,12 @@ export default function HomePage() {
             </h1>
             <p className="text-sm text-muted capitalize">{formatDayLong(today)}</p>
           </div>
-          <div className="flex items-center gap-1" title="Sequência">
-            <StreakFlame lit={streak > 0} size={30} />
-            <span className={`text-lg font-bold ${streak > 0 ? '' : 'text-muted'}`}>{streak}</span>
+          <div className="flex items-center gap-3">
+            <SyncBadge onClick={() => navigate('/config')} />
+            <div className="flex items-center gap-1" title="Sequência">
+              <StreakFlame lit={streak > 0} size={30} />
+              <span className={`text-lg font-bold ${streak > 0 ? '' : 'text-muted'}`}>{streak}</span>
+            </div>
           </div>
         </div>
 

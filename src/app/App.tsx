@@ -8,6 +8,7 @@ import MesPage from '../features/mes/MesPage'
 import ConquistasPage from '../features/conquistas/ConquistasPage'
 import PerfilPage from '../features/perfil/PerfilPage'
 import ConfigPage from '../features/config/ConfigPage'
+import LoginPage from '../features/auth/LoginPage'
 import GoalWizard from '../features/objetivos/GoalWizard'
 import GoalDetailOverlay from '../features/objetivos/GoalDetailOverlay'
 import TimeTravel from '../features/dev/TimeTravel'
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/conquistas" element={<ConquistasPage />} />
         <Route path="/perfil" element={<PerfilPage />} />
         <Route path="/config" element={<ConfigPage />} />
+        <Route path="/entrar" element={<LoginPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {wizardOpen && <GoalWizard />}

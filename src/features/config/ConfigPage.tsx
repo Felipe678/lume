@@ -12,8 +12,11 @@ import {
   Upload,
   Volume2,
 } from 'lucide-react'
+import { Link } from 'react-router'
 import { ensureNotificationPermission, notificationSupport } from '../../lib/notify'
 import { speak, speechAvailable } from '../../lib/speech'
+import { useAuth } from '../../store/useAuth'
+import { setBaseUpdatedAt, useSyncStatus } from '../../store/sync'
 import NavBar from '../../components/NavBar'
 import Modal from '../../components/Modal'
 import ConfirmDialog from '../../components/ConfirmDialog'
@@ -54,6 +57,8 @@ export default function ConfigPage() {
       <NavBar />
       <main className="mx-auto max-w-3xl p-4">
         <h1 className="mb-4 text-xl font-bold">Configurações</h1>
+
+        <AccountSection />
 
         {/* Premiações */}
         <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
@@ -239,6 +244,84 @@ export default function ConfigPage() {
         />
       )}
     </div>
+  )
+}
+
+const SYNC_LABEL: Record<string, string> = {
+  guest: 'sem conta neste aparelho',
+  saving: 'sincronizando…',
+  saved: 'sincronizado ✓',
+  offline: 'offline — dados seguros neste aparelho',
+  conflict: 'outro aparelho salvou depois — carregamos a versão mais recente',
+  error: 'erro de sincronização',
+}
+
+function AccountSection() {
+  const auth = useAuth()
+  const clearAll = useAppStore((s) => s.clearAll)
+  const status = useSyncStatus((s) => s.status)
+  const [confirmWipe, setConfirmWipe] = useState(false)
+
+  return (
+    <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
+      <h2 className="mb-1 text-sm font-semibold tracking-widest text-muted uppercase">
+        Conta e sincronização
+      </h2>
+      {auth.token ? (
+        <>
+          <p className="text-sm">
+            Conectado como <b>{auth.email}</b>
+          </p>
+          <p className="mt-0.5 text-xs text-muted">Status: {SYNC_LABEL[status]}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              onClick={() => auth.logout()}
+              className="rounded-lg bg-ink-3 px-3 py-2 text-xs text-muted hover:text-paper"
+            >
+              Sair (dados ficam neste aparelho)
+            </button>
+            <button
+              onClick={() => setConfirmWipe(true)}
+              className="rounded-lg bg-ink-3 px-3 py-2 text-xs text-muted hover:text-red-400"
+            >
+              Sair e limpar este aparelho
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-xs text-muted">
+            Sem conta, tudo funciona só neste aparelho. Entre para sincronizar tablet e celular.
+          </p>
+          <Link
+            to="/entrar"
+            className="mt-3 inline-block rounded-full bg-flame px-4 py-2 text-xs font-bold text-ink"
+          >
+            Entrar ou criar conta
+          </Link>
+        </>
+      )}
+
+      {confirmWipe && (
+        <ConfirmDialog
+          title="Sair e limpar este aparelho?"
+          message="A conta é desconectada E os dados locais são apagados. O que já foi sincronizado continua salvo na nuvem."
+          actions={[
+            {
+              label: 'Sair e limpar',
+              variant: 'danger',
+              onClick: () => {
+                auth.logout()
+                clearAll()
+                setBaseUpdatedAt(null)
+                setConfirmWipe(false)
+              },
+            },
+          ]}
+          onClose={() => setConfirmWipe(false)}
+        />
+      )}
+    </section>
   )
 }
 
