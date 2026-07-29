@@ -27,9 +27,21 @@ describe('suggestBlocks', () => {
   })
 
   it('respeita horário de início custom e não estoura a meia-noite', () => {
-    const tarde = suggestBlocks('alta', 'X', '23:30')[0]
+    const tarde = suggestBlocks('alta', 'X', { start: '23:30' })[0]
     expect(tarde.end).toBe('23:59')
     expect(validateBlockInput(tarde)).toEqual([])
+  })
+
+  it('desvia do trabalho quando a rotina é informada (edge 28)', () => {
+    const trabalhoTarde = {
+      mode: 'weekly' as const,
+      weekdays: [1, 2, 3, 4, 5] as (1 | 2 | 3 | 4 | 5)[],
+      start: '12:00',
+      end: '21:00',
+    }
+    const draft = suggestBlocks('alta', 'Inglês', { workSchedule: trabalhoTarde, refDate: '2026-07-29' })[0]
+    expect(draft.start).toBe('22:00') // fim do expediente + 1h
+    expect(validateBlockInput(draft)).toEqual([])
   })
 
   it('presets expostos para a UI explicarem o porquê', () => {
