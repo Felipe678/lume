@@ -7,6 +7,7 @@ export function makeGoal(id: string, overrides: Partial<Goal> = {}): Goal {
     title: `Objetivo ${id}`,
     emoji: '🎯',
     color: 'amber',
+    priority: 'media',
     milestones: [],
     createdAt: '2026-01-01',
     ...overrides,
