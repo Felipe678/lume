@@ -292,7 +292,7 @@ export default function FocoView({ embedded = false }: { embedded?: boolean }) {
       <AnimatePresence>
         {startCandidate && (
           <StartActivityModal
-            key={startCandidate.block.id}
+            key={`start-${startCandidate.block.id}`}
             activity={startCandidate}
             currentFocus={current}
             onStart={() => confirmStart(startCandidate)}
@@ -305,7 +305,7 @@ export default function FocoView({ embedded = false }: { embedded?: boolean }) {
         )}
         {pending && (
           <TransitionPopup
-            key={pending.block.id}
+            key={`end-${pending.block.id}`}
             activity={pending}
             onCheckInAndContinue={() => {
               doCheckIn(pending)
@@ -326,7 +326,7 @@ export default function FocoView({ embedded = false }: { embedded?: boolean }) {
         )}
         {rewardToCelebrate && (
           <RewardCelebration
-            key={rewardToCelebrate.id}
+            key={`reward-${rewardToCelebrate.id}`}
             reward={rewardToCelebrate}
             onDismiss={() => setSeenRewards((s) => new Set(s).add(rewardToCelebrate.id))}
             onGo={() => navigate('/conquistas')}
@@ -334,7 +334,7 @@ export default function FocoView({ embedded = false }: { embedded?: boolean }) {
         )}
         {queueCandidate && (
           <QueueCelebration
-            key={queueCandidate.id}
+            key={`queue-${queueCandidate.id}`}
             goal={queueCandidate}
             blockerTitle={state.goals.find((g) => g.id === queueCandidate.afterGoalId)?.title}
             onActivate={() => setActivating(queueCandidate)}
