@@ -89,14 +89,18 @@ export interface CheckIn {
   completedAt: string
 }
 
+import type { WorkSchedule } from './work'
+
 export interface AppState {
-  schemaVersion: 2
+  schemaVersion: 3
   goals: Goal[]
   blocks: TimeBlock[]
   /** Chave lógica "AAAA-MM-DD:blockId" — idempotente por construção. */
   checkIns: Record<string, CheckIn>
   rewards: Reward[]
   profile: Profile
+  /** Rotina de trabalho — o planejamento respeita essa disponibilidade. */
+  workSchedule: WorkSchedule
 }
 
 /** Rascunho de bloco antes de ganhar id/createdAt (wizard, sugestões, store). */
@@ -128,10 +132,11 @@ export type GoalColor = keyof typeof GOAL_COLORS
 export const OBLIGATORY_COLOR = '#78716c'
 
 export const emptyState = (): AppState => ({
-  schemaVersion: 2,
+  schemaVersion: 3,
   goals: [],
   blocks: [],
   checkIns: {},
   rewards: [],
   profile: defaultProfile(),
+  workSchedule: { mode: 'none' },
 })

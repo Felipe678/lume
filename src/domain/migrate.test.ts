@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { migrateV1toV2, type AppStateV1 } from './migrate'
+import { migrateToLatest, migrateV1toV2, migrateV2toV3, type AppStateV1 } from './migrate'
 
 const v1: AppStateV1 = {
   schemaVersion: 1,
@@ -39,5 +39,26 @@ describe('migrateV1toV2', () => {
       goals: [{ ...v1.goals[0], priority: 'alta' } as (typeof v1.goals)[0]],
     }
     expect(migrateV1toV2(weird).goals[0].priority).toBe('alta')
+  })
+})
+
+describe('migrateV2toV3 / migrateToLatest', () => {
+  it('v2 → v3 adiciona rotina de trabalho vazia', () => {
+    const v3 = migrateV2toV3(migrateV1toV2(v1))
+    expect(v3.schemaVersion).toBe(3)
+    expect(v3.workSchedule).toEqual({ mode: 'none' })
+    expect(v3.checkIns).toEqual(v1.checkIns)
+  })
+
+  it('migrateToLatest encadeia da v1 até a atual', () => {
+    const latest = migrateToLatest(v1, 1)
+    expect(latest.schemaVersion).toBe(3)
+    expect(latest.goals[0].priority).toBe('media')
+    expect(latest.workSchedule).toEqual({ mode: 'none' })
+  })
+
+  it('migrateToLatest com versão atual devolve intacto', () => {
+    const v3 = migrateToLatest(v1, 1)
+    expect(migrateToLatest(v3, 3)).toBe(v3)
   })
 })

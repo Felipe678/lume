@@ -17,7 +17,8 @@ import { checkInKey, emptyState } from '../domain/types'
 import { toISODate } from '../domain/dates'
 import { isGoalCompleted } from '../domain/goals'
 import { newlyUnlockedRewards } from '../domain/achievements'
-import { migrateV1toV2, type AppStateV1 } from '../domain/migrate'
+import { migrateToLatest } from '../domain/migrate'
+import type { WorkSchedule } from '../domain/work'
 
 export type { BlockDraft } from '../domain/types'
 
@@ -89,6 +90,7 @@ interface Actions {
   deleteReward: (id: string) => void
   redeemReward: (id: string) => void
   setProfile: (profile: Profile) => void
+  setWorkSchedule: (workSchedule: WorkSchedule) => void
   replaceState: (state: AppState) => void
   clearAll: () => void
   seedDemo: () => void
@@ -116,12 +118,13 @@ const reconcileRewards = (next: AppState, now: Date): Reward[] => {
 }
 
 const pure = (s: AppStore): AppState => ({
-  schemaVersion: 2,
+  schemaVersion: 3,
   goals: s.goals,
   blocks: s.blocks,
   checkIns: s.checkIns,
   rewards: s.rewards,
   profile: s.profile,
+  workSchedule: s.workSchedule,
 })
 
 export const useAppStore = create<AppStore>()(
@@ -263,6 +266,8 @@ export const useAppStore = create<AppStore>()(
 
       setProfile: (profile) => set({ profile }),
 
+      setWorkSchedule: (workSchedule) => set({ workSchedule }),
+
       replaceState: (state) => set({ ...state }),
 
       clearAll: () => set({ ...emptyState() }),
@@ -348,10 +353,9 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => (storageAvailable ? localStorage : memoryStorage)),
-      migrate: (persisted, version) =>
-        version < 2 ? (migrateV1toV2(persisted as AppStateV1) as AppStore) : (persisted as AppStore),
+      migrate: (persisted, version) => migrateToLatest(persisted, version) as AppStore,
       partialize: (s) => pure(s),
     },
   ),

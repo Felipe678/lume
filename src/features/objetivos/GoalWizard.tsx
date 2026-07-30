@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check, Plus, X } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
 import { useOverlays } from '../../store/useOverlays'
+import { toISODate } from '../../domain/dates'
 import { goalStatus } from '../../domain/goals'
 import { PRIORITY_PRESETS, suggestBlocks } from '../../domain/suggest'
 import {
@@ -22,6 +23,7 @@ const STEP_TITLES = ['O quê', 'Por quê', 'Etapas', 'Quando', 'Encaixes', 'Revi
 export default function GoalWizard() {
   const closeWizard = useOverlays((s) => s.closeWizard)
   const goals = useAppStore((s) => s.goals)
+  const workSchedule = useAppStore((s) => s.workSchedule)
   const createGoalWithBlocks = useAppStore((s) => s.createGoalWithBlocks)
 
   const [step, setStep] = useState(0)
@@ -52,7 +54,14 @@ export default function GoalWizard() {
   const next = () => {
     let target = step + 1
     if (target === 4 && skipFits) target = 5
-    if (target === 4 && !fitsTouched) setDrafts(suggestBlocks(priority, title.trim() || 'Novo objetivo'))
+    if (target === 4 && !fitsTouched) {
+      setDrafts(
+        suggestBlocks(priority, title.trim() || 'Novo objetivo', {
+          workSchedule,
+          refDate: toISODate(new Date()),
+        }),
+      )
+    }
     setStep(target)
   }
   const back = () => {

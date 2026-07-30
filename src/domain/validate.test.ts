@@ -65,23 +65,59 @@ describe('validateAppState', () => {
   })
 
   it('recusa versões de schema desconhecidas (arquivo de app mais novo)', () => {
-    const result = validateAppState({ ...valid, schemaVersion: 3 })
+    const result = validateAppState({ ...valid, schemaVersion: 4 })
     expect(result.ok).toBe(false)
   })
 
-  it('aceita backup v1 e migra para v2 (check-ins são sagrados)', () => {
+  it('aceita backup v1 e migra até a versão atual (check-ins são sagrados)', () => {
     const v1 = JSON.parse(JSON.stringify(valid)) as Record<string, unknown>
     v1.schemaVersion = 1
     delete v1.rewards
     delete v1.profile
+    delete v1.workSchedule
     for (const g of v1.goals as Array<Record<string, unknown>>) delete g.priority
     const result = validateAppState(v1)
     expect(result.ok).toBe(true)
     if (result.ok) {
-      expect(result.state.schemaVersion).toBe(2)
+      expect(result.state.schemaVersion).toBe(3)
       expect(result.state.goals[0].priority).toBe('media')
       expect(result.state.rewards).toEqual([])
+      expect(result.state.workSchedule).toEqual({ mode: 'none' })
     }
+  })
+
+  it('aceita backup v2 e migra para v3', () => {
+    const v2 = JSON.parse(JSON.stringify(valid)) as Record<string, unknown>
+    v2.schemaVersion = 2
+    delete v2.workSchedule
+    const result = validateAppState(v2)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.state.schemaVersion).toBe(3)
+      expect(result.state.workSchedule).toEqual({ mode: 'none' })
+    }
+  })
+
+  it('v3 valida a rotina de trabalho (edge 65)', () => {
+    const badMode = JSON.parse(JSON.stringify(valid))
+    badMode.workSchedule = { mode: 'lunar' }
+    expect(validateAppState(badMode).ok).toBe(false)
+
+    const equalHours = JSON.parse(JSON.stringify(valid))
+    equalHours.workSchedule = { mode: 'weekly', weekdays: [1], start: '08:00', end: '08:00' }
+    expect(validateAppState(equalHours).ok).toBe(false)
+
+    const noDays = JSON.parse(JSON.stringify(valid))
+    noDays.workSchedule = { mode: 'weekly', weekdays: [], start: '08:00', end: '18:00' }
+    expect(validateAppState(noDays).ok).toBe(false)
+
+    const badRotation = JSON.parse(JSON.stringify(valid))
+    badRotation.workSchedule = { mode: 'rotation', daysOn: 0, daysOff: 1, anchorDate: '2026-07-29', start: '07:00', end: '19:00' }
+    expect(validateAppState(badRotation).ok).toBe(false)
+
+    const good = JSON.parse(JSON.stringify(valid))
+    good.workSchedule = { mode: 'rotation', daysOn: 1, daysOff: 1, anchorDate: '2026-07-29', start: '07:00', end: '19:00' }
+    expect(validateAppState(good).ok).toBe(true)
   })
 
   it('v2 exige prioridade válida e aceita afterGoalId órfão', () => {

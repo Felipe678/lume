@@ -10,7 +10,24 @@ import { DAY_LABELS, DAY_ORDER } from './GradePage'
 
 const inputClass = 'w-full rounded-lg bg-ink-3 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-flame'
 
-export default function BlockFormModal({ block, onClose }: { block?: TimeBlock; onClose: () => void }) {
+export interface BlockPreset {
+  title: string
+  weekdays: Weekday[]
+  start: string
+  end: string
+  goalId?: string | null
+}
+
+export default function BlockFormModal({
+  block,
+  preset,
+  onClose,
+}: {
+  block?: TimeBlock
+  /** valores iniciais para criação (quick-add de rotina) */
+  preset?: BlockPreset
+  onClose: () => void
+}) {
   const goals = useAppStore((s) => s.goals)
   const blocks = useAppStore((s) => s.blocks)
   const checkIns = useAppStore((s) => s.checkIns)
@@ -18,11 +35,11 @@ export default function BlockFormModal({ block, onClose }: { block?: TimeBlock; 
   const updateBlock = useAppStore((s) => s.updateBlock)
   const deleteBlock = useAppStore((s) => s.deleteBlock)
 
-  const [title, setTitle] = useState(block?.title ?? '')
-  const [goalId, setGoalId] = useState<string>(block?.goalId ?? '')
-  const [weekdays, setWeekdays] = useState<Weekday[]>(block?.weekdays ?? [])
-  const [start, setStart] = useState(block?.start ?? '08:00')
-  const [end, setEnd] = useState(block?.end ?? '09:00')
+  const [title, setTitle] = useState(block?.title ?? preset?.title ?? '')
+  const [goalId, setGoalId] = useState<string>(block?.goalId ?? preset?.goalId ?? '')
+  const [weekdays, setWeekdays] = useState<Weekday[]>(block?.weekdays ?? preset?.weekdays ?? [])
+  const [start, setStart] = useState(block?.start ?? preset?.start ?? '08:00')
+  const [end, setEnd] = useState(block?.end ?? preset?.end ?? '09:00')
   const [tried, setTried] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -69,7 +86,7 @@ export default function BlockFormModal({ block, onClose }: { block?: TimeBlock; 
           <label className="flex flex-col gap-1 text-sm">
             <span className="text-muted">Vínculo</span>
             <select className={inputClass} value={goalId} onChange={(e) => setGoalId(e.target.value)}>
-              <option value="">Obrigatória (sem objetivo)</option>
+              <option value="">Rotina (dia a dia, sem objetivo)</option>
               {activeGoals.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.emoji} {g.title}

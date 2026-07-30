@@ -1,7 +1,7 @@
 import type { AppState, TimeBlock, Weekday } from './types'
 import { GOAL_COLORS, PRIORITY_LABELS } from './types'
 import { hhmmToMin } from './dates'
-import { migrateV1toV2, type AppStateV1 } from './migrate'
+import { migrateToLatest, type AppStateV1, type AppStateV2 } from './migrate'
 
 export interface BlockInput {
   id?: string
@@ -140,9 +140,34 @@ function validateRewardsAndProfile(d: Record<string, unknown>): string | null {
   return null
 }
 
+const WORK_MODES = new Set(['none', 'weekly', 'rotation'])
+
+/** Valida uma rotina de trabalho. Retorna mensagem de erro ou null. */
+export function validateWorkSchedule(v: unknown): string | null {
+  if (typeof v !== 'object' || v === null) return 'Rotina de trabalho inválida.'
+  const w = v as Record<string, unknown>
+  if (!isStr(w.mode) || !WORK_MODES.has(w.mode)) return 'Modo de trabalho desconhecido.'
+  if (w.mode === 'none') return null
+  if (!isStr(w.start) || !isStr(w.end) || !HHMM_RE.test(w.start) || !HHMM_RE.test(w.end)) {
+    return 'Horários de trabalho inválidos.'
+  }
+  if (w.start === w.end) return 'Início e fim do trabalho não podem ser iguais.'
+  if (w.mode === 'weekly') {
+    if (!Array.isArray(w.weekdays) || w.weekdays.length === 0 || !w.weekdays.every(isWeekday)) {
+      return 'Escolha pelo menos um dia de trabalho.'
+    }
+    return null
+  }
+  // rotation
+  if (typeof w.daysOn !== 'number' || !Number.isInteger(w.daysOn) || w.daysOn < 1) return 'Dias de trabalho da escala inválidos.'
+  if (typeof w.daysOff !== 'number' || !Number.isInteger(w.daysOff) || w.daysOff < 1) return 'Dias de folga da escala inválidos.'
+  if (!isStr(w.anchorDate) || !ISODATE_RE.test(w.anchorDate)) return 'Data de referência da escala inválida.'
+  return null
+}
+
 /**
  * Valida um JSON importado antes de substituir o estado — import inválido nunca sobrescreve nada.
- * Aceita backups v1 (migrados na hora) e v2; retorna sempre estado v2.
+ * Aceita backups v1/v2 (migrados na hora) e v3; retorna sempre estado v3.
  */
 export function validateAppState(data: unknown): ValidationResult {
   if (typeof data !== 'object' || data === null || Array.isArray(data)) {
@@ -153,17 +178,24 @@ export function validateAppState(data: unknown): ValidationResult {
   if (d.schemaVersion === 1) {
     const coreError = validateCore(d, false)
     if (coreError) return { ok: false, error: coreError }
-    return { ok: true, state: migrateV1toV2(d as unknown as AppStateV1) }
+    return { ok: true, state: migrateToLatest(d as unknown as AppStateV1, 1) }
   }
 
   if (d.schemaVersion === 2) {
     const error = validateCore(d, true) ?? validateRewardsAndProfile(d)
+    if (error) return { ok: false, error }
+    return { ok: true, state: migrateToLatest(d as unknown as AppStateV2, 2) }
+  }
+
+  if (d.schemaVersion === 3) {
+    const error =
+      validateCore(d, true) ?? validateRewardsAndProfile(d) ?? validateWorkSchedule(d.workSchedule)
     if (error) return { ok: false, error }
     return { ok: true, state: d as unknown as AppState }
   }
 
   return {
     ok: false,
-    error: `Versão de dados desconhecida (${String(d.schemaVersion)}). Este app entende as versões 1 e 2 — o arquivo pode ser de uma versão mais nova do Lume.`,
+    error: `Versão de dados desconhecida (${String(d.schemaVersion)}). Este app entende as versões 1, 2 e 3 — o arquivo pode ser de uma versão mais nova do Lume.`,
   }
 }

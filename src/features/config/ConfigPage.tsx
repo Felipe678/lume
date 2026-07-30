@@ -1,5 +1,22 @@
 import { useMemo, useRef, useState } from 'react'
-import { BarChart3, Download, Gift, Pencil, PieChart, Plus, Sparkles, Trash2, Upload } from 'lucide-react'
+import {
+  BarChart3,
+  Bell,
+  Download,
+  Gift,
+  Pencil,
+  PieChart,
+  Plus,
+  Sparkles,
+  Trash2,
+  Upload,
+  Volume2,
+} from 'lucide-react'
+import { Link } from 'react-router'
+import { ensureNotificationPermission, notificationSupport } from '../../lib/notify'
+import { speak, speechAvailable } from '../../lib/speech'
+import { useAuth } from '../../store/useAuth'
+import { setBaseUpdatedAt, useSyncStatus } from '../../store/sync'
 import NavBar from '../../components/NavBar'
 import Modal from '../../components/Modal'
 import ConfirmDialog from '../../components/ConfirmDialog'
@@ -21,6 +38,11 @@ export default function ConfigPage() {
   const setChartStyle = useUiPrefs((s) => s.setChartStyle)
   const startScreen = useUiPrefs((s) => s.startScreen)
   const setStartScreen = useUiPrefs((s) => s.setStartScreen)
+  const voiceEnabled = useUiPrefs((s) => s.voiceEnabled)
+  const setVoiceEnabled = useUiPrefs((s) => s.setVoiceEnabled)
+  const notificationsEnabled = useUiPrefs((s) => s.notificationsEnabled)
+  const setNotificationsEnabled = useUiPrefs((s) => s.setNotificationsEnabled)
+  const notifStatus = notificationSupport()
 
   const state = useMemo(
     () => selectAppState(store),
@@ -35,6 +57,8 @@ export default function ConfigPage() {
       <NavBar />
       <main className="mx-auto max-w-3xl p-4">
         <h1 className="mb-4 text-xl font-bold">Configurações</h1>
+
+        <AccountSection />
 
         {/* Premiações */}
         <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
@@ -129,6 +153,66 @@ export default function ConfigPage() {
           </div>
         </section>
 
+        {/* Alertas */}
+        <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
+          <h2 className="mb-1 text-sm font-semibold tracking-widest text-muted uppercase">
+            Alertas de atividade (neste aparelho)
+          </h2>
+          <p className="mb-3 text-xs text-muted">
+            No início e no fim de cada atividade, o Lume avisa com frases motivacionais. Integração com
+            Alexa está no radar — por ora, voz e notificação locais.
+          </p>
+
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-1.5">
+              <Volume2 size={15} /> Voz (anúncio falado)
+            </span>
+            <button
+              onClick={() => {
+                const on = !voiceEnabled
+                setVoiceEnabled(on)
+                if (on) speak('Alertas de voz ativados. Bora acender essa chama!')
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${voiceEnabled ? 'bg-flame text-ink' : 'bg-ink-3 text-muted'}`}
+            >
+              {voiceEnabled ? 'Ligado' : 'Desligado'}
+            </button>
+          </div>
+          {!speechAvailable() && (
+            <p className="mt-1 text-xs text-amber-300/80">
+              Este navegador não expôs nenhuma voz — o anúncio falado ficará mudo aqui.
+            </p>
+          )}
+
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="flex items-center gap-1.5">
+              <Bell size={15} /> Notificações do navegador
+            </span>
+            <button
+              disabled={notifStatus === 'denied' || notifStatus === 'unsupported'}
+              onClick={async () => {
+                if (notificationsEnabled) {
+                  setNotificationsEnabled(false)
+                  return
+                }
+                const perm = await ensureNotificationPermission()
+                setNotificationsEnabled(perm === 'granted')
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-40 ${
+                notificationsEnabled ? 'bg-flame text-ink' : 'bg-ink-3 text-muted'
+              }`}
+            >
+              {notifStatus === 'denied'
+                ? 'Bloqueado no navegador'
+                : notifStatus === 'unsupported'
+                  ? 'Sem suporte'
+                  : notificationsEnabled
+                    ? 'Ligado'
+                    : 'Desligado'}
+            </button>
+          </div>
+        </section>
+
         <DataSection />
       </main>
 
@@ -160,6 +244,84 @@ export default function ConfigPage() {
         />
       )}
     </div>
+  )
+}
+
+const SYNC_LABEL: Record<string, string> = {
+  guest: 'sem conta neste aparelho',
+  saving: 'sincronizando…',
+  saved: 'sincronizado ✓',
+  offline: 'offline — dados seguros neste aparelho',
+  conflict: 'outro aparelho salvou depois — carregamos a versão mais recente',
+  error: 'erro de sincronização',
+}
+
+function AccountSection() {
+  const auth = useAuth()
+  const clearAll = useAppStore((s) => s.clearAll)
+  const status = useSyncStatus((s) => s.status)
+  const [confirmWipe, setConfirmWipe] = useState(false)
+
+  return (
+    <section className="mb-6 rounded-2xl border border-ink-3 bg-ink-2/40 p-4">
+      <h2 className="mb-1 text-sm font-semibold tracking-widest text-muted uppercase">
+        Conta e sincronização
+      </h2>
+      {auth.token ? (
+        <>
+          <p className="text-sm">
+            Conectado como <b>{auth.email}</b>
+          </p>
+          <p className="mt-0.5 text-xs text-muted">Status: {SYNC_LABEL[status]}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              onClick={() => auth.logout()}
+              className="rounded-lg bg-ink-3 px-3 py-2 text-xs text-muted hover:text-paper"
+            >
+              Sair (dados ficam neste aparelho)
+            </button>
+            <button
+              onClick={() => setConfirmWipe(true)}
+              className="rounded-lg bg-ink-3 px-3 py-2 text-xs text-muted hover:text-red-400"
+            >
+              Sair e limpar este aparelho
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-xs text-muted">
+            Sem conta, tudo funciona só neste aparelho. Entre para sincronizar tablet e celular.
+          </p>
+          <Link
+            to="/entrar"
+            className="mt-3 inline-block rounded-full bg-flame px-4 py-2 text-xs font-bold text-ink"
+          >
+            Entrar ou criar conta
+          </Link>
+        </>
+      )}
+
+      {confirmWipe && (
+        <ConfirmDialog
+          title="Sair e limpar este aparelho?"
+          message="A conta é desconectada E os dados locais são apagados. O que já foi sincronizado continua salvo na nuvem."
+          actions={[
+            {
+              label: 'Sair e limpar',
+              variant: 'danger',
+              onClick: () => {
+                auth.logout()
+                clearAll()
+                setBaseUpdatedAt(null)
+                setConfirmWipe(false)
+              },
+            },
+          ]}
+          onClose={() => setConfirmWipe(false)}
+        />
+      )}
+    </section>
   )
 }
 

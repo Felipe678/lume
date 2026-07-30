@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './app/App'
 import { startClock } from './store/useClock'
+import { startSync } from './store/sync'
 import { STORAGE_KEY, storageAvailable, useAppStore } from './store/useAppStore'
 
 startClock()
+startSync()
 
 if (storageAvailable) {
   // outra aba gravou → re-hidrata este estado (last-write-wins)

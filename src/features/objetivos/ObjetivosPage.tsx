@@ -6,7 +6,7 @@ import ProgressBar from '../../components/ProgressBar'
 import ConfirmDialog, { type ConfirmAction } from '../../components/ConfirmDialog'
 import GoalFormModal from './GoalFormModal'
 import ActivateGoalFlow from './ActivateGoalFlow'
-import { useAppStore } from '../../store/useAppStore'
+import { selectAppState, useAppStore } from '../../store/useAppStore'
 import { useOverlays } from '../../store/useOverlays'
 import { goalTotalProgress } from '../../domain/progress'
 import { investedMinutes } from '../../domain/stats'
@@ -118,10 +118,7 @@ function GoalCard({ goal, onEdit, onArchive }: { goal: Goal; onEdit: () => void;
   const color = GOAL_COLORS[goal.color]
   const total = goalTotalProgress(goal)
   const complete = total === 1
-  const invested = investedMinutes(
-    { schemaVersion: 2, goals: store.goals, blocks: store.blocks, checkIns: store.checkIns, rewards: store.rewards, profile: store.profile },
-    goal.id,
-  )
+  const invested = investedMinutes(selectAppState(store), goal.id)
 
   const submitMilestone = () => {
     const t = newMilestone.trim()
@@ -250,7 +247,7 @@ function ArchiveDialog({ goal, onClose }: { goal: Goal; onClose: () => void }) {
             },
           },
           {
-            label: 'Manter blocos como "Obrigatória"',
+            label: 'Manter blocos como Rotina',
             variant: 'neutral',
             onClick: () => {
               archiveGoal(goal.id, 'convert')

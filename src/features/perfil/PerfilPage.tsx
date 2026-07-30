@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import NavBar from '../../components/NavBar'
 import StreakFlame from '../../components/StreakFlame'
+import WorkScheduleEditor from './WorkScheduleEditor'
 import { selectAppState, useAppStore } from '../../store/useAppStore'
 import { useNow } from '../../store/useClock'
 import { computeStreak } from '../../domain/streak'
@@ -101,6 +102,8 @@ export default function PerfilPage() {
             </motion.div>
           ))}
         </section>
+
+        <WorkScheduleEditor />
       </main>
     </div>
   )

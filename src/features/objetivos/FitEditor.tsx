@@ -1,7 +1,10 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useAppStore } from '../../store/useAppStore'
+import { useNow } from '../../store/useClock'
 import { visibleBlocks } from '../../domain/schedule'
 import { findOverlaps, validateBlockInput } from '../../domain/validate'
+import { blockConflictsWork } from '../../domain/work'
+import { hhmmToMin, toISODate } from '../../domain/dates'
 import type { BlockDraft, Weekday } from '../../domain/types'
 import { DAY_LABELS, DAY_ORDER } from '../grade/GradePage'
 
@@ -20,6 +23,8 @@ export default function FitEditor({
 }) {
   const goals = useAppStore((s) => s.goals)
   const blocks = useAppStore((s) => s.blocks)
+  const workSchedule = useAppStore((s) => s.workSchedule)
+  const today = toISODate(useNow())
   const existing = visibleBlocks({ goals, blocks })
 
   const update = (i: number, patch: Partial<BlockDraft>) =>
@@ -35,6 +40,10 @@ export default function FitEditor({
       {drafts.map((d, i) => {
         const errors = validateBlockInput(d)
         const overlaps = findOverlaps(d, existing)
+        const workConflict =
+          errors.length === 0
+            ? blockConflictsWork(workSchedule, d.weekdays, hhmmToMin(d.start), hhmmToMin(d.end), today)
+            : null
         return (
           <div key={i} className="rounded-xl border border-ink-3 bg-ink-2/60 p-3">
             <div className="flex items-center gap-2">
@@ -99,6 +108,11 @@ export default function FitEditor({
             {overlaps.length > 0 && (
               <p className="mt-2 rounded-lg bg-amber-950/40 p-2 text-xs text-amber-300">
                 Sobrepõe {overlaps.map((o) => `"${o.title}"`).join(', ')} — pode salvar mesmo assim.
+              </p>
+            )}
+            {workConflict && (
+              <p className="mt-2 rounded-lg bg-amber-950/40 p-2 text-xs text-amber-300">
+                💼 {workConflict.label} Pode salvar, mas talvez outro horário encaixe melhor.
               </p>
             )}
           </div>
