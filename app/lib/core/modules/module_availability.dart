@@ -1,0 +1,1 @@
+enum ModuleAvailability { available, comingSoon }
