@@ -25,3 +25,9 @@ server/.env
 *.njsproj
 *.sln
 *.sw?
+
+# Screenshots do Playwright (ferramenta local)
+.playwright-mcp/
+
+# Dumps de crash do bash no Windows
+*.stackdump

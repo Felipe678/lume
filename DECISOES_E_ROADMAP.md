@@ -3,7 +3,8 @@
 > Registro vivo do contexto do projeto: o que o Lume é, as decisões já tomadas (e por quê) e o roadmap de entregas.
 > Atualize este arquivo sempre que uma decisão nova for tomada ou uma entrega avançar.
 >
-> **Última atualização:** 2026-09-30 · **Branch:** `new-plan/mudanca_de_escopo`
+> **Última atualização:** 2026-11-11 · **Branch:** `new-plan/mudanca_de_escopo`
+> **Jira:** projeto [LUME](https://felipeoliveiranogueira.atlassian.net/jira/software/projects/LUME) (ver seção 7)
 
 ---
 
@@ -87,7 +88,9 @@ Ordem aprovada: E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 (detalhes na
 - Navegação com `go_router`. Catálogo único de módulos em `app/lib/core/modules/`: quando um módulo ganha tela, o menu e o dashboard mudam juntos.
 - **Tempo e objetivos** (`/tempo`) já tem rota e tela, por enquanto só com o fundo.
 
-### D9 — Paleta de cores (2026-09-28)
+### D9 — Paleta de cores (2026-09-28) · ⚠️ a ser substituída pela D12
+> Esta é a paleta **atualmente no código**. Ela será trocada quando a tarefa LUME-68 (tokens de cor v2) for implementada.
+
 - Testado e **revertido**: paleta preto/vermelho e depois uma paleta "agressiva" (carmim, brasa, âmbar). O usuário preferiu a original.
 - **Paleta vigente:** acentos violeta `#5B16F0`, ciano `#16D4F5` e laranja `#FF8A00` (`app_palette.dart`), logo azul → roxo, cores de objetivos variadas para serem reconhecíveis.
 - **Card "Agora":** gradiente **deep navy**, de `#060B1A` a `#1C3C86`, com texto branco e brilho azul discreto.
@@ -100,6 +103,22 @@ Ordem aprovada: E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 (detalhes na
 ### D11 — Ambiente de desenvolvimento com auto reload (2026-09-28)
 - `app/tool/dev_server.mjs` sobe o Flutter web em `http://localhost:5500`, vigia `lib/` e `assets/` e recompila sozinho. Se o Flutter cair, ele reinicia em ~1,5s.
 - Uso: `cd app && node tool/dev_server.mjs`. Mudanças no `pubspec.yaml` exigem reiniciar o servidor.
+
+### D12 — Design System v2 "brasa" (2026-11-09) · 🟡 decidido, implementação não iniciada
+- O visual do app será refeito com o **Design System v2 "brasa"**, publicado como artefato (https://claude.ai/artifact/9TAdTj4LkKjQRPiaVbH9XK, versão 4), com brand book, regras de movimento, responsividade, tradução para widgets Flutter e tokens.
+- Épico no Jira: **LUME-67 · E0.1** (a fundação visual). As telas de Tempo e objetivos e o Modo Foco redesenhados ficam na E1 e dependem deste épico.
+- **Linguagem visual:**
+  - Uma fonte de luz por tela (brilho + respiração de 6s), só no elemento que está acontecendo agora.
+  - Superfícies em camadas: `surface` com linha fina no topo e sombras em duas camadas (`elev-1/2/3`). Sem `Card` do Material.
+  - Aurora de fundo (dois gradientes radiais), uma vez por página, no scaffold.
+  - Vidro (`surface-glass` + blur 20) só em elementos flutuantes: BottomNav, Sheet, menu de módulos e Toast.
+  - Raios concêntricos 16 → 12 → 8 → 4.
+  - Progresso que "acende": barra ou anel com cabeça luminosa laranja → brasa, e passos concluídos que esfriam para violeta.
+  - Movimento: `ease-out` para entrar, `ease-in` (mais curto) para sair, mola só ao soltar botão, marcar check ou trocar de passo. `disableAnimations` é respeitado em tudo.
+- **Navegação responsiva** em três classes de tela: compact, medium e wide, com BottomNav em vidro no celular.
+- **Pronto quando:** o dashboard atual renderiza com a v2 nos dois temas e nas três classes de tela, com goldens e teste de contraste passando.
+- **Efeito sobre decisões anteriores:** a D9 (paleta) será substituída; a D2 (tema claro e escuro) continua valendo, e o tema claro definitivo agora faz parte deste trabalho (LUME-23).
+- **Novo modelo de domínio de Tempo** (LUME-82): Atividade (cotidiana ou de objetivo), Passo com estimativa, Anotação e consistência. O Modo Foco v2 vira "foco absoluto" (LUME-84), com encerramento próprio (LUME-85).
 
 ### Restrições de produto já definidas
 - **Dados de saúde são sensíveis (LGPD, art. 11):** exigem criptografia, consentimento explícito e trilha de auditoria.
@@ -143,8 +162,8 @@ flowchart LR
 
 | # | Entrega | Escopo | Pronto quando | Status |
 |---|---|---|---|---|
-| **E0** | Fundação | Design system (paleta, tipografia, componentes), estrutura do ERP (navegação e registro de módulos), backend definitivo (Quarkus + PostgreSQL), sync por módulo, remoção do splash | Um módulo "vazio" funciona de ponta a ponta na estrutura nova | 🟡 Em andamento: design system, dashboard, menu de módulos e catálogo prontos · backend e sync não iniciados |
-| **E1** | Tempo e Objetivos | Painel, Grade, Objetivos, Foco e Mês nas telas novas, portando o domínio do app React | Tudo o que o app React faz funciona no visual novo | ⏭️ Próxima: tela `/tempo` criada só com fundo |
+| **E0** | Fundação | Design system (paleta, tipografia, componentes), estrutura do ERP (navegação e registro de módulos), backend definitivo (Quarkus + PostgreSQL), sync por módulo, remoção do splash | Um módulo "vazio" funciona de ponta a ponta na estrutura nova | 🟡 Em andamento: design system v1, dashboard, menu de módulos, catálogo e remoção do splash prontos · backend e sync não iniciados · **E0.1** (DS v2 "brasa", LUME-67) planejado antes da E1 |
+| **E1** | Tempo e Objetivos | Painel, Grade, Objetivos, Foco e Mês nas telas novas, portando o domínio do app React | Tudo o que o app React faz funciona no visual novo | ⏭️ Próxima, depende da E0.1: tela `/tempo` criada só com fundo; tarefas e histórias no Jira (LUME-2) |
 | **E2** | Saúde I — corpo | Peso, IMC, medidas, caneta (aplicações, dose, evolução de dose, local da aplicação, lembrete) | Dá para acompanhar um tratamento com tirzepatida do começo ao fim | ⬜ |
 | **E3** | Saúde II — rotina | Alimentação e sono | Sono e alimentação aparecem cruzados com o peso | ⬜ |
 | **E4** | Visão da Vida | Visão geral de todos os módulos, equilíbrio entre as áreas, evolução comparativa | A tela inicial mostra o "caminho do meio" com dados reais | ⬜ |
@@ -159,9 +178,10 @@ A Visão da Vida (E4) vem depois de Saúde de propósito: sem dados de pelo meno
 ## 6. Melhorias e pendências já levantadas
 
 ### Próximos passos imediatos
-- [ ] **Tela Tempo e objetivos (E1):** levantar o que o app React faz em Tarefas, Rotina e Objetivos e montar a proposta de tela, como foi feito com o dashboard.
-- [ ] **Ligar o dashboard a dados reais**, substituindo o `dashboard_mock_datasource.dart`, junto com a E1.
-- [ ] **Tema claro definitivo:** aguardando a imagem de referência do design claro (frame `868-27423` do Eclipse).
+- [ ] **E0.1 · Design System v2 "brasa" (LUME-67):** tokens de cor (LUME-68), espaçamentos, raios e sombras (LUME-70), `AppPageScaffold` v2 (LUME-72), kit de widgets base (LUME-73), estados padrão (LUME-76), BottomNav em vidro (LUME-75), dashboard v2 (LUME-77), goldens e contraste (LUME-78) e acessibilidade (LUME-79).
+- [ ] **Tela Tempo e objetivos (E1):** levantar o que o app React faz em Tarefas, Rotina e Objetivos e montar a proposta de tela, como foi feito com o dashboard (LUME-57). Depois, o modelo de domínio (LUME-82) e as telas v2 (LUME-80, 81, 83, 84, 85).
+- [ ] **Ligar o dashboard a dados reais**, substituindo o `dashboard_mock_datasource.dart`, junto com a E1 (LUME-64).
+- [ ] **Tema claro definitivo (LUME-23):** agora faz parte do DS v2; antes aguardava a imagem de referência do frame `868-27423` do Eclipse.
 
 ### Decisões aguardando aprovação
 - [ ] **Exceção à regra "um arquivo por classe"** para pares `StatefulWidget`/`State` (ex.: `now_builder.dart`, `LumeApp`). É o padrão do Flutter; separar obrigaria a deixar o `State` público.
@@ -178,4 +198,26 @@ A Visão da Vida (E4) vem depois de Saúde de propósito: sem dados de pelo meno
 - [ ] Decidir quando o app React será aposentado (após a E1 cobrir todas as suas funcionalidades).
 
 ### Design
-- [ ] Ícones e imagens do Eclipse foram substituídos por equivalentes (chip e logo Mastercard em código, ícones Material), porque o arquivo do Figma não permite leitura sem acesso de edição. Duplicar o arquivo para a própria conta libera a extração exata de tokens e ícones.
+- [ ] (LUME-27) Ícones e imagens do Eclipse foram substituídos por equivalentes (chip e logo Mastercard em código, ícones Material), porque o arquivo do Figma não permite leitura sem acesso de edição. Duplicar o arquivo para a própria conta libera a extração exata de tokens e ícones.
+
+---
+
+## 7. Jira
+
+Projeto **LUME** em `felipeoliveiranogueira.atlassian.net`, criado em 2026-11-09 a partir deste roadmap. Os épicos espelham as entregas:
+
+| Épico | Entrega |
+|---|---|
+| LUME-1 | E0 · Fundação |
+| LUME-67 | E0.1 · Design System v2 "brasa" (D12) |
+| LUME-2 | E1 · Tempo e Objetivos |
+| LUME-3 | E2 · Saúde I — corpo |
+| LUME-4 | E3 · Saúde II — rotina |
+| LUME-5 | E4 · Visão da Vida |
+| LUME-6 | E5 · Finanças |
+| LUME-7 | E6 · Patrimônio |
+| LUME-8 | E7 · Documentos |
+
+- O Jira guarda o detalhamento em tarefas e histórias; este arquivo guarda o **porquê** das decisões.
+- Itens já entregues antes da criação do projeto (design system v1, dashboard, menu de módulos) não têm ticket.
+- **Concluído no Jira:** LUME-19 (remover o splash do app), em 2026-11-11.
