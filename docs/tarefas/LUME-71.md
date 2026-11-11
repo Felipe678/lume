@@ -1,7 +1,7 @@
 # LUME-71 · AppMotion e AppMotionScope (movimento do DS v2)
 
 - **Jira:** LUME-71 (épico LUME-67)
-- **Etapa atual:** commit
+- **Etapa atual:** concluida
 - **Atualizado em:** 11/11/2026 13:30
 - **Orçamento (ponderado):** 600.000
 - **Gasto até agora:** `node scripts/dev/metricas.mjs --tarefa LUME-71`
