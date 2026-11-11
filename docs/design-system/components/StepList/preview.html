@@ -1,0 +1,303 @@
+<!-- @dsCard group="Atividades" height=640 subtitle="Passos de uma atividade no detalhe (planejamento): número, título, estimativa editável, check com mola, anotações por passo, reordenar e adicionar. Com a barra segmentada da atividade acima." -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1180px; margin-inline: auto; display: flex; gap: var(--space-32); flex-wrap: wrap; align-items: flex-start; }
+  .sec { display: grid; gap: var(--space-4); align-content: start; }
+  .sec .lead { color: var(--text-secondary); max-width: 52ch; margin-bottom: var(--space-12); }
+  .cap { color: var(--text-muted); margin-top: var(--space-8); }
+  .desk { width: 450px; max-width: 100%; }
+  .phone { width: 360px; max-width: 100%; }
+  .side { width: 290px; max-width: 100%; display: grid; gap: var(--space-16); }
+  .pad { padding: var(--space-20); }
+  .theme { position: fixed; right: var(--space-16); top: var(--space-16); z-index: 9; }
+
+  /* ===== StepList (CSS local; sugestão para o kit) ===== */
+  .steplist { display: grid; gap: var(--space-12); }
+  .steplist .lbl { display: flex; justify-content: space-between; align-items: baseline; }
+  .steplist ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .step { display: grid; grid-template-columns: 16px 20px 24px minmax(0, 1fr) auto auto; grid-template-areas: "h n c t notes est"; align-items: center; gap: var(--space-8);
+    min-height: 44px; padding: var(--space-4) var(--space-8) var(--space-4) 0; margin-left: calc(-1 * var(--space-8)); padding-left: var(--space-8); border-radius: var(--radius-sm); position: relative;
+    transition: background-color var(--dur-instant) var(--ease-out); }
+  .step .h { grid-area: h; color: var(--text-muted); cursor: grab; opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); touch-action: none; }
+  .step .n { grid-area: n; color: var(--text-muted); text-align: center; }
+  .step .check { grid-area: c; cursor: pointer; }
+  .step .t { grid-area: t; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .step .notes { grid-area: notes; display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); min-height: 32px; padding: 0 var(--space-4); border-radius: var(--radius-sm); }
+  .step .notes .ms { color: var(--text-muted); }
+  .step .est { grid-area: est; display: inline-flex; align-items: center; justify-content: flex-end; gap: var(--space-2); min-width: 64px; min-height: 32px; padding: 0 var(--space-8); border-radius: var(--radius-sm); color: var(--text-primary); white-space: nowrap; }
+  .step .est small { color: var(--text-secondary); font-size: inherit; font-weight: 500; }
+  .step .est .pen { color: var(--text-muted); opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
+  .step .est-in { grid-area: est; display: none; align-items: center; gap: var(--space-4); justify-content: flex-end; }
+  .step .est-in input { width: 44px; min-height: 32px; text-align: right; font: inherit; color: var(--text-primary); background: var(--surface-raised); border: 0; border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--border-control); padding: 0 var(--space-8); font-variant-numeric: tabular-nums; }
+  .step .est-in input:focus-visible { outline: 2px solid var(--violet-ink); outline-offset: 1px; }
+  .step .est-in small { color: var(--text-secondary); }
+  .step.editing .est { display: none; } .step.editing .est-in { display: inline-flex; }
+  .step .more { grid-area: est; display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .step:hover { background: var(--surface-raised); }
+    .step:hover .h, .step:focus-within .h, .step:hover .est .pen, .step .est:focus-visible .pen { opacity: 1; }
+    .step .notes:hover, .step .est:hover { background: var(--chip); }
+  }
+  .step.done .t { color: var(--text-secondary); }
+  .step.done .n { color: var(--violet-ink); }
+  .step.now { background: var(--surface-tint); box-shadow: inset 0 1px 0 var(--hairline-strong); }
+  .step.now .t { font-weight: 600; }
+  .step.now .n { color: var(--orange-ink); font-weight: 700; }
+  .step.now .check { box-shadow: inset 0 0 0 1.5px var(--orange); }
+  .step.now::before { content: ""; position: absolute; left: 0; top: 50%; width: 3px; height: 16px; margin-top: -8px; border-radius: var(--radius-full); background: var(--orange); box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 70%, transparent); }
+  .step.dragging { opacity: .5; }
+  .step.over { box-shadow: inset 0 2px 0 var(--violet-ink); }
+  /* adicionar passo */
+  .addstep { display: grid; grid-template-columns: 16px 20px 24px minmax(0, 1fr) auto; gap: var(--space-8); align-items: center; min-height: 44px; margin-left: calc(-1 * var(--space-8)); padding: 0 var(--space-8); border-radius: var(--radius-sm); }
+  .addstep .ms { grid-column: 3; color: var(--violet-ink); }
+  .addstep input { grid-column: 4; min-height: 36px; font: inherit; color: var(--text-primary); background: transparent; border: 0; padding: 0; min-width: 0; }
+  .addstep input::placeholder { color: var(--text-muted); }
+  .addstep input:focus { outline: none; }
+  .addstep:focus-within { background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--border-control); }
+  .addstep .hint { grid-column: 5; color: var(--text-muted); white-space: nowrap; }
+  /* compact: alça some, menu ⋯ aparece */
+  .m .step { grid-template-columns: 20px 24px minmax(0, 1fr) auto auto 32px; grid-template-areas: "n c t notes est more"; }
+  .m .step .h { display: none; }
+  .m .step .t { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .m .step .more { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-sm); color: var(--text-secondary); grid-area: more; }
+  .m .step .more::after { content: ""; position: absolute; inset: -8px; }
+  .m .addstep { grid-template-columns: 20px 24px minmax(0, 1fr) auto; }
+  .m .addstep .ms { grid-column: 2; } .m .addstep input { grid-column: 3; } .m .addstep .hint { grid-column: 4; }
+  /* menu ⋯ (glass) */
+  .menu { position: absolute; right: var(--space-8); top: calc(100% - 4px); z-index: 5; min-width: 180px; padding: var(--space-8); border-radius: var(--radius-md); display: none; grid-template-rows: auto; gap: var(--space-2); }
+  .menu.open { display: grid; animation: rise var(--dur-base) var(--ease-out-quint) both; }
+  .menu button { display: flex; align-items: center; gap: var(--space-8); min-height: 40px; padding: 0 var(--space-8); border-radius: var(--radius-sm); text-align: left; color: var(--text-primary); }
+  .menu button .ms { color: var(--text-secondary); }
+  .menu button:focus-visible { outline-offset: -2px; }
+  /* vazio */
+  .empty { display: grid; gap: var(--space-8); padding: var(--space-16); text-align: left; }
+  .empty .body { max-width: 34ch; }
+  .empty .sug { margin-top: var(--space-4); justify-self: start; }
+  @media (prefers-reduced-motion: reduce) {
+    .step, .step .h, .step .est .pen { transition: none; }
+    .step .h, .step .est .pen { opacity: 1; }
+    .menu.open { animation: none; }
+  }
+</style>
+</head>
+<body>
+<button class="btn secondary sm theme" id="theme" aria-pressed="false">Alternar tema</button>
+<div class="wrap">
+
+  <section class="sec desk">
+    <h2 class="title">Desktop</h2>
+    <p class="body lead">Marque o passo atual: o check tem mola, o segmento esfria para violeta e o próximo acende. Clique na estimativa para editar. Passe o mouse para ver a alça de arrastar.</p>
+    <div class="card pad">
+      <div class="steplist" id="sl">
+        <div class="lbl caption"><span class="t2">Passos da atividade</span><span class="num" id="sl-cnt">3 <span class="t2">de 5</span></span></div>
+        <div class="seg" id="sl-seg" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></div>
+        <ol id="sl-list" aria-label="Passos de Estudo de inglês">
+          <li class="step done pulse" draggable="true" style="--c:var(--violet)">
+            <span class="ms s16 h" aria-hidden="true">drag_indicator</span><span class="caption num n">1</span>
+            <span class="check on" role="checkbox" aria-checked="true" tabindex="0" aria-label="Rever vocabulário, concluído"><span class="ms s16">check</span></span>
+            <span class="body t">Rever vocabulário</span>
+            <button class="caption notes" type="button" aria-label="1 anotação em Rever vocabulário"><span class="ms s16">notes</span>1</button>
+            <button class="label num est" type="button" aria-label="Estimativa: 10 minutos. Editar">10 <small>min</small><span class="ms s16 pen">edit</span></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="10" aria-label="Minutos estimados"><small class="caption">min</small></span>
+          </li>
+          <li class="step done pulse" draggable="true" style="--c:var(--violet)">
+            <span class="ms s16 h" aria-hidden="true">drag_indicator</span><span class="caption num n">2</span>
+            <span class="check on" role="checkbox" aria-checked="true" tabindex="0" aria-label="Assistir aula, concluído"><span class="ms s16">check</span></span>
+            <span class="body t">Assistir aula</span>
+            <span class="notes" aria-hidden="true"></span>
+            <button class="label num est" type="button" aria-label="Estimativa: 25 minutos. Editar">25 <small>min</small><span class="ms s16 pen">edit</span></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="25" aria-label="Minutos estimados"><small class="caption">min</small></span>
+          </li>
+          <li class="step now pulse" draggable="true" style="--c:var(--violet)">
+            <span class="ms s16 h" aria-hidden="true">drag_indicator</span><span class="caption num n">3</span>
+            <span class="check" role="checkbox" aria-checked="false" tabindex="0" aria-label="Anotar 3 frases novas, atual"><span class="ms s16">check</span></span>
+            <span class="body t">Anotar 3 frases novas</span>
+            <button class="caption notes" type="button" aria-label="2 anotações em Anotar 3 frases novas"><span class="ms s16">notes</span>2</button>
+            <button class="label num est" type="button" aria-label="Estimativa: 10 minutos. Editar">10 <small>min</small><span class="ms s16 pen">edit</span></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="10" aria-label="Minutos estimados"><small class="caption">min</small></span>
+          </li>
+          <li class="step pulse" draggable="true" style="--c:var(--violet)">
+            <span class="ms s16 h" aria-hidden="true">drag_indicator</span><span class="caption num n">4</span>
+            <span class="check" role="checkbox" aria-checked="false" tabindex="0" aria-label="Exercício de escuta"><span class="ms s16">check</span></span>
+            <span class="body t">Exercício de escuta</span>
+            <span class="notes" aria-hidden="true"></span>
+            <button class="label num est" type="button" aria-label="Estimativa: 10 minutos. Editar">10 <small>min</small><span class="ms s16 pen">edit</span></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="10" aria-label="Minutos estimados"><small class="caption">min</small></span>
+          </li>
+          <li class="step pulse" draggable="true" style="--c:var(--violet)">
+            <span class="ms s16 h" aria-hidden="true">drag_indicator</span><span class="caption num n">5</span>
+            <span class="check" role="checkbox" aria-checked="false" tabindex="0" aria-label="Resumo do dia"><span class="ms s16">check</span></span>
+            <span class="body t">Resumo do dia</span>
+            <span class="notes" aria-hidden="true"></span>
+            <button class="label num est" type="button" aria-label="Estimativa: 5 minutos. Editar">5 <small>min</small><span class="ms s16 pen">edit</span></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="5" aria-label="Minutos estimados"><small class="caption">min</small></span>
+          </li>
+        </ol>
+        <form class="addstep" id="sl-add"><span class="ms s20">add</span><input class="body" type="text" placeholder="Adicionar passo" aria-label="Título do novo passo"><span class="caption hint">Enter salva · 10 min</span></form>
+      </div>
+    </div>
+    <p class="caption cap">Soma das estimativas: 60 min, igual à duração da atividade. Quando passar, o detalhe avisa em caption, sem alerta.</p>
+  </section>
+
+  <section class="sec phone">
+    <h2 class="title">Celular (360 px)</h2>
+    <p class="body lead">Sem alça: o menu “⋯” move ou exclui o passo. Toque no check para concluir.</p>
+    <div class="card pad">
+      <div class="steplist m" id="sl-m">
+        <div class="lbl caption"><span class="t2">Passos</span><span class="num">1 <span class="t2">de 2</span></span></div>
+        <div class="seg" aria-hidden="true"><i class="now" style="--p:30%"></i><i></i></div>
+        <ol aria-label="Passos de Leitura">
+          <li class="step now pulse" style="--c:var(--violet)">
+            <span class="caption num n">1</span>
+            <span class="check" role="checkbox" aria-checked="false" tabindex="0" aria-label="Ler 20 páginas, atual"><span class="ms s16">check</span></span>
+            <span class="body t">Ler 20 páginas</span>
+            <span class="notes" aria-hidden="true"></span>
+            <button class="label num est" type="button" aria-label="Estimativa: 30 minutos. Editar">30 <small>min</small></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="30" aria-label="Minutos estimados"><small class="caption">min</small></span>
+            <button class="more" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Mais ações para Ler 20 páginas"><span class="ms s20">more_horiz</span></button>
+            <div class="menu glass" role="menu" aria-label="Ações do passo">
+              <button type="button" role="menuitem"><span class="ms s20">arrow_upward</span><span class="body-sm">Mover para cima</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">arrow_downward</span><span class="body-sm">Mover para baixo</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">notes</span><span class="body-sm">Anotar</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">delete</span><span class="body-sm">Excluir passo</span></button>
+            </div>
+          </li>
+          <li class="step pulse" style="--c:var(--violet)">
+            <span class="caption num n">2</span>
+            <span class="check" role="checkbox" aria-checked="false" tabindex="0" aria-label="Anotar uma ideia"><span class="ms s16">check</span></span>
+            <span class="body t">Anotar uma ideia</span>
+            <button class="caption notes" type="button" aria-label="1 anotação"><span class="ms s16">notes</span>1</button>
+            <button class="label num est" type="button" aria-label="Estimativa: 10 minutos. Editar">10 <small>min</small></button>
+            <span class="est-in"><input type="number" min="1" max="180" value="10" aria-label="Minutos estimados"><small class="caption">min</small></span>
+            <button class="more" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Mais ações para Anotar uma ideia"><span class="ms s20">more_horiz</span></button>
+            <div class="menu glass" role="menu" aria-label="Ações do passo">
+              <button type="button" role="menuitem"><span class="ms s20">arrow_upward</span><span class="body-sm">Mover para cima</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">arrow_downward</span><span class="body-sm">Mover para baixo</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">notes</span><span class="body-sm">Anotar</span></button>
+              <button type="button" role="menuitem"><span class="ms s20">delete</span><span class="body-sm">Excluir passo</span></button>
+            </div>
+          </li>
+        </ol>
+        <form class="addstep"><span class="ms s20">add</span><input class="body" type="text" placeholder="Adicionar passo" aria-label="Título do novo passo"><span class="caption hint">10 min</span></form>
+      </div>
+    </div>
+    <p class="caption cap">O menu abre em glass (surface-glass + blur) por cima da lista.</p>
+  </section>
+
+  <section class="sec side">
+    <div>
+      <h2 class="title">Vazio</h2>
+      <p class="caption cap" style="margin:0 0 var(--space-8)">Convida a dividir, com uma sugestão pronta.</p>
+      <div class="card">
+        <div class="steplist" style="padding:var(--space-20)">
+          <div class="lbl caption"><span class="t2">Passos da atividade</span><span class="num t2">0 de 0</span></div>
+          <div class="seg" aria-hidden="true"><i></i></div>
+          <div class="empty block">
+            <p class="body">Divida em passos de 5 a 25 minutos.</p>
+            <p class="caption t2">Passos curtos mantêm o foco e deixam a estimativa mais honesta.</p>
+            <button class="btn secondary sm sug" type="button"><span class="ms s20">auto_awesome</span>Começar com “Aquecer 5 min”</button>
+          </div>
+          <form class="addstep"><span class="ms s20">add</span><input class="body" type="text" placeholder="Adicionar passo" aria-label="Título do novo passo"><span class="caption hint">10 min</span></form>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2 class="title">Carregando</h2>
+      <p class="caption cap" style="margin:0 0 var(--space-8)">Esqueleto na forma dos passos.</p>
+      <div class="card" aria-hidden="true">
+        <div class="steplist" style="padding:var(--space-20)">
+          <div class="lbl"><span class="skel" style="width:120px;height:12px"></span><span class="skel" style="width:40px;height:12px"></span></div>
+          <div class="seg"><span class="skel" style="flex:1;height:6px;border-radius:var(--radius-full)"></span><span class="skel" style="flex:1;height:6px;border-radius:var(--radius-full)"></span><span class="skel" style="flex:1;height:6px;border-radius:var(--radius-full)"></span></div>
+          <div class="step"><span></span><span class="skel" style="width:12px;height:12px"></span><span class="skel" style="width:24px;height:24px"></span><span class="skel" style="height:14px;width:70%"></span><span></span><span class="skel" style="width:48px;height:14px"></span></div>
+          <div class="step"><span></span><span class="skel" style="width:12px;height:12px"></span><span class="skel" style="width:24px;height:24px"></span><span class="skel" style="height:14px;width:55%"></span><span></span><span class="skel" style="width:48px;height:14px"></span></div>
+          <div class="step"><span></span><span class="skel" style="width:12px;height:12px"></span><span class="skel" style="width:24px;height:24px"></span><span class="skel" style="height:14px;width:62%"></span><span></span><span class="skel" style="width:48px;height:14px"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  var html = document.documentElement, tb = document.getElementById('theme');
+  tb.addEventListener('click', function(){ var d = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', d ? 'light' : 'dark'); tb.setAttribute('aria-pressed', String(d)); });
+
+  function fire(el, c){ el.classList.remove('go'); el.style.setProperty('--c', c); void el.offsetWidth; el.classList.add('go'); }
+  /* recalcula estado: feitos, atual (primeiro não feito), segmentos, números */
+  function refresh(list){
+    var steps = Array.prototype.slice.call(list.querySelectorAll('.step'));
+    var seg = list.querySelector('.seg'), cnt = list.querySelector('.lbl .num');
+    var firstOpen = -1, done = 0;
+    steps.forEach(function(s, i){
+      var on = s.querySelector('.check').classList.contains('on');
+      s.classList.toggle('done', on); if (on) done++;
+      s.querySelector('.n').textContent = i + 1;
+      s.classList.remove('now');
+      if (!on && firstOpen < 0) firstOpen = i;
+    });
+    if (firstOpen >= 0) steps[firstOpen].classList.add('now');
+    if (seg) {
+      seg.innerHTML = '';
+      steps.forEach(function(s, i){ var b = document.createElement('i'); if (s.classList.contains('done')) b.className = 'done'; else if (i === firstOpen) { b.className = 'now'; b.style.setProperty('--p', '35%'); } seg.appendChild(b); });
+    }
+    if (cnt) cnt.innerHTML = (firstOpen >= 0 ? firstOpen + 1 : steps.length) + ' <span class="t2">de ' + steps.length + '</span>';
+  }
+  document.querySelectorAll('.steplist').forEach(function(list){
+    /* check com mola + pulso */
+    list.addEventListener('click', function(e){
+      var chk = e.target.closest('.check'); if (chk) { toggle(chk); return; }
+      var est = e.target.closest('.est'); if (est) { var li = est.closest('.step'); li.classList.add('editing'); var inp = li.querySelector('input'); inp.focus(); inp.select(); return; }
+      var more = e.target.closest('.more'); if (more) { var m = more.nextElementSibling; var open = m.classList.toggle('open'); more.setAttribute('aria-expanded', String(open)); if (open) m.querySelector('button').focus(); return; }
+      var mi = e.target.closest('[role="menuitem"]'); if (mi) { var menu = mi.closest('.menu'), li2 = mi.closest('.step'); menu.classList.remove('open'); menu.previousElementSibling.setAttribute('aria-expanded', 'false');
+        var txt = mi.textContent.trim();
+        if (/cima/.test(txt) && li2.previousElementSibling) li2.parentNode.insertBefore(li2, li2.previousElementSibling);
+        if (/baixo/.test(txt) && li2.nextElementSibling) li2.parentNode.insertBefore(li2.nextElementSibling, li2);
+        if (/Excluir/.test(txt)) li2.remove();
+        refresh(list); return; }
+    });
+    function toggle(chk){
+      var on = chk.classList.toggle('on'); chk.setAttribute('aria-checked', String(on));
+      var li = chk.closest('.step'); if (on) fire(li, 'var(--violet)');
+      refresh(list);
+    }
+    list.addEventListener('keydown', function(e){
+      var chk = e.target.closest('.check'); if (chk && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); toggle(chk); }
+      if (e.key === 'Escape') { var ed = list.querySelector('.step.editing'); if (ed) { ed.classList.remove('editing'); ed.querySelector('.est').focus(); } var om = list.querySelector('.menu.open'); if (om) { om.classList.remove('open'); om.previousElementSibling.setAttribute('aria-expanded','false'); om.previousElementSibling.focus(); } }
+    });
+    /* estimativa: Enter/blur salvam */
+    list.querySelectorAll('.est-in input').forEach(function(inp){
+      function save(){ var li = inp.closest('.step'); var v = Math.max(1, parseInt(inp.value || '0', 10) || 1); inp.value = v; var est = li.querySelector('.est'); est.innerHTML = v + ' <small>min</small>' + (list.classList.contains('m') ? '' : '<span class="ms s16 pen">edit</span>'); est.setAttribute('aria-label', 'Estimativa: ' + v + ' minutos. Editar'); li.classList.remove('editing'); }
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); save(); inp.closest('.step').querySelector('.est').focus(); } });
+      inp.addEventListener('blur', save);
+    });
+    /* adicionar passo */
+    var form = list.querySelector('.addstep');
+    if (form) form.addEventListener('submit', function(e){
+      e.preventDefault(); var inp = form.querySelector('input'); var v = inp.value.trim(); if (!v) return;
+      var ol = list.querySelector('ol'); if (!ol) return;
+      var li = document.createElement('li'); li.className = 'step pulse'; li.draggable = !list.classList.contains('m'); li.style.setProperty('--c', 'var(--violet)');
+      li.innerHTML = (list.classList.contains('m') ? '' : '<span class="ms s16 h" aria-hidden="true">drag_indicator</span>') + '<span class="caption num n"></span><span class="check" role="checkbox" aria-checked="false" tabindex="0"><span class="ms s16">check</span></span><span class="body t"></span><span class="notes" aria-hidden="true"></span><button class="label num est" type="button" aria-label="Estimativa: 10 minutos. Editar">10 <small>min</small>' + (list.classList.contains('m') ? '' : '<span class="ms s16 pen">edit</span>') + '</button><span class="est-in"><input type="number" min="1" max="180" value="10" aria-label="Minutos estimados"><small class="caption">min</small></span>';
+      li.querySelector('.t').textContent = v; li.querySelector('.check').setAttribute('aria-label', v);
+      ol.appendChild(li); inp.value = ''; refresh(list); bindDrag(li);
+    });
+    /* arrastar para reordenar (desktop) */
+    var dragging = null;
+    function bindDrag(li){
+      if (!li.draggable) return;
+      li.addEventListener('dragstart', function(e){ dragging = li; li.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+      li.addEventListener('dragend', function(){ li.classList.remove('dragging'); list.querySelectorAll('.over').forEach(function(o){ o.classList.remove('over'); }); dragging = null; refresh(list); });
+      li.addEventListener('dragover', function(e){ if (!dragging || dragging === li) return; e.preventDefault(); li.classList.add('over'); });
+      li.addEventListener('dragleave', function(){ li.classList.remove('over'); });
+      li.addEventListener('drop', function(e){ e.preventDefault(); if (!dragging || dragging === li) return; li.parentNode.insertBefore(dragging, li); li.classList.remove('over'); });
+    }
+    list.querySelectorAll('.step[draggable="true"]').forEach(bindDrag);
+  });
+  document.addEventListener('click', function(e){ if (!e.target.closest('.more') && !e.target.closest('.menu')) document.querySelectorAll('.menu.open').forEach(function(m){ m.classList.remove('open'); m.previousElementSibling.setAttribute('aria-expanded', 'false'); }); });
+</script>
+</body>
+</html>

@@ -1,0 +1,904 @@
+{
+  "name": "Lume · Orquestrador de produto",
+  "id": "lumeProd00000001",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Extensão de IA (futuro)\nNada de IA é executado hoje: os nós abaixo são só passagem, desativados.\n\nGuardrails obrigatórios antes de ligar qualquer um:\n- Nunca recomendar dose; o app apenas registra.\n- Saúde é dado sensível (LGPD art. 11): consentimento explícito, criptografia e envio do mínimo necessário.\n- Pró-humano: sem gatilhos de vício, impulso, comparação ou punição.\n- Consentimento por funcionalidade e auditoria de cada chamada (quem, quando, o quê, resposta).\n- Humano no controle: a IA sugere, a pessoa decide.",
+        "height": 340,
+        "width": 1960,
+        "color": 7
+      },
+      "id": "2e639d80-a659-4882-aa90-e1e5ec168ce6",
+      "name": "Nota · Extensão de IA (futuro)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        1580
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Registro comum\nTodo ramo termina aqui: grava o fato no estado via _core. Nasce desativado.",
+        "height": 260,
+        "width": 340,
+        "color": 1
+      },
+      "id": "0ae9b7c6-812f-41a0-aa72-a2080294b6a7",
+      "name": "Nota · Registro comum",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Visão da vida\nEquilíbrio entre as frentes da vida.",
+        "height": 200,
+        "width": 1500,
+        "color": 1
+      },
+      "id": "401a46c5-61e6-4410-ab00-e98ea888c9c0",
+      "name": "Nota · Módulo · Visão da vida",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Documentos\nDocumentos criptografados e vencimentos.",
+        "height": 200,
+        "width": 1500,
+        "color": 2
+      },
+      "id": "18c4d7ad-e5f3-4213-afdd-78024714d421",
+      "name": "Nota · Módulo · Documentos",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Patrimônio\nImóveis, veículos e casa.",
+        "height": 200,
+        "width": 1500,
+        "color": 4
+      },
+      "id": "12513bc2-9338-4505-a425-43d01a4f1cb9",
+      "name": "Nota · Módulo · Patrimônio",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Finanças\nContas a pagar e fluxo do mês.",
+        "height": 200,
+        "width": 1500,
+        "color": 3
+      },
+      "id": "5c31327d-1f58-49d7-ae2f-c23f11261836",
+      "name": "Nota · Módulo · Finanças",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Saúde\nAlerta de dose REGISTRADA. Só registra; nunca recomenda dose. Sem valores clínicos no log (LGPD art. 11).",
+        "height": 200,
+        "width": 1500,
+        "color": 6
+      },
+      "id": "13e519cb-0d3f-4284-a1df-39c3870b5579",
+      "name": "Nota · Módulo · Saúde",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Módulo · Tempo e objetivos\nLembretes de rotina e de passos de objetivos.",
+        "height": 200,
+        "width": 1500,
+        "color": 5
+      },
+      "id": "3f471de4-be6c-45b2-a868-db0a8a8405dd",
+      "name": "Nota · Módulo · Tempo e objetivos",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Orquestrador de produto (desativado)\nUm gatilho por módulo do ERP pessoal, todos num só canvas. Os gatilhos nascem **desativados**: nada dispara de verdade até cada módulo existir no app.\n\nPara ligar um ramo: ative o gatilho dele e o nó **Registrar**. Para criar um ramo novo: duplique uma raia, troque o gatilho e o texto; não crie workflow novo.\n\nRegras: o app **registra** doses, nunca recomenda dose. Dados de saúde só como identificadores no log (LGPD art. 11).",
+        "height": 260,
+        "width": 1500,
+        "color": 7
+      },
+      "id": "e28d8908-4e20-4897-a0b2-9e0b67b3537b",
+      "name": "Nota · Orquestrador de produto (desativado)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "id": "1df78eca-b1cf-430e-ab3d-41c27ffae0c4",
+      "name": "Lembrete de rotina (manhã)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        160
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fab531d9-33b2-48b3",
+              "name": "tarefa",
+              "value": "produto:tempo",
+              "type": "string"
+            },
+            {
+              "id": "b4caf963-73ac-4ee5",
+              "name": "etapa",
+              "value": "registro",
+              "type": "string"
+            },
+            {
+              "id": "58290fe1-4378-4f31",
+              "name": "agente",
+              "value": "lume-produto",
+              "type": "string"
+            },
+            {
+              "id": "b8649908-834f-4cdb",
+              "name": "status",
+              "value": "concluida",
+              "type": "string"
+            },
+            {
+              "id": "637413fc-c51a-441a",
+              "name": "resumo",
+              "value": "Lembrete de rotina enviado ao app (placeholder).",
+              "type": "string"
+            },
+            {
+              "id": "155c2bc2-bf48-4abe",
+              "name": "sessao",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "97607c16-ded2-4449",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "ef86ae76-5a3d-4632",
+              "name": "valido",
+              "value": "true",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "cca75f13-96f1-4088-a470-9254e2b44d34",
+      "name": "Montar lembrete de rotina",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lume-produto-saude",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "1bae4f80-7b0d-49a8-ad01-2456538ee6f9",
+      "name": "Aplicação registrada no app",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ],
+      "disabled": true,
+      "webhookId": "67971c16-b258-4047-af40-0890d81d048d",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "lume-token",
+          "name": "lume-token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Saúde · SOMENTE REGISTRO. Este ramo nunca calcula, sugere ou recomenda dose.\n// LGPD art. 11: guarda apenas identificadores e o tipo do fato, jamais valores clínicos no log do n8n.\nreturn $input.all().map((item) => {\n  const b = (item.json && item.json.body) || item.json || {};\n  const id = String(b.aplicacaoId || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 64);\n  return { json: {\n    tarefa: 'produto:saude',\n    etapa: 'registro',\n    agente: 'lume-produto',\n    status: 'concluida',\n    resumo: 'Aplicação registrada' + (id ? ' (' + id + ')' : '') + '. O app apenas registra; não há recomendação de dose.',\n    sessao: '',\n    ts: new Date().toISOString(),\n    operacao: 'registrar_estado',\n    valido: true,\n  } };\n});\n"
+      },
+      "id": "c64a94b4-e244-4d7e-a84f-dc1dd8d194da",
+      "name": "Registrar aplicação (somente registro)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "29a46ade-3cf1-4eaa-afd2-08bf6c359cde",
+      "name": "Vencimentos do mês (diário)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        640
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4e85da3-20f0-4b4f",
+              "name": "tarefa",
+              "value": "produto:financas",
+              "type": "string"
+            },
+            {
+              "id": "b4caf963-73ac-4ee5",
+              "name": "etapa",
+              "value": "registro",
+              "type": "string"
+            },
+            {
+              "id": "58290fe1-4378-4f31",
+              "name": "agente",
+              "value": "lume-produto",
+              "type": "string"
+            },
+            {
+              "id": "b8649908-834f-4cdb",
+              "name": "status",
+              "value": "concluida",
+              "type": "string"
+            },
+            {
+              "id": "90096986-d107-43ea",
+              "name": "resumo",
+              "value": "Aviso de vencimento financeiro (placeholder).",
+              "type": "string"
+            },
+            {
+              "id": "155c2bc2-bf48-4abe",
+              "name": "sessao",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "97607c16-ded2-4449",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "ef86ae76-5a3d-4632",
+              "name": "valido",
+              "value": "true",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "815bd86e-7396-4984-aa66-cb4e61d427c2",
+      "name": "Montar aviso de vencimento",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "4faf3d71-fb33-4702-af88-00531ad786cf",
+      "name": "Vencimentos de IPVA, seguro e manutenção (semanal)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        880
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "632d9f63-3313-4d89",
+              "name": "tarefa",
+              "value": "produto:patrimonio",
+              "type": "string"
+            },
+            {
+              "id": "b4caf963-73ac-4ee5",
+              "name": "etapa",
+              "value": "registro",
+              "type": "string"
+            },
+            {
+              "id": "58290fe1-4378-4f31",
+              "name": "agente",
+              "value": "lume-produto",
+              "type": "string"
+            },
+            {
+              "id": "b8649908-834f-4cdb",
+              "name": "status",
+              "value": "concluida",
+              "type": "string"
+            },
+            {
+              "id": "e10b9089-754d-4d07",
+              "name": "resumo",
+              "value": "Aviso de vencimento de imóvel ou veículo (placeholder).",
+              "type": "string"
+            },
+            {
+              "id": "155c2bc2-bf48-4abe",
+              "name": "sessao",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "97607c16-ded2-4449",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "ef86ae76-5a3d-4632",
+              "name": "valido",
+              "value": "true",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a0802a49-6256-4937-ae46-370fae564b21",
+      "name": "Montar aviso de patrimônio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "76a2118d-62ec-4f59-ac20-49e6d3533830",
+      "name": "Vencimento de documento (diário)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1120
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22feacea-3b41-4c99",
+              "name": "tarefa",
+              "value": "produto:documentos",
+              "type": "string"
+            },
+            {
+              "id": "b4caf963-73ac-4ee5",
+              "name": "etapa",
+              "value": "registro",
+              "type": "string"
+            },
+            {
+              "id": "58290fe1-4378-4f31",
+              "name": "agente",
+              "value": "lume-produto",
+              "type": "string"
+            },
+            {
+              "id": "b8649908-834f-4cdb",
+              "name": "status",
+              "value": "concluida",
+              "type": "string"
+            },
+            {
+              "id": "4a908135-9695-41b2",
+              "name": "resumo",
+              "value": "Documento próximo do vencimento (placeholder).",
+              "type": "string"
+            },
+            {
+              "id": "155c2bc2-bf48-4abe",
+              "name": "sessao",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "97607c16-ded2-4449",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "ef86ae76-5a3d-4632",
+              "name": "valido",
+              "value": "true",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "bc8c378f-8567-488b-ab18-befd8282c1b6",
+      "name": "Montar aviso de documento",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 18 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "7b9f15c0-ff07-46ea-af0b-050ab7761c57",
+      "name": "Resumo semanal de equilíbrio (domingo)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1360
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a25350b0-5c34-4aae",
+              "name": "tarefa",
+              "value": "produto:visao",
+              "type": "string"
+            },
+            {
+              "id": "b4caf963-73ac-4ee5",
+              "name": "etapa",
+              "value": "registro",
+              "type": "string"
+            },
+            {
+              "id": "58290fe1-4378-4f31",
+              "name": "agente",
+              "value": "lume-produto",
+              "type": "string"
+            },
+            {
+              "id": "b8649908-834f-4cdb",
+              "name": "status",
+              "value": "concluida",
+              "type": "string"
+            },
+            {
+              "id": "18e029a5-9530-40bf",
+              "name": "resumo",
+              "value": "Resumo semanal do caminho do meio (placeholder, sem IA).",
+              "type": "string"
+            },
+            {
+              "id": "155c2bc2-bf48-4abe",
+              "name": "sessao",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "97607c16-ded2-4449",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "ef86ae76-5a3d-4632",
+              "name": "valido",
+              "value": "true",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3de0330f-261f-4738-a667-949447bac879",
+      "name": "Montar resumo de equilíbrio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "c430f1be-efdf-4575-a854-fa96362cab4f",
+      "name": "Registrar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1640,
+        800
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "4f02dc99-3bd0-4f63-a738-0250f577271c",
+      "name": "IA · gancho de entrada (futuro)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1700
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "74430469-4fcf-407a-abe4-e7adccbdc15f",
+      "name": "IA · minimizar e anonimizar (futuro)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        320,
+        1700
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "b4f3d5af-e9c2-4e88-a449-a9207b3ae289",
+      "name": "IA · chamada ao modelo (não implementada)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1700
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "1092cc9b-ed3f-467c-abe3-43efe0f3c935",
+      "name": "IA · checar guardrails da resposta (futuro)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        1700
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "d6c4db91-43f7-4891-a8c1-2630bc7c4a39",
+      "name": "IA · auditoria e consentimento (futuro)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        1700
+      ],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Lembrete de rotina (manhã)": {
+      "main": [
+        [
+          {
+            "node": "Montar lembrete de rotina",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar lembrete de rotina": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicação registrada no app": {
+      "main": [
+        [
+          {
+            "node": "Registrar aplicação (somente registro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar aplicação (somente registro)": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vencimentos do mês (diário)": {
+      "main": [
+        [
+          {
+            "node": "Montar aviso de vencimento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar aviso de vencimento": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vencimentos de IPVA, seguro e manutenção (semanal)": {
+      "main": [
+        [
+          {
+            "node": "Montar aviso de patrimônio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar aviso de patrimônio": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vencimento de documento (diário)": {
+      "main": [
+        [
+          {
+            "node": "Montar aviso de documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar aviso de documento": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumo semanal de equilíbrio (domingo)": {
+      "main": [
+        [
+          {
+            "node": "Montar resumo de equilíbrio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar resumo de equilíbrio": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar": {
+      "main": [
+        [
+          {
+            "node": "IA · gancho de entrada (futuro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA · gancho de entrada (futuro)": {
+      "main": [
+        [
+          {
+            "node": "IA · minimizar e anonimizar (futuro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA · minimizar e anonimizar (futuro)": {
+      "main": [
+        [
+          {
+            "node": "IA · chamada ao modelo (não implementada)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA · chamada ao modelo (não implementada)": {
+      "main": [
+        [
+          {
+            "node": "IA · checar guardrails da resposta (futuro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA · checar guardrails da resposta (futuro)": {
+      "main": [
+        [
+          {
+            "node": "IA · auditoria e consentimento (futuro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

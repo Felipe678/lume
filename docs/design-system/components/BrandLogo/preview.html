@@ -1,0 +1,62 @@
+<!-- @dsCard group="Marca" height=470 subtitle="Marca LUME: quadrado com gradiente e só uma hairline no topo, glifo auto_awesome e a palavra, em quatro tamanhos e sobre bg, surface e topbar" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .stack{display:flex;flex-direction:column;gap:var(--space-32)}
+  h3.lbl{margin-bottom:var(--space-12);color:var(--text-secondary)}
+  .line{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-32)}
+  .item{display:flex;flex-direction:column;gap:var(--space-8);align-items:flex-start}
+  .cap{color:var(--text-muted)}
+  /* A logo escala a partir do tamanho do quadrado (--s). Em 28px: raio 8 (radius-sm), glifo 16, vão 10, texto 20. Só uma hairline no topo do quadrado; nada mais. */
+  .logo{--s:28px;display:inline-flex;align-items:center;gap:calc(var(--s)*.357);color:var(--text-primary)}
+  .logo .mark{width:var(--s);height:var(--s);flex:none;border-radius:calc(var(--s)*.2857);
+    background:linear-gradient(135deg,var(--brand-from),var(--brand-to));
+    box-shadow:inset 0 1px 0 var(--hairline-strong);
+    display:inline-flex;align-items:center;justify-content:center}
+  .logo .mark svg{width:calc(var(--s)*.571);height:calc(var(--s)*.571);fill:var(--on-violet)}
+  .logo .word{font-size:calc(var(--s)*.714);line-height:1;font-weight:500;letter-spacing:.025em;text-transform:none}
+  .s20{--s:20px}.s28{--s:28px}.s40{--s:40px}.s56{--s:56px}
+  .bg-box{display:flex;flex-wrap:wrap;gap:var(--space-16)}
+  .panel{flex:1 1 220px;min-height:96px;padding:var(--space-20);border-radius:var(--radius-lg);display:flex;flex-direction:column;gap:var(--space-12);justify-content:center}
+  .on-bg{background:var(--bg);box-shadow:inset 0 0 0 1px var(--divider)}
+  .on-surface{background:var(--surface);box-shadow:var(--elev-1)}
+  .on-topbar{background:var(--topbar);box-shadow:inset 0 1px 0 var(--hairline)}
+</style>
+</head>
+<body class="aurora">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="spark" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></symbol></svg>
+<div class="stack">
+  <section>
+    <h3 class="title-sm lbl">Tamanhos</h3>
+    <div class="line">
+      <div class="item"><span class="logo s20" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">20 px</span></div>
+      <div class="item"><span class="logo s28" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">28 px (padrão da barra superior)</span></div>
+      <div class="item"><span class="logo s40" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">40 px</span></div>
+      <div class="item"><span class="logo s56" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">56 px</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="title-sm lbl">Sobre as superfícies</h3>
+    <div class="bg-box">
+      <div class="panel on-bg"><span class="logo" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">sobre bg</span></div>
+      <div class="panel on-surface"><span class="logo" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">sobre surface</span></div>
+      <div class="panel on-topbar"><span class="logo" role="img" aria-label="Lume"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span><span class="caption cap">sobre topbar</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="title-sm lbl">Só a marca</h3>
+    <div class="line">
+      <div class="item"><span class="logo s40"><span class="mark" role="img" aria-label="Lume"><svg aria-hidden="true"><use href="#spark"/></svg></span></span><span class="caption cap">Ícone do app e favicon: só o quadrado</span></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

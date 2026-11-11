@@ -1,0 +1,182 @@
+<!-- @dsCard group="Atividades" height=840 subtitle="Cabeçalho dos grupos Cotidianas e De objetivos no mesmo painel: nome, contagem, barra fina do grupo, ação Nova discreta e chevron que gira ao recolher" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1180px; margin-inline: auto; display: grid; gap: var(--space-32); }
+  .cols { display: flex; gap: var(--space-32); flex-wrap: wrap; align-items: flex-start; }
+  .sec { display: grid; gap: var(--space-4); align-content: start; }
+  .sec .lead { color: var(--text-secondary); max-width: 62ch; margin-bottom: var(--space-12); }
+  .cap { color: var(--text-muted); margin-top: var(--space-8); }
+  .desk { width: 640px; max-width: 100%; }
+  .phone { width: 360px; max-width: 100%; }
+  .list { padding: var(--space-8); display: grid; gap: var(--space-2); }
+  .theme { position: fixed; right: var(--space-16); top: var(--space-16); z-index: 9; }
+  .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: var(--space-16); }
+  .tgh .tog .title-sm { white-space: nowrap; }
+  .states .card { padding: var(--space-8); }
+
+  /* ===== TaskGroupHeader (CSS local; sugestão para o kit) ===== */
+  .tgh { display: flex; align-items: center; gap: var(--space-12); min-height: 44px; padding: var(--space-4) var(--space-4) var(--space-4) var(--space-8); border-radius: var(--radius-md); }
+  .tgh + .tgh, .tgh-body + .tgh { margin-top: var(--space-8); }
+  .tgh .tog { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 36px; padding: 0 var(--space-8) 0 var(--space-4); border-radius: var(--radius-sm); color: var(--text-primary); }
+  .tgh .tog .chev { color: var(--text-secondary); transition: transform var(--dur-base) var(--ease-in-out); }
+  .tgh .tog[aria-expanded="false"] .chev { transform: rotate(-90deg); }
+  @media (hover: hover) and (pointer: fine) { .tgh .tog:hover { background: var(--surface-raised); } }
+  .tgh .cnt { color: var(--text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: var(--space-4); }
+  .tgh .cnt .ms { color: var(--violet-ink); }
+  .tgh .bar { height: 4px; width: 96px; flex: 0 1 96px; min-width: 40px; }
+  .tgh .sp { margin-left: auto; }
+  .tgh .nova { min-height: 36px; padding: 0 var(--space-12); color: var(--text-secondary); gap: var(--space-4); }
+  .tgh .nova .ms { color: var(--violet-ink); }
+  @media (hover: hover) and (pointer: fine) { .tgh .nova:hover { color: var(--violet-ink); background: color-mix(in srgb, var(--violet-ink) 10%, transparent); } }
+  .tgh-body { display: grid; gap: var(--space-2); }
+  .tgh-body.opening { animation: rise var(--dur-base) var(--ease-out-quint) both; }
+  .tgh-body.closing { opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); }
+  .tgh-body[hidden] { display: none; }
+  /* compact */
+  .m .tgh .bar { width: 48px; }
+  .m .tgh .nova { width: 44px; padding: 0; }
+  .m .tgh .nova .txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* linhas de exemplo (TaskRow resumida) */
+  .trow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 56px 64px; align-items: center; gap: var(--space-12); min-height: 48px; padding: var(--space-4) var(--space-12); border-radius: var(--radius-md); }
+  .trow .time { color: var(--text-secondary); }
+  .trow .ttl { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trow .dur { white-space: nowrap; } .trow .dur small { color: var(--text-secondary); font-size: inherit; font-weight: 500; }
+  .trow.done .ttl, .trow.done .dur { color: var(--text-secondary); }
+  .trow.now { background: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline-strong), 0 0 0 1px color-mix(in srgb, var(--orange) 30%, transparent), 0 4px 18px color-mix(in srgb, var(--orange) 16%, transparent); }
+  .trow.now .time { color: var(--text-primary); font-weight: 700; }
+  .m .trow { grid-template-columns: 48px minmax(0, 1fr) 56px; }
+  .m .trow .dur { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .tgh .tog .chev { transition: none; }
+    .tgh-body.opening { animation: none; }
+    .tgh-body.closing { transition: none; }
+  }
+</style>
+</head>
+<body>
+<button class="btn secondary sm theme" id="theme" aria-pressed="false">Alternar tema</button>
+<div class="wrap">
+  <div class="cols">
+    <section class="sec desk">
+      <h2 class="title">Dois grupos no mesmo painel</h2>
+      <p class="body lead">Clique no nome do grupo para recolher: o chevron gira (ease-in-out) e as linhas somem. A barra fina mostra o progresso do grupo; “Nova” cria uma atividade já naquele grupo.</p>
+      <div class="card list" id="panel">
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="true" aria-controls="g-cot"><span class="ms s20 chev">expand_more</span><span class="title-sm">Cotidianas</span></button>
+          <span class="caption cnt num">1 de 3 feitas</span>
+          <div class="bar" role="progressbar" aria-label="Cotidianas feitas" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3"><i style="--p:33%"></i></div>
+          <button class="btn ghost sm nova sp" type="button" aria-label="Nova cotidiana"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+        <div class="tgh-body" id="g-cot">
+          <div class="trow done"><span class="label num time">07:00</span><span class="title-sm ttl">Caminhada</span><div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i></div><span class="label num dur">30 <small>min</small></span></div>
+          <div class="trow"><span class="label num time">12:30</span><span class="title-sm ttl">Almoço</span><div class="seg mini" aria-hidden="true"></div><span class="label num dur">45 <small>min</small></span></div>
+          <div class="trow"><span class="label num time">21:30</span><span class="title-sm ttl">Planejar amanhã</span><div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div><span class="label num dur">15 <small>min</small></span></div>
+        </div>
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="true" aria-controls="g-obj"><span class="ms s20 chev">expand_more</span><span class="title-sm">De objetivos</span></button>
+          <span class="caption cnt num">0 de 4 feitas · 1 agora</span>
+          <div class="bar" role="progressbar" aria-label="Atividades de objetivo feitas" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4"><i style="--p:0%"></i></div>
+          <button class="btn ghost sm nova sp" type="button" aria-label="Nova atividade de objetivo"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+        <div class="tgh-body" id="g-obj">
+          <div class="trow now"><span class="label num time">14:00</span><span class="title-sm ttl">Estudo de inglês</span><div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></div><span class="label num dur">60 <small>min</small></span></div>
+          <div class="trow"><span class="label num time">15:30</span><span class="title-sm ttl">Revisão de código</span><div class="seg mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="label num dur">90 <small>min</small></span></div>
+          <div class="trow"><span class="label num time">18:30</span><span class="title-sm ttl">Treino</span><div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div><span class="label num dur">50 <small>min</small></span></div>
+          <div class="trow"><span class="label num time">20:00</span><span class="title-sm ttl">Leitura</span><div class="seg mini" aria-hidden="true"><i class="done"></i><i></i></div><span class="label num dur">40 <small>min</small></span></div>
+        </div>
+      </div>
+      <p class="caption cap">Grupos separados, mesmo lugar: a pessoa vê o dia inteiro sem trocar de aba.</p>
+    </section>
+
+    <section class="sec phone">
+      <h2 class="title">Celular (360 px)</h2>
+      <p class="body lead">A barra encurta para 48 px e “Nova” vira só o ícone, com 48 px de toque.</p>
+      <div class="card list m" id="panel-m">
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="true" aria-controls="m-cot"><span class="ms s20 chev">expand_more</span><span class="title-sm">Cotidianas</span></button>
+          <span class="caption cnt num">1 de 3</span>
+          <div class="bar" role="progressbar" aria-label="Cotidianas feitas" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3"><i style="--p:33%"></i></div>
+          <button class="btn ghost sm nova sp" type="button" aria-label="Nova cotidiana"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+        <div class="tgh-body" id="m-cot">
+          <div class="trow done"><span class="label num time">07:00</span><span class="title-sm ttl">Caminhada</span><div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i></div></div>
+          <div class="trow"><span class="label num time">12:30</span><span class="title-sm ttl">Almoço</span><div class="seg mini" aria-hidden="true"></div></div>
+          <div class="trow"><span class="label num time">21:30</span><span class="title-sm ttl">Planejar amanhã</span><div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="false" aria-controls="m-obj"><span class="ms s20 chev">expand_more</span><span class="title-sm">De objetivos</span></button>
+          <span class="caption cnt num">0 de 4</span>
+          <div class="bar" role="progressbar" aria-label="Atividades de objetivo feitas" aria-valuenow="0" aria-valuemin="0" aria-valuemax="4"><i style="--p:0%"></i></div>
+          <button class="btn ghost sm nova sp" type="button" aria-label="Nova atividade de objetivo"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+        <div class="tgh-body" id="m-obj" hidden>
+          <div class="trow now"><span class="label num time">14:00</span><span class="title-sm ttl">Estudo de inglês</span><div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></div></div>
+          <div class="trow"><span class="label num time">15:30</span><span class="title-sm ttl">Revisão de código</span><div class="seg mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+      <p class="caption cap">“De objetivos” está recolhido: o chevron aponta para a direita.</p>
+    </section>
+  </div>
+
+  <section class="sec">
+    <h2 class="title">Estados do cabeçalho</h2>
+    <p class="body lead">Nada feito, tudo feito e carregando. A contagem nunca vira cobrança: “0 de 4 feitas” é só um número.</p>
+    <div class="states">
+      <div class="card">
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="true"><span class="ms s20 chev">expand_more</span><span class="title-sm">De objetivos</span></button>
+          <span class="caption cnt num">0 de 4 feitas</span>
+          <div class="bar" aria-hidden="true"><i style="--p:0%"></i></div>
+          <button class="btn ghost sm nova sp" type="button"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tgh">
+          <button class="tog" type="button" aria-expanded="true"><span class="ms s20 chev">expand_more</span><span class="title-sm">Cotidianas</span></button>
+          <span class="caption cnt num"><span class="ms s16">check_circle</span>3 de 3 feitas</span>
+          <div class="bar" aria-hidden="true"><i style="--p:100%"></i></div>
+          <button class="btn ghost sm nova sp" type="button"><span class="ms s20">add</span><span class="txt">Nova</span></button>
+        </div>
+      </div>
+      <div class="card" aria-hidden="true">
+        <div class="tgh">
+          <span class="skel" style="width:20px;height:20px;margin-left:var(--space-4)"></span>
+          <span class="skel" style="width:110px;height:16px"></span>
+          <span class="skel" style="width:72px;height:12px"></span>
+          <span class="skel" style="width:96px;height:4px;border-radius:var(--radius-full)"></span>
+          <span class="skel sp" style="width:64px;height:28px"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  var html = document.documentElement, tb = document.getElementById('theme');
+  tb.addEventListener('click', function(){ var d = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', d ? 'light' : 'dark'); tb.setAttribute('aria-pressed', String(d)); });
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.tog[aria-controls]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var body = document.getElementById(b.getAttribute('aria-controls')); if (!body) return;
+      var open = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', String(!open));
+      if (open) {
+        if (reduce) { body.hidden = true; return; }
+        body.classList.add('closing');
+        setTimeout(function(){ body.hidden = true; body.classList.remove('closing'); }, 160);
+      } else {
+        body.hidden = false; body.classList.remove('closing');
+        if (!reduce) { body.classList.add('opening'); setTimeout(function(){ body.classList.remove('opening'); }, 240); }
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router'
 import HomePage from '../features/home/HomePage'
 import FocoPage from '../features/foco/FocoPage'
@@ -11,6 +12,7 @@ import ConfigPage from '../features/config/ConfigPage'
 import LoginPage from '../features/auth/LoginPage'
 import GoalWizard from '../features/objetivos/GoalWizard'
 import GoalDetailOverlay from '../features/objetivos/GoalDetailOverlay'
+import SplashScreen from '../features/splash/SplashScreen'
 import TimeTravel from '../features/dev/TimeTravel'
 import { useOverlays } from '../store/useOverlays'
 import { useUiPrefs } from '../store/useUiPrefs'
@@ -34,6 +36,7 @@ function StartRedirect() {
 export default function App() {
   const wizardOpen = useOverlays((s) => s.wizardOpen)
   const detailGoalId = useOverlays((s) => s.detailGoalId)
+  const [splashDone, setSplashDone] = useState(false)
   return (
     <BrowserRouter>
       <StartRedirect />
@@ -51,6 +54,9 @@ export default function App() {
       </Routes>
       {wizardOpen && <GoalWizard />}
       {detailGoalId && <GoalDetailOverlay goalId={detailGoalId} />}
+      <AnimatePresence>
+        {!splashDone && <SplashScreen key="splash" onDone={() => setSplashDone(true)} />}
+      </AnimatePresence>
       {import.meta.env.DEV && <TimeTravel />}
     </BrowserRouter>
   )

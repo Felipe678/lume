@@ -1,0 +1,87 @@
+<!-- @dsCard group="Finanças" height=500 subtitle="Cartão em deep navy com hairline, chip metálico refinado e bandeira ilustrativa; o único elemento aceso da tela de Finanças" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-32); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: var(--space-32); align-items: start; }
+  .col { display: grid; gap: var(--space-12); min-width: 0; }
+  .cap { color: var(--text-muted); }
+  .hdr .eyebrow { color: var(--text-primary); }
+  .hdr .eyebrow .sep { color: var(--text-secondary); margin: 0 var(--space-8); }
+  .hdr h3 { margin-top: var(--space-4); }
+
+  /* cartão */
+  .cc { width: 100%; max-width: 330px; aspect-ratio: 330 / 200; min-height: 200px; padding: var(--space-20); display: flex; flex-direction: column; isolation: isolate; }
+  .cc.big { max-width: 420px; }
+  .cc::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+    background: radial-gradient(70% 90% at 100% 0%, color-mix(in srgb, var(--card-glow) 45%, transparent), transparent 70%); opacity: .5; }
+  .cc .avail { max-width: calc(100% - 96px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cc .lim-l { margin-top: var(--space-16); color: var(--card-fg-muted); }
+  .cc .lim-v { margin-top: var(--space-2); }
+  .cc .foot { margin-top: auto; color: var(--card-fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 72px); }
+  .cc .brand { position: absolute; right: var(--space-20); top: var(--space-20); color: var(--card-fg); display: flex; align-items: center; min-height: 24px; }
+  .cc .brand.word { font-size: 16px; line-height: 24px; font-weight: 800; font-style: italic; letter-spacing: -0.4px; opacity: .9; }
+  /* bandeira ilustrativa: dois círculos translúcidos */
+  .orbs { position: relative; width: 36px; height: 24px; }
+  .orbs i { position: absolute; top: 1px; width: 22px; height: 22px; border-radius: var(--radius-full); background: var(--card-fg); }
+  .orbs i:first-child { left: 0; opacity: .9; }
+  .orbs i:last-child { left: 14px; opacity: .45; mix-blend-mode: screen; }
+
+  /* chip metálico: gradiente em 3 paradas, hairline e linhas de contato */
+  .chipm { position: absolute; right: var(--space-20); top: 52%; width: 44px; height: 34px; border-radius: var(--radius-sm); overflow: hidden;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--ember) 55%, var(--card-fg)) 0%, color-mix(in srgb, var(--ember) 70%, var(--orange)) 48%, color-mix(in srgb, var(--ember) 30%, var(--card-fg)) 100%);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--card-fg) 70%, transparent), inset 0 -1px 0 color-mix(in srgb, black 25%, transparent), 0 2px 6px color-mix(in srgb, black 35%, transparent);
+    color: color-mix(in srgb, var(--on-orange) 55%, transparent); }
+  .chipm svg { display: block; width: 100%; height: 100%; }
+
+  .legend { display: grid; gap: var(--space-4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cols">
+    <div class="col">
+      <span class="caption cap">Celular, 390px: cabeçalho em display, bandeira em círculos</span>
+      <div class="hdr">
+        <div class="body eyebrow">Banco Aurora<span class="sep">·</span>Platinum</div>
+        <h3 class="display">Seu cartão</h3>
+      </div>
+      <div class="navy cc breathe" role="img" aria-label="Cartão Aurora final 4821, disponível R$ 3.450 de R$ 5.000">
+        <p class="avail display num">R$ 3.450</p>
+        <span class="lim-l caption">Limite de crédito</span>
+        <span class="lim-v title-sm num">R$ 5.000</span>
+        <span class="foot body-sm num">Aurora ····4821</span>
+        <span class="brand" aria-hidden="true"><span class="orbs"><i></i><i></i></span></span>
+        <span class="chipm" aria-hidden="true"><svg viewBox="0 0 44 34" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 11H15M0 23H15M29 11H44M29 23H44M22 0V6.5M22 27.5V34"/><rect x="15" y="6.5" width="14" height="21" rx="3"/></svg></span>
+      </div>
+    </div>
+
+    <div class="col">
+      <span class="caption cap">Desktop: cabeçalho em display-lg, bandeira em palavra, nome longo com reticências</span>
+      <div class="hdr">
+        <div class="body eyebrow">Banco Aurora<span class="sep">·</span>Platinum</div>
+        <h3 class="display-lg">Seu cartão</h3>
+      </div>
+      <div class="navy cc big" role="img" aria-label="Cartão Aurora Internacional Platinum Black final 0937, disponível R$ 12.480 de R$ 20.000">
+        <p class="avail display num">R$ 12.480</p>
+        <span class="lim-l caption">Limite de crédito</span>
+        <span class="lim-v title-sm num">R$ 20.000</span>
+        <span class="foot body-sm num">Aurora Internacional Platinum Black ····0937</span>
+        <span class="brand word" aria-hidden="true">aurora</span>
+        <span class="chipm" aria-hidden="true"><svg viewBox="0 0 44 34" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 11H15M0 23H15M29 11H44M29 23H44M22 0V6.5M22 27.5V34"/><rect x="15" y="6.5" width="14" height="21" rx="3"/></svg></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend caption cap">
+    <span>Bandeira e chip são ilustrativos: não reproduzem marcas oficiais. O chip usa o gradiente metálico quente (ember) para ecoar a brasa.</span>
+    <span>O cartão mantém o gradiente deep navy, a hairline e o texto branco nos dois temas; é o elemento aceso da tela de Finanças e respira em dur-breathe.</span>
+  </div>
+</div>
+</body>
+</html>

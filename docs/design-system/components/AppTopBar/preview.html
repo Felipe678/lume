@@ -1,0 +1,121 @@
+<!-- @dsCard group="Navegação" height=780 subtitle="Barra superior sólida com hairline inferior, busca em bloco, botões de ícone com mola; desktop e tablet" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .stack{display:flex;flex-direction:column;gap:var(--space-32)}
+  h3.lbl{margin-bottom:var(--space-12);color:var(--text-secondary)}
+  .cap{color:var(--text-muted)}
+  .scroll{overflow-x:auto}
+  .bar-frame{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--elev-1)}
+  .wide-frame{min-width:760px}
+  .medium-frame{width:680px}
+
+  /* AppTopBar: topbar sólida com hairline inferior */
+  .topbar{display:flex;align-items:center;gap:var(--space-4);min-height:64px;padding:var(--space-8) var(--space-24);background:var(--topbar);color:var(--text-primary);box-shadow:0 1px 0 var(--hairline);position:relative;z-index:1}
+  .logo{--s:28px;display:inline-flex;align-items:center;gap:10px;color:var(--text-primary);flex:none;text-decoration:none;border-radius:var(--radius-sm)}
+  .logo .mark{width:var(--s);height:var(--s);border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--brand-from),var(--brand-to));display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 var(--hairline-strong)}
+  .logo .mark svg{width:16px;height:16px;fill:var(--on-violet)}
+  .logo .word{font-size:20px;line-height:1;font-weight:500;letter-spacing:.025em}
+  .search-slot{flex:1;min-width:0;margin-left:var(--space-48);display:flex}
+  .search{display:flex;align-items:center;gap:var(--space-8);width:100%;max-width:320px;min-height:40px;padding:0 var(--space-12);color:var(--text-secondary);cursor:text}
+  .search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text-primary);font:inherit}
+  .search input::placeholder{color:var(--text-secondary);opacity:1}
+  .search:focus-within{outline:2px solid var(--violet-ink);outline-offset:2px}
+  .spacer{flex:1}
+
+  .ib{width:40px;height:40px;border-radius:var(--radius-full);display:grid;place-items:center;color:var(--text-primary);flex:none;transition:background-color var(--dur-instant) var(--ease-out),color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+  .ib .ms{font-size:22px;width:22px;height:22px}
+  .medium-frame .ib{width:48px;height:48px}
+  @media (hover:hover) and (pointer:fine){.ib:hover{background:var(--chip)}}
+  .ib.is-hover{background:var(--chip)}
+  .ib:active,.ib.is-pressed{background:var(--chip);transform:scale(.94);transition-timing-function:var(--ease-out)}
+  .ib.is-focus{outline:2px solid var(--violet-ink);outline-offset:2px}
+  .ib[aria-expanded="true"],.ib.is-open{background:var(--chip);color:var(--violet-ink);box-shadow:inset 0 1px 0 var(--hairline)}
+  .ib[aria-disabled="true"]{opacity:.4;cursor:default}
+  .profile{display:inline-flex;align-items:center;margin-left:var(--space-8);min-height:40px;border-radius:var(--radius-full);color:var(--text-muted);padding:0 var(--space-4) 0 0;transition:background-color var(--dur-instant) var(--ease-out)}
+  .medium-frame .profile{min-height:48px}
+  @media (hover:hover) and (pointer:fine){.profile:hover{background:var(--chip)}}
+  .avatar{width:32px;height:32px;border-radius:var(--radius-full);background:linear-gradient(180deg,var(--ember),var(--orange));color:var(--on-orange);display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 var(--hairline-strong)}
+  .avatar .ms{font-size:20px;width:20px;height:20px}
+
+  /* Conteúdo e rodapé de exemplo */
+  .content-demo{padding:var(--space-24);min-height:96px;display:flex;flex-direction:column;gap:var(--space-8)}
+  .content-demo .skel{height:12px;width:40%}
+  .content-demo .skel.b{width:70%}
+  .footer{box-shadow:0 -1px 0 var(--hairline);min-height:40px;padding:var(--space-8) var(--space-24);display:flex;align-items:center;color:var(--text-muted)}
+
+  .states{display:flex;flex-wrap:wrap;gap:var(--space-24);align-items:flex-start}
+  .state{display:flex;flex-direction:column;gap:var(--space-8);align-items:center}
+  .tray{background:var(--topbar);border-radius:var(--radius-md);padding:var(--space-8);box-shadow:inset 0 1px 0 var(--hairline)}
+
+  @media (prefers-reduced-motion:reduce){ .ib,.profile{transition:none} .ib:active,.ib.is-pressed{transform:none} }
+</style>
+</head>
+<body class="aurora">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="spark" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></symbol></svg>
+<div class="stack">
+  <section>
+    <h3 class="title-sm lbl">Desktop (wide)</h3>
+    <div class="scroll">
+      <div class="bar-frame wide-frame aurora">
+        <header class="topbar" role="banner">
+          <a class="logo" href="#" aria-label="Lume, ir para o início" onclick="return false"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></a>
+          <div class="search-slot"><label class="search block"><span class="ms s20" aria-hidden="true">search</span><input type="search" placeholder="Buscar" aria-label="Buscar"></label></div>
+          <button class="ib" type="button" aria-label="Módulos" aria-haspopup="dialog" aria-expanded="false" data-toggle><span class="ms">grid_view</span></button>
+          <button class="ib" type="button" aria-label="Relatórios"><span class="ms">bar_chart</span></button>
+          <button class="ib" type="button" aria-label="Notificações"><span class="ms">notifications</span></button>
+          <button class="profile" type="button" aria-label="Perfil"><span class="avatar"><span class="ms">person</span></span><span class="ms">arrow_drop_down</span></button>
+        </header>
+        <div class="content-demo"><span class="skel"></span><span class="skel b"></span></div>
+        <footer class="footer"><span class="caption">© 2026 Lume</span></footer>
+      </div>
+    </div>
+    <p class="caption cap" style="margin-top:var(--space-8)">Logo, busca de até 320 em bloco (surface-raised com hairline), Módulos, Relatórios, Notificações e Perfil. Altura mínima de 64; a barra é sólida (topbar) com hairline inferior; a aurora fica só no conteúdo.</p>
+  </section>
+
+  <section>
+    <h3 class="title-sm lbl">Medium (tablet)</h3>
+    <div class="scroll">
+      <div class="bar-frame medium-frame aurora">
+        <header class="topbar" role="banner">
+          <a class="logo" href="#" aria-label="Lume, ir para o início" onclick="return false"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></a>
+          <span class="spacer"></span>
+          <button class="ib" type="button" aria-label="Buscar"><span class="ms">search</span></button>
+          <button class="ib" type="button" aria-label="Módulos" aria-haspopup="dialog" aria-expanded="false" data-toggle><span class="ms">grid_view</span></button>
+          <button class="ib" type="button" aria-label="Notificações"><span class="ms">notifications</span></button>
+          <button class="profile" type="button" aria-label="Perfil"><span class="avatar"><span class="ms">person</span></span><span class="ms">arrow_drop_down</span></button>
+        </header>
+        <div class="content-demo"><span class="skel"></span><span class="skel b"></span></div>
+        <footer class="footer"><span class="caption">© 2026 Lume</span></footer>
+      </div>
+    </div>
+    <p class="caption cap" style="margin-top:var(--space-8)">Busca vira ícone e Relatórios sai da barra. Alvos de 48. No celular, Módulos passa para a BottomNav.</p>
+  </section>
+
+  <section>
+    <h3 class="title-sm lbl">Estados do botão de ícone</h3>
+    <div class="states">
+      <div class="state"><div class="tray"><button class="ib" type="button" aria-label="Notificações"><span class="ms">notifications</span></button></div><span class="caption cap">Normal</span></div>
+      <div class="state"><div class="tray"><button class="ib is-hover" type="button" aria-label="Notificações"><span class="ms">notifications</span></button></div><span class="caption cap">Hover (ponteiro fino)</span></div>
+      <div class="state"><div class="tray"><button class="ib is-pressed" type="button" aria-label="Notificações"><span class="ms">notifications</span></button></div><span class="caption cap">Pressionado (solta com mola)</span></div>
+      <div class="state"><div class="tray"><button class="ib is-focus" type="button" aria-label="Notificações"><span class="ms">notifications</span></button></div><span class="caption cap">Foco</span></div>
+      <div class="state"><div class="tray"><button class="ib is-open" type="button" aria-label="Módulos"><span class="ms">grid_view</span></button></div><span class="caption cap">Módulos aberto</span></div>
+      <div class="state"><div class="tray"><button class="ib" type="button" aria-label="Relatórios" aria-disabled="true"><span class="ms">bar_chart</span></button></div><span class="caption cap">Desabilitado, 40%</span></div>
+    </div>
+  </section>
+</div>
+<script>
+  document.querySelectorAll('[data-toggle]').forEach(function(b){
+    b.addEventListener('click',function(){
+      b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')==='true' ? 'false' : 'true');
+    });
+  });
+</script>
+</body>
+</html>

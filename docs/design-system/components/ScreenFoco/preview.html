@@ -1,0 +1,351 @@
+<!-- @dsCard group="Telas" page width=1200 height=1220 subtitle="Modo Foco no desktop: não é hora de pensar, é hora de agir. Um passo, um anel, duas ações; o passo atual acende em laranja e esfria para violeta ao concluir" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { min-height: 100vh; }
+  input { font: inherit; color: inherit; background: none; border: 0; outline: 0; }
+  input::placeholder { color: var(--text-muted); }
+
+  /* ---------- a tela ---------- */
+  .screen { position: relative; isolation: isolate; min-height: 640px; display: flex; flex-direction: column; }
+  .screen::after { /* a brasa: radial laranja a 6% atrás do anel, só nesta tela */
+    content: ""; position: absolute; left: 50%; top: 56%; width: 760px; height: 560px; transform: translate(-50%, -50%); z-index: -1; pointer-events: none;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--orange) 6%, transparent), transparent 72%);
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .screen.paused::after { opacity: .35; }
+  .fbar { display: flex; align-items: center; gap: var(--space-8); min-height: var(--space-56); color: var(--text-secondary); width: 100%; }
+  .fbar .dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--goal-sky); flex: 0 0 auto; }
+  .fbar .name { color: var(--text-primary); }
+  .fbar .btn.ghost { color: var(--text-secondary); }
+  @media (hover: hover) and (pointer: fine) { .fbar .btn.ghost:hover { color: var(--text-primary); background: color-mix(in srgb, var(--text-primary) 8%, transparent); } }
+
+  .fmain { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-24); width: 100%; padding-block: var(--space-16) var(--space-32); }
+  .fmain .seg { width: min(640px, 100%); height: 8px; gap: 6px; }
+  .seg > i.pulse { overflow: visible; }
+  .seg > i.now.over::after { background: var(--orange); }
+  .screen.paused .seg { --glow-orange: none; }
+  .steplbl { display: flex; align-items: baseline; gap: var(--space-8); color: var(--text-secondary); }
+  .steplbl .extra { font-variant-numeric: tabular-nums; display: none; }
+  .screen.over .steplbl .extra { display: inline; }
+  .steptitle { display: grid; text-align: center; font-size: 40px; line-height: 46px; font-weight: 800; letter-spacing: -0.9px; color: var(--text-primary); max-width: 760px; }
+  .steptitle > span { grid-area: 1 / 1; transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .steptitle > span.out { opacity: 0; transform: translateY(-6px); transition-timing-function: var(--ease-in); }
+  .steptitle > span.in { opacity: 0; transform: translateY(6px); }
+  .hgroup { display: grid; gap: var(--space-8); justify-items: center; }
+
+  /* slot embaixo do título: chip de anotações OU composer (mesma altura, nada pula) */
+  .slot { min-height: 48px; width: min(560px, 100%); display: grid; align-items: center; justify-items: center; }
+  .slot .composer { display: none; width: 100%; align-items: center; gap: var(--space-8); min-height: 48px; padding: 0 var(--space-8) 0 var(--space-12); border-radius: var(--radius-md); background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--border-control), inset 0 1px 0 var(--hairline); }
+  .slot .composer:focus-within { box-shadow: inset 0 0 0 2px var(--violet-ink), inset 0 1px 0 var(--hairline); }
+  .slot .composer .ms { color: var(--text-muted); }
+  .slot .composer input { flex: 1; min-width: 0; font-size: 15px; line-height: 22px; height: 44px; }
+  .slot.open .composer { display: flex; animation: capin var(--dur-fast) var(--ease-out) both; }
+  .slot.open .chiprow { display: none; }
+  @keyframes capin { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .chiprow { display: flex; align-items: center; gap: var(--space-12); }
+  .notechip .ms { color: var(--violet-ink); }
+  .notechip .count { display: inline-grid; height: 16px; overflow: hidden; font-variant-numeric: tabular-nums; }
+  .notechip .count > span { grid-area: 1 / 1; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out); }
+  .notechip .count > span.out { transform: translateY(-16px); opacity: 0; }
+  .notechip .count > span.in { transform: translateY(16px); opacity: 0; }
+  .saved { color: var(--text-secondary); display: inline-flex; align-items: center; gap: var(--space-4); opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); }
+  .saved.show { opacity: 1; transition: opacity var(--dur-fast) var(--ease-out); }
+  .saved .ms { color: var(--green-ink); }
+
+  /* FocusTimer */
+  .ftimer { --size: 232px; --stroke: 7; --p: 0; --h: 3.4; display: grid; justify-items: center; }
+  .ftimer .ring { position: relative; width: var(--size); height: var(--size); border-radius: var(--radius-full); transition: transform var(--dur-base) var(--ease-spring); }
+  .ftimer svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .ftimer .trk { fill: none; stroke: var(--ring-track); stroke-width: var(--stroke); }
+  .ftimer .arc { fill: none; stroke: var(--orange); stroke-width: var(--stroke); stroke-linecap: round; stroke-dasharray: var(--p) 100; transition: stroke-dasharray var(--dur-base) var(--ease-in-out); }
+  .ftimer .head { fill: none; stroke: var(--ember); stroke-width: var(--stroke); stroke-linecap: round; stroke-dasharray: var(--h) 100; stroke-dashoffset: calc(-1 * (var(--p) - var(--h))); filter: url(#glow-head); transition: stroke-dashoffset var(--dur-base) var(--ease-in-out), opacity var(--dur-fast) var(--ease-out); }
+  .ftimer .ctr { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--space-4); text-align: center; padding: var(--space-24); }
+  .ftimer .time { display: grid; font-size: 72px; line-height: 76px; font-weight: 800; letter-spacing: -2px; font-variant-numeric: tabular-nums; color: var(--text-primary); transition: color var(--dur-base) var(--ease-out); }
+  .ftimer .time > span { grid-area: 1 / 1; transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .ftimer .time > span.out { opacity: 0; transform: translateY(-8px); transition-timing-function: var(--ease-in); }
+  .ftimer .time > span.in { opacity: 0; transform: translateY(8px); }
+  .ftimer .sub { color: var(--text-secondary); display: inline-flex; align-items: center; gap: var(--space-4); }
+  .ftimer .sub .ms { display: none; }
+  .paused .ftimer .ring { animation: none; }
+  .paused .ftimer .head { filter: none; stroke: var(--orange); }
+  .paused .ftimer .time { color: var(--text-secondary); }
+  .paused .ftimer .sub .ms { display: inline-block; }
+  .over .ftimer .ring { animation: none; }
+  .over .ftimer .arc { stroke-dasharray: 100 100; }
+  .over .ftimer .head { opacity: 0; }
+  .over .ftimer .time { color: var(--text-secondary); font-size: 56px; line-height: 60px; letter-spacing: -1.5px; }
+  .ftimer.compact { --size: 176px; }
+  .ftimer.compact .time { font-size: 56px; line-height: 60px; letter-spacing: -1.5px; }
+  .over .ftimer.compact .time { font-size: 44px; line-height: 48px; letter-spacing: -1px; }
+
+  .acts { display: flex; gap: var(--space-12); align-items: center; }
+  .acts .btn { min-height: 48px; padding-inline: var(--space-24); }
+  .dots { display: flex; justify-content: center; gap: 10px; }
+  .dots > i { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--ring-track); transition: background-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-spring); }
+  .dots > i.done { background: var(--violet); }
+  .dots > i.now { background: var(--orange); box-shadow: 0 0 10px color-mix(in srgb, var(--orange) 70%, transparent); transform: scale(1.25); }
+  .paused .dots > i.now { box-shadow: none; }
+  .tail { display: grid; gap: var(--space-12); justify-items: center; }
+  .foot { color: var(--text-secondary); font-variant-numeric: tabular-nums; text-align: center; }
+
+  /* encerramento dentro da tela */
+  .fend-wrap { display: none; flex: 1; align-items: center; justify-content: center; padding: var(--space-24) 0 var(--space-40); width: 100%; }
+  .screen.ended .fmain { display: none; }
+  .screen.ended .fend-wrap { display: flex; }
+  .screen.ended::after { background: radial-gradient(closest-side, color-mix(in srgb, var(--violet) 7%, transparent), transparent 72%); }
+  .fend { padding: var(--space-32); display: grid; gap: var(--space-24); width: min(620px, 100%); }
+  .fend .head { display: grid; gap: var(--space-12); justify-items: start; }
+  .fend .ico-tile { width: 48px; height: 48px; --c: var(--violet); }
+  .fend .sum { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-12); }
+  .fend .block { padding: var(--space-16); display: grid; gap: var(--space-8); align-content: start; }
+  .fend .block .k { color: var(--text-secondary); }
+  .fend .block .v { font-variant-numeric: tabular-nums; }
+  .fend .block .v small { color: var(--text-secondary); font-weight: 500; font-size: 13px; }
+  .fend .seg { height: 6px; width: 100%; }
+  .fend .wk { display: flex; gap: var(--space-8); }
+  .fend .wk > span { display: grid; gap: var(--space-4); justify-items: center; }
+  .fend .wk i { width: 10px; height: 10px; border-radius: var(--radius-full); background: var(--ring-track); display: block; }
+  .fend .wk i.done { background: var(--violet); }
+  .fend .wk i.today { background: var(--violet); box-shadow: 0 0 0 1px color-mix(in srgb, var(--violet) 35%, transparent), 0 0 12px color-mix(in srgb, var(--violet-ink) 70%, transparent); transform: scale(1.2); }
+  .fend .wk .micro { color: var(--text-muted); }
+  .fend .wk .today + .micro { color: var(--text-primary); }
+  .fend .gentle { grid-column: 1 / -1; background: var(--surface-tint); display: flex; gap: var(--space-12); align-items: flex-start; }
+  .fend .gentle .ms { color: var(--violet-ink); flex: 0 0 auto; }
+  .fend .acts { flex-wrap: wrap; }
+  .fend .acts .btn { min-height: 44px; }
+  .fend .acts small { opacity: .8; font-weight: 500; }
+
+  /* toast de "Sair" */
+  .toast { position: absolute; left: 50%; bottom: var(--space-24); transform: translate(-50%, 8px); opacity: 0; pointer-events: none; display: flex; align-items: center; gap: var(--space-12); min-height: 48px; padding: 0 var(--space-8) 0 var(--space-16); border-radius: var(--radius-md); transition: opacity var(--dur-exit) var(--ease-in), transform var(--dur-exit) var(--ease-in); z-index: 5; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+
+  /* ---------- estados menores ---------- */
+  .states { padding-block: var(--space-16) var(--space-32); display: grid; gap: var(--space-16); }
+  .states .hd { display: flex; align-items: baseline; gap: var(--space-12); }
+  .states .hd .caption { color: var(--text-muted); }
+  .sgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-16); align-items: start; }
+  .mini { padding: var(--space-20) var(--space-20) var(--space-24); display: grid; gap: var(--space-16); justify-items: center; position: relative; isolation: isolate; }
+  .mini .fbar { min-height: 0; }
+  .mini .fbar .btn.ghost.sm { min-height: 32px; padding-inline: var(--space-8); }
+  .mini .seg { width: 100%; height: 6px; }
+  .mini .steptitle { font-size: 22px; line-height: 28px; letter-spacing: -0.4px; }
+  .mini .ftimer.compact { --size: 160px; }
+  .mini .ftimer.compact .time { font-size: 48px; line-height: 52px; letter-spacing: -1.2px; }
+  .mini.over .ftimer.compact .time { font-size: 40px; line-height: 44px; letter-spacing: -1px; }
+  .mini .hgroup { gap: var(--space-2); }
+  .mini .sum .block { padding: var(--space-12); }
+  .mini .fend { padding: 0; background: none; box-shadow: none; gap: var(--space-16); }
+  .mini .fend .ico-tile { width: 40px; height: 40px; }
+  .mini .fend .headline { font-size: 20px; line-height: 26px; }
+  .mini .cap { color: var(--text-muted); text-align: center; }
+  .mini.over::after, .mini.paused::after { content: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .slot.open .composer { animation: none; }
+    .steptitle > span, .ftimer .time > span, .ftimer .ring, .ftimer .arc, .ftimer .head, .dots > i, .toast, .saved, .notechip .count > span { transition: none; }
+  }
+</style>
+</head>
+<body class="aurora">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="glow-head" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs></svg>
+
+<div class="screen" id="screen">
+  <header class="fbar content rise hero">
+    <span class="dot" aria-hidden="true"></span>
+    <span class="body-sm"><span class="name">Estudo de inglês</span> · Inglês fluente</span>
+    <span class="sp"></span>
+    <button class="btn ghost sm" id="pause" aria-pressed="false"><span class="ms s20" id="pause-ico">pause</span><span id="pause-lbl">Pausar</span></button>
+    <button class="btn ghost sm" id="exit"><span class="ms s20">logout</span>Sair</button>
+  </header>
+
+  <main class="fmain content" id="main">
+    <div class="seg rise" style="--w:0" id="seg" role="progressbar" aria-label="Passos da atividade" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-valuetext="Passo 3 de 5">
+      <i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i>
+    </div>
+    <div class="hgroup rise" style="--w:0">
+      <div class="steplbl"><span class="label" id="lbl">Passo 3 de 5</span><span class="caption extra" id="extra"></span></div>
+      <h1 class="steptitle" id="title"><span>Anotar 3 frases novas</span></h1>
+      <div class="slot" id="slot">
+        <div class="chiprow">
+          <span class="chip notechip label" id="chip"><span class="ms s16">sticky_note_2</span><span class="count" id="count"><span>2</span></span><span id="plural">anotações</span></span>
+          <span class="caption saved" id="saved"><span class="ms s16">check</span>Anotado</span>
+        </div>
+        <div class="composer" id="composer">
+          <span class="ms s20">edit_note</span>
+          <input id="inp" type="text" aria-label="Nova anotação" placeholder="Um pensamento, uma frase nova… Enter salva" autocomplete="off">
+          <button class="btn ghost sm" id="cancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftimer rise" style="--w:1;--p:33.3" id="ft">
+      <div class="ring breathe" id="ring"><svg viewBox="0 0 232 232"><circle class="trk" cx="116" cy="116" r="112.5"/><circle class="arc" cx="116" cy="116" r="112.5" pathLength="100"/><circle class="head" cx="116" cy="116" r="112.5" pathLength="100"/></svg>
+        <div class="ctr" role="timer" aria-live="off" aria-label="Tempo restante do passo"><div class="time" id="time"><span>06:40</span></div><div class="body-sm sub" id="sub"><span class="ms s16">pause</span><span id="sub-txt">restantes neste passo</span></div></div>
+      </div>
+    </div>
+
+    <div class="acts rise" style="--w:1">
+      <button class="btn primary" id="done"><span class="ms s20">check</span>Concluir passo</button>
+      <button class="btn secondary" id="note" aria-expanded="false" aria-controls="composer"><span class="ms s20">add</span>Anotar</button>
+    </div>
+
+    <div class="tail rise" style="--w:1">
+      <div class="dots" id="dots" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
+      <p class="caption foot" id="foot">32 min restantes na atividade · termina 15:00</p>
+    </div>
+  </main>
+
+  <section class="fend-wrap content" id="fend-wrap" aria-label="Atividade concluída">
+    <div class="card fend">
+      <div class="head">
+        <span class="ico-tile violet pulse" id="fend-ico"><span class="ms">check</span></span>
+        <div><h2 class="headline">Estudo de inglês concluído</h2><p class="body-sm t2" style="margin-top:var(--space-4)">Inglês fluente · 14:00–15:00</p></div>
+      </div>
+      <div class="sum">
+        <div class="block"><span class="caption k">Passos</span><span class="title v">5 <small>de 5</small></span><div class="seg" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div></div>
+        <div class="block"><span class="caption k">Tempo</span><span class="title v" id="fend-time">58 <small>min</small></span><span class="caption t3">estimado 60 min</span></div>
+        <div class="block"><span class="caption k">Anotações</span><span class="title v" id="fend-notes">2</span><span class="caption t3">na tela da atividade</span></div>
+        <div class="block"><span class="caption k">Consistência</span><span class="title v">5 <small>de 7 dias</small></span>
+          <div class="wk" aria-label="Últimos 7 dias: 5 feitos, hoje incluído"><span><i class="done"></i><span class="micro">T</span></span><span><i class="done"></i><span class="micro">Q</span></span><span><i></i><span class="micro">Q</span></span><span><i class="done"></i><span class="micro">S</span></span><span><i class="done"></i><span class="micro">S</span></span><span><i></i><span class="micro">D</span></span><span><i class="today"></i><span class="micro">S</span></span></div>
+        </div>
+        <div class="block gentle" id="gentle" hidden><span class="ms s20">spa</span><p class="body-sm t1" id="gentle-txt">Levou 12 min a mais. Tudo bem, isso ajusta a próxima estimativa.</p></div>
+      </div>
+      <div class="acts">
+        <button class="btn primary"><span class="ms s20">play_arrow</span>Próxima: Revisão de código <small>&nbsp;· 15:30</small></button>
+        <button class="btn ghost">Encerrar por hoje</button>
+        <button class="btn ghost sm sp" id="again" style="color:var(--text-secondary)">Voltar ao passo 3</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast glass" id="toast" role="status"><span class="body-sm">Você saiu do foco. A atividade continua na sua grade.</span><button class="btn ghost sm" id="undo">Desfazer</button></div>
+</div>
+
+<section class="states content" aria-label="Outros estados">
+  <div class="hd"><h2 class="title">Outros estados</h2><span class="caption">pausado · passou do tempo · último passo concluído</span></div>
+  <div class="sgrid">
+    <div class="card mini paused">
+      <div class="fbar" style="width:100%"><span class="dot"></span><span class="caption"><span class="name">Estudo de inglês</span> · Inglês fluente</span><span class="sp"></span><button class="btn ghost sm" tabindex="-1" aria-pressed="true"><span class="ms s20">play_arrow</span>Retomar</button></div>
+      <div class="seg"><i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i></div>
+      <div class="hgroup"><span class="caption t2">Passo 3 de 5</span><h3 class="steptitle">Anotar 3 frases novas</h3></div>
+      <div class="ftimer compact" style="--p:33.3"><div class="ring"><svg viewBox="0 0 232 232"><circle class="trk" cx="116" cy="116" r="112.5"/><circle class="arc" cx="116" cy="116" r="112.5" pathLength="100"/><circle class="head" cx="116" cy="116" r="112.5" pathLength="100"/></svg><div class="ctr"><div class="time"><span>06:40</span></div><div class="caption sub"><span class="ms s16">pause</span>Pausado</div></div></div></div>
+      <div class="dots"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
+      <p class="caption cap">Pausado: o glow para de respirar, o número vai para text-secondary, a brasa de fundo esmaece. Nada mais muda.</p>
+    </div>
+
+    <div class="card mini over">
+      <div class="fbar" style="width:100%"><span class="dot"></span><span class="caption"><span class="name">Estudo de inglês</span> · Inglês fluente</span><span class="sp"></span><button class="btn ghost sm" tabindex="-1"><span class="ms s20">pause</span>Pausar</button></div>
+      <div class="seg"><i class="done"></i><i class="done"></i><i class="now over" style="--p:100%"></i><i></i><i></i></div>
+      <div class="hgroup"><span class="caption t2">Passo 3 de 5 · <span class="num">+02:10</span></span><h3 class="steptitle">Anotar 3 frases novas</h3></div>
+      <div class="ftimer compact" style="--p:100"><div class="ring"><svg viewBox="0 0 232 232"><circle class="trk" cx="116" cy="116" r="112.5"/><circle class="arc" cx="116" cy="116" r="112.5" pathLength="100"/><circle class="head" cx="116" cy="116" r="112.5" pathLength="100"/></svg><div class="ctr"><div class="time"><span>+02:10</span></div><div class="caption sub">além dos 10 min estimados</div></div></div></div>
+      <div class="dots"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
+      <p class="caption cap">Passou do tempo: anel e segmento completos em laranja estável, excedente em text-secondary. Sem vermelho, sem piscar.</p>
+    </div>
+
+    <div class="card mini">
+      <div class="fend">
+        <div class="head"><span class="ico-tile violet"><span class="ms">check</span></span><div><h3 class="headline">Estudo de inglês concluído</h3><p class="caption t2" style="margin-top:var(--space-4)">Inglês fluente · 14:00–15:12</p></div></div>
+        <div class="sum">
+          <div class="block"><span class="caption k">Passos</span><span class="title-sm v">5 <small>de 5</small></span><div class="seg" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div></div>
+          <div class="block"><span class="caption k">Tempo</span><span class="title-sm v">72 <small>min</small></span><span class="caption t3">estimado 60 min</span></div>
+          <div class="block gentle"><span class="ms s20">spa</span><p class="caption t1">Levou 12 min a mais. Tudo bem, isso ajusta a próxima estimativa.</p></div>
+        </div>
+        <div class="acts" style="display:grid;width:100%;gap:var(--space-8)"><button class="btn primary sm" tabindex="-1"><span class="ms s20">play_arrow</span>Próxima: Revisão de código <small>&nbsp;· 15:30</small></button><button class="btn ghost sm" tabindex="-1">Encerrar por hoje</button></div>
+      </div>
+      <p class="caption cap">Último passo concluído: a tela troca para o encerramento com um único pulso violeta no ícone.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var names = ['Rever vocabulário', 'Assistir aula', 'Anotar 3 frases novas', 'Exercício de escuta', 'Resumo do dia'];
+  var est = [10, 25, 10, 10, 5]; // minutos
+  var screen = document.getElementById('screen'), seg = document.getElementById('seg'), dots = document.getElementById('dots'), lbl = document.getElementById('lbl'), extra = document.getElementById('extra');
+  var title = document.getElementById('title'), ft = document.getElementById('ft'), ring = document.getElementById('ring'), timeEl = document.getElementById('time'), subTxt = document.getElementById('sub-txt'), foot = document.getElementById('foot');
+  var cur = 2, left = 6 * 60 + 40, total = est[cur] * 60, actLeft = 32 * 60, paused = false, notes = 2, tick;
+  function fmt(s) { s = Math.abs(s); var m = Math.floor(s / 60), r = s % 60; return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r; }
+  function swap(el, text) {
+    var old = el.firstElementChild; if (old && old.textContent === text) return;
+    var nw = document.createElement('span'); nw.className = 'in'; nw.textContent = text; el.appendChild(nw);
+    if (old) old.classList.add('out'); void nw.offsetWidth; nw.classList.remove('in');
+    setTimeout(function () { if (old && old.parentNode) old.remove(); }, 200);
+  }
+  function endsAt() { var d = new Date(2026, 10, 9, 15, 0); return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  function paint() {
+    var over = left < 0; screen.classList.toggle('over', over);
+    if (over) { timeEl.firstElementChild.textContent = '+' + fmt(left); subTxt.textContent = 'além dos ' + est[cur] + ' min estimados'; extra.textContent = '+' + fmt(left); }
+    else { timeEl.firstElementChild.textContent = fmt(left); subTxt.textContent = paused ? 'Pausado' : 'restantes neste passo'; ft.style.setProperty('--p', String(Math.min(100, 100 * (total - left) / total))); }
+    seg.children[cur] && seg.children[cur].classList.toggle('over', over);
+    if (!over) seg.children[cur] && seg.children[cur].style.setProperty('--p', Math.round(100 * (total - left) / total) + '%');
+    var m = Math.max(0, Math.round(actLeft / 60)); foot.textContent = m + ' min restantes na atividade · termina ' + endsAt();
+  }
+  function render() {
+    var n = seg.children.length;
+    for (var i = 0; i < n; i++) { seg.children[i].className = i < cur ? 'done' : i === cur ? 'now' : ''; seg.children[i].style.removeProperty('--p'); dots.children[i].className = i < cur ? 'done' : i === cur ? 'now' : ''; }
+    lbl.textContent = 'Passo ' + (cur + 1) + ' de ' + n; seg.setAttribute('aria-valuenow', String(cur)); seg.setAttribute('aria-valuetext', lbl.textContent);
+  }
+  function start() { clearInterval(tick); tick = setInterval(function () { if (paused) return; left--; actLeft--; paint(); }, 1000); }
+  paint(); start();
+
+  // concluir passo
+  document.getElementById('done').addEventListener('click', function () {
+    var now = seg.children[cur]; if (!now) return;
+    now.classList.add('pulse', 'go'); now.style.setProperty('--c', 'var(--orange)');
+    var spent = total - left;
+    setTimeout(function () {
+      cur++;
+      if (cur >= names.length) { finish(spent); return; }
+      render(); screen.classList.remove('over');
+      total = est[cur] * 60; left = total;
+      ft.style.setProperty('--p', '0'); ring.style.transform = 'scale(0.96)';
+      swap(title, names[cur]); swap(timeEl, fmt(left)); subTxt.textContent = paused ? 'Pausado' : 'restantes neste passo';
+      setTimeout(function () { ring.style.transform = ''; }, 160);
+      setTimeout(function () { ft.querySelector('.arc').style.transitionTimingFunction = 'var(--ease-settle)'; paint(); setTimeout(function () { ft.querySelector('.arc').style.transitionTimingFunction = ''; }, 400); }, 420);
+    }, 220);
+  });
+  function finish(spentSec) {
+    clearInterval(tick);
+    var used = Math.round((60 * 60 - actLeft) / 60); var over = used - 60;
+    document.getElementById('fend-time').innerHTML = used + ' <small>min</small>';
+    document.getElementById('fend-notes').textContent = String(notes);
+    var g = document.getElementById('gentle'); g.hidden = over <= 0; if (over > 0) document.getElementById('gentle-txt').textContent = 'Levou ' + over + ' min a mais. Tudo bem, isso ajusta a próxima estimativa.';
+    screen.classList.add('ended'); var ico = document.getElementById('fend-ico'); ico.classList.remove('go'); void ico.offsetWidth; ico.classList.add('go');
+  }
+  document.getElementById('again').addEventListener('click', function () { cur = 2; left = 6 * 60 + 40; total = est[cur] * 60; actLeft = 32 * 60; render(); title.innerHTML = '<span>' + names[cur] + '</span>'; timeEl.innerHTML = '<span>' + fmt(left) + '</span>'; screen.classList.remove('ended', 'over'); paint(); start(); });
+
+  // pausar
+  var pauseBtn = document.getElementById('pause');
+  pauseBtn.addEventListener('click', function () {
+    paused = !paused; screen.classList.toggle('paused', paused); pauseBtn.setAttribute('aria-pressed', String(paused));
+    document.getElementById('pause-ico').textContent = paused ? 'play_arrow' : 'pause'; document.getElementById('pause-lbl').textContent = paused ? 'Retomar' : 'Pausar';
+    ring.classList.toggle('breathe', !paused); paint();
+  });
+
+  // anotar
+  var slot = document.getElementById('slot'), inp = document.getElementById('inp'), noteBtn = document.getElementById('note'), count = document.getElementById('count'), saved = document.getElementById('saved'), t;
+  function setOpen(o) { slot.classList.toggle('open', o); noteBtn.setAttribute('aria-expanded', String(o)); if (o) setTimeout(function () { inp.focus(); }, 30); }
+  noteBtn.addEventListener('click', function () { setOpen(!slot.classList.contains('open')); });
+  document.getElementById('cancel').addEventListener('click', function () { inp.value = ''; setOpen(false); noteBtn.focus(); });
+  function roll(to) { var old = count.firstElementChild, nw = document.createElement('span'); nw.className = 'in'; nw.textContent = to; count.appendChild(nw); old.classList.add('out'); void nw.offsetWidth; nw.classList.remove('in'); setTimeout(function () { old.remove(); }, 260); }
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { inp.value = ''; setOpen(false); noteBtn.focus(); }
+    if (e.key === 'Enter' && inp.value.trim()) { notes++; roll(notes); document.getElementById('plural').textContent = notes === 1 ? 'anotação' : 'anotações'; inp.value = ''; setOpen(false); noteBtn.focus(); saved.classList.add('show'); clearTimeout(t); t = setTimeout(function () { saved.classList.remove('show'); }, 1600); }
+  });
+
+  // sair → toast com desfazer
+  var toast = document.getElementById('toast'), tt;
+  document.getElementById('exit').addEventListener('click', function () { toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove('show'); }, 6000); });
+  document.getElementById('undo').addEventListener('click', function () { toast.classList.remove('show'); clearTimeout(tt); });
+  toast.addEventListener('mouseenter', function () { clearTimeout(tt); }); toast.addEventListener('mouseleave', function () { tt = setTimeout(function () { toast.classList.remove('show'); }, 2000); });
+})();
+</script>
+</body>
+</html>

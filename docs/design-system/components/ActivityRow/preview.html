@@ -1,0 +1,123 @@
+<!-- @dsCard group="Dashboard" height=1320 subtitle="Linha de Próximas atividades: ponto do objetivo, duração com unidade em apoio e status em palavra e ícone; a atual em surface-tint" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .stack{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  figure{margin:0;display:flex;flex-direction:column;gap:var(--space-12)}
+  figcaption{color:var(--text-muted)}
+  .panel{padding:var(--space-20)}
+  .panel.compact{width:360px;max-width:100%;padding:var(--space-16)}
+  .panel.wide{width:760px;max-width:100%;padding:var(--space-24)}
+  .panel h3{margin-bottom:var(--space-16)}
+  .list{display:flex;flex-direction:column;gap:var(--space-4);margin:0 calc(var(--space-12)*-1);padding:0;list-style:none}
+
+  /* ActivityRow */
+  .arow{display:grid;align-items:center;width:100%;min-height:var(--touch-min);padding:var(--space-8) var(--space-12);border-radius:var(--radius-md);color:var(--text-primary);text-align:left;grid-template-columns:48px minmax(0,1fr) auto;column-gap:var(--space-12);transition:background-color var(--dur-instant) var(--ease-out),box-shadow var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+  .arow:active,.arow.is-pressed{transform:scale(.985);background:var(--surface-raised);transition-timing-function:var(--ease-out)}
+  .arow.is-focus{outline:2px solid var(--violet-ink);outline-offset:2px}
+  @media (hover:hover) and (pointer:fine){.arow:hover{background:var(--surface-raised);box-shadow:inset 0 1px 0 var(--hairline)}}
+  .arow.is-hover{background:var(--surface-raised);box-shadow:inset 0 1px 0 var(--hairline)}
+  .arow.current{background:var(--surface-tint);box-shadow:inset 0 1px 0 var(--hairline)}
+  .time{font-size:15px;line-height:22px;font-weight:600}
+  .txt{min-width:0;display:flex;flex-direction:column;gap:var(--space-2)}
+  .ttl{color:var(--text-primary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .goal{display:flex;align-items:center;gap:var(--space-8);color:var(--text-secondary);min-width:0}
+  .goal .dot{width:8px;height:8px;border-radius:var(--radius-full);background:var(--g);flex:none}
+  .goal .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gentle{color:var(--text-secondary)}
+  .end{display:flex;flex-direction:column;align-items:flex-end;gap:var(--space-2);text-align:right}
+  .dur{color:var(--text-primary);font-weight:600;white-space:nowrap}
+  .dur small{font-size:inherit;font-weight:500;color:var(--text-secondary)}
+  .st{display:inline-flex;align-items:center;gap:var(--space-4);white-space:nowrap}
+  .st.done{color:var(--green-ink)}
+  .st.current{color:var(--violet-ink)}
+  .st.next,.st.missed{color:var(--text-secondary)}
+  .arow.done .ttl{color:var(--text-secondary)}
+  /* largo */
+  .wide .arow{grid-template-columns:56px minmax(0,1fr) 84px 120px;min-height:var(--hit-min)}
+  .wide .arow .end{display:contents}
+  .wide .arow .dur{text-align:right}
+  .wide .arow .st{justify-self:start}
+  @media (prefers-reduced-motion:reduce){ .arow{transition:none} .arow:active,.arow.is-pressed{transform:none} }
+</style>
+</head>
+<body class="aurora">
+<div class="stack">
+  <figure>
+    <section class="card panel compact" aria-labelledby="c1">
+      <h3 class="title" id="c1">Próximas atividades</h3>
+      <ul class="list" data-list="compact"></ul>
+    </section>
+    <figcaption class="caption">Celular (360px): duração e status à direita, alvo de 48px, sem hover; a atividade de agora em surface-tint</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel wide" aria-labelledby="c2">
+      <h3 class="title" id="c2">Próximas atividades</h3>
+      <ul class="list" data-list="wide"></ul>
+    </section>
+    <figcaption class="caption">Desktop (760px): colunas separadas e hover só com ponteiro fino, 32px de altura mínima</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel compact" aria-labelledby="c3">
+      <h3 class="title" id="c3">Estados da linha</h3>
+      <ul class="list" data-list="states"></ul>
+    </section>
+    <figcaption class="caption">Normal, hover, pressionado e foco (forçados para ver; em uso hover só existe com mouse)</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel compact" aria-labelledby="c4">
+      <h3 class="title" id="c4">Próximas atividades</h3>
+      <p class="body-sm t2">Nada mais agendado para hoje</p>
+    </section>
+    <figcaption class="caption">Vazio</figcaption>
+  </figure>
+</div>
+
+<script>
+(function(){
+  var ST={
+    done:{icon:'check_circle',word:'Feita'},
+    current:{icon:'play_circle',word:'Agora'},
+    next:{icon:'schedule',word:'Próxima'},
+    missed:{icon:'history',word:'Não feita'}
+  };
+  var A=[
+    {t:'06:30',title:'Leitura',goal:'Leitura',color:'var(--goal-amber)',dur:'20 <small>min</small>',durTxt:'20 min',s:'missed'},
+    {t:'07:00',title:'Caminhada',goal:'Saúde',color:'var(--goal-emerald)',dur:'30 <small>min</small>',durTxt:'30 min',s:'done'},
+    {t:'08:00',title:'Estudo de inglês',goal:'Inglês',color:'var(--goal-sky)',dur:'1 <small>h</small>',durTxt:'1 h',s:'current'},
+    {t:'09:30',title:'Treino de força no clube do bairro e alongamento',goal:'Condicionamento',color:'var(--goal-rose)',dur:'1 <small>h</small> 20',durTxt:'1 h 20',s:'next'},
+    {t:'12:00',title:'Almoço e mercado',goal:'Obrigatória',color:'var(--goal-obligatory)',dur:'1 <small>h</small>',durTxt:'1 h',s:'next'}
+  ];
+  function row(a,cls){
+    var s=ST[a.s];
+    var li=document.createElement('li');
+    var gentle=a.s==='missed'?'<span class="gentle caption">Sem problema, dá para retomar quando quiser.</span>':'';
+    li.innerHTML='<button type="button" class="arow '+a.s+(cls?' '+cls:'')+'" aria-label="'+a.t+', '+a.title+', '+a.goal+', duração '+a.durTxt+', '+s.word+'">'
+      +'<span class="time">'+a.t+'</span>'
+      +'<span class="txt"><span class="ttl title-sm">'+a.title+'</span><span class="goal caption"><i class="dot" style="--g:'+a.color+'"></i><span class="nm">'+a.goal+'</span></span>'+gentle+'</span>'
+      +'<span class="end"><span class="dur body-sm">'+a.dur+'</span>'
+      +'<span class="st caption '+a.s+'"><span class="ms s16" aria-hidden="true">'+s.icon+'</span>'+s.word+'</span></span></button>';
+    return li;
+  }
+  document.querySelectorAll('[data-list]').forEach(function(ul){
+    var k=ul.dataset.list;
+    if(k==='states'){
+      var a=A[2];
+      [['is-normal'],['is-hover'],['is-pressed'],['is-focus']].forEach(function(c){ ul.appendChild(row({t:a.t,title:a.title,goal:a.goal,color:a.color,dur:a.dur,durTxt:a.durTxt,s:'next'},c[0])); });
+    } else {
+      A.forEach(function(a){ ul.appendChild(row(a,'')); });
+    }
+  });
+})();
+</script>
+</body>
+</html>

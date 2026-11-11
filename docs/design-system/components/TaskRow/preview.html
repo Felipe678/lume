@@ -1,0 +1,218 @@
+<!-- @dsCard group="Atividades" height=720 subtitle="Linha de atividade do dia: hora, título, pill do objetivo ou Rotina, passos em mini-segmentos, duração, estado (próxima, agora, feita, não feita) e o botão de foco" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1180px; margin-inline: auto; display: flex; gap: var(--space-32); flex-wrap: wrap; align-items: flex-start; }
+  .sec { display: grid; gap: var(--space-4); align-content: start; }
+  .sec h2 { margin: 0; }
+  .sec .lead { color: var(--text-secondary); max-width: 62ch; margin-bottom: var(--space-12); }
+  .cap { color: var(--text-muted); }
+  .list { padding: var(--space-8); display: grid; gap: var(--space-2); }
+  .desk { width: 760px; max-width: 100%; }
+  .phone { width: 360px; max-width: 100%; }
+  .theme { position: fixed; right: var(--space-16); top: var(--space-16); z-index: 9; }
+  .legend { display: grid; gap: var(--space-4); margin-top: var(--space-8); }
+
+  /* ===== TaskRow (CSS local; sugestão para o kit) ===== */
+  .trow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 56px 64px 112px 148px; grid-template-areas: "time main seg dur state act";
+    align-items: center; gap: var(--space-12); min-height: 56px; padding: var(--space-8) var(--space-12); border-radius: var(--radius-md);
+    color: var(--text-primary); position: relative; cursor: pointer; text-align: left;
+    transition: background-color var(--dur-instant) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+  .trow:focus-visible { outline: 2px solid var(--violet-ink); outline-offset: -2px; border-radius: var(--radius-md); }
+  .trow .time { grid-area: time; color: var(--text-secondary); }
+  .trow .main { grid-area: main; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .trow .ttl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trow .meta { display: flex; align-items: center; gap: var(--space-8); color: var(--text-secondary); min-width: 0; }
+  .trow .meta .ms { color: var(--text-muted); flex: 0 0 auto; }
+  .trow .meta > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trow .seg.mini { grid-area: seg; }
+  .trow .dur { grid-area: dur; color: var(--text-primary); white-space: nowrap; }
+  .trow .dur small { color: var(--text-secondary); font-size: inherit; font-weight: 500; }
+  .trow .state { grid-area: state; display: inline-flex; align-items: center; gap: var(--space-4); color: var(--text-secondary); white-space: nowrap; }
+  .trow .state .ms { flex: 0 0 auto; }
+  .trow .act { grid-area: act; justify-self: end; opacity: 0; transform: translateX(4px); transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background-color var(--dur-instant) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+  .trow .act .ms { color: var(--text-secondary); }
+  .trow.now .act .ms { color: var(--orange-ink); }
+  .trow.now .act, .trow:focus-within .act { opacity: 1; transform: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .trow:hover { background: var(--surface-raised); }
+    .trow:hover .act { opacity: 1; transform: none; }
+  }
+  /* pill do objetivo e pill Rotina: variante compacta do .chip */
+  .chip.xs { min-height: 22px; padding: 0 var(--space-8); gap: var(--space-4); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-primary); flex: 0 0 auto; max-width: 100%; }
+  .chip.xs > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gdot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--gc, var(--goal-sky)); flex: 0 0 auto; }
+  /* estados */
+  .trow.now { background: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline-strong), 0 0 0 1px color-mix(in srgb, var(--orange) 30%, transparent), 0 4px 18px color-mix(in srgb, var(--orange) 16%, transparent); }
+  .trow.now .time { color: var(--text-primary); font-weight: 700; }
+  .trow.now .state { color: var(--orange-ink); }
+  .trow.now .state i { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--orange); box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 70%, transparent); display: inline-block; margin-right: var(--space-2); }
+  .trow.done .ttl, .trow.done .dur { color: var(--text-secondary); }
+  .trow.done .state .ms { color: var(--violet-ink); }
+  .trow.skipped .ttl, .trow.skipped .dur { color: var(--text-secondary); }
+  .trow.skipped .state { color: var(--text-muted); }
+  .trow[aria-selected="true"] { background: var(--surface-tint); box-shadow: inset 0 0 0 1px var(--hairline-strong); }
+  .trow.now[aria-selected="true"] { box-shadow: inset 0 0 0 1px var(--hairline-strong), 0 0 0 1px color-mix(in srgb, var(--orange) 30%, transparent), 0 4px 18px color-mix(in srgb, var(--orange) 16%, transparent); }
+  /* compact: hora | principal | ação; passos, duração e estado descem para a 2ª linha */
+  .m .trow { grid-template-columns: 44px 56px auto minmax(0, 1fr) 44px; grid-template-areas: "time main main main act" "time seg dur state act"; row-gap: var(--space-4); column-gap: var(--space-12); padding: var(--space-12); min-height: 64px; }
+  .m .trow .act { opacity: 1; transform: none; }
+  .m .trow .state { justify-self: start; }
+  .m .trow .dur { color: var(--text-secondary); }
+  @media (prefers-reduced-motion: reduce) {
+    .trow, .trow .act { transition: none; }
+    .trow .act { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<button class="btn secondary sm theme" id="theme" aria-pressed="false">Alternar tema</button>
+<div class="wrap">
+
+  <section class="sec desk">
+    <h2 class="title">Desktop</h2>
+    <p class="body lead">Clique numa linha para selecioná-la. O botão “Entrar em foco” aparece em hover e foco; na linha de agora ele fica sempre visível. Só a linha de agora tem luz.</p>
+    <div class="card list" id="list" role="listbox" aria-label="Atividades de hoje">
+      <div class="trow done" role="option" tabindex="0" aria-selected="false" aria-label="07:00, Caminhada, rotina, todo dia, 2 de 2 passos, 30 minutos, feita">
+        <span class="label num time">07:00</span>
+        <div class="main"><span class="title-sm ttl">Caminhada</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>todo dia</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i></div>
+        <span class="label num dur">30 <small>min</small></span>
+        <span class="caption state"><span class="ms s16">check_circle</span>feita</span>
+        <button class="btn secondary sm act" type="button" tabindex="-1" aria-hidden="true"><span class="ms s20">replay</span>Rever</button>
+      </div>
+      <div class="trow skipped" role="option" tabindex="0" aria-selected="false" aria-label="12:30, Almoço, rotina, todo dia, 45 minutos, não feita">
+        <span class="label num time">12:30</span>
+        <div class="main"><span class="title-sm ttl">Almoço</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>fica para amanhã</span></div></div>
+        <div class="seg mini" aria-hidden="true"></div>
+        <span class="label num dur">45 <small>min</small></span>
+        <span class="caption state"><span class="ms s16">history</span>não feita</span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">check</span>Marcar feita</button>
+      </div>
+      <div class="trow now" role="option" tabindex="0" aria-selected="true" aria-label="14:00, Estudo de inglês, objetivo Inglês fluente, passo 3 de 5, 60 minutos, agora">
+        <span class="label num time">14:00</span>
+        <div class="main"><span class="title-sm ttl">Estudo de inglês</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-sky)"><i class="gdot" aria-hidden="true"></i><span>Inglês fluente</span></span><span>passo 3 de 5</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></div>
+        <span class="label num dur">60 <small>min</small></span>
+        <span class="overline state"><i aria-hidden="true"></i>AGORA</span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">play_arrow</span>Continuar</button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="15:30, Revisão de código, objetivo Projeto Lume, 0 de 4 passos, 90 minutos, próxima">
+        <span class="label num time">15:30</span>
+        <div class="main"><span class="title-sm ttl">Revisão de código</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-violet)"><i class="gdot" aria-hidden="true"></i><span>Projeto Lume</span></span><span>4 passos</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span class="label num dur">90 <small>min</small></span>
+        <span class="caption state">próxima · em 1 h 10</span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="18:30, Treino, objetivo Condicionamento, 0 de 3 passos, 50 minutos">
+        <span class="label num time">18:30</span>
+        <div class="main"><span class="title-sm ttl">Treino</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-emerald)"><i class="gdot" aria-hidden="true"></i><span>Condicionamento</span></span><span>3 passos</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="label num dur">50 <small>min</small></span>
+        <span class="caption state"></span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="20:00, Leitura, objetivo Ler 12 livros, 1 de 2 passos, 40 minutos">
+        <span class="label num time">20:00</span>
+        <div class="main"><span class="title-sm ttl">Leitura</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-amber)"><i class="gdot" aria-hidden="true"></i><span>Ler 12 livros</span></span><span>1 de 2 passos</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i class="done"></i><i></i></div>
+        <span class="label num dur">40 <small>min</small></span>
+        <span class="caption state"></span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="21:30, Planejar amanhã, rotina, segunda, quarta e sexta, 0 de 3 passos, 15 minutos">
+        <span class="label num time">21:30</span>
+        <div class="main"><span class="title-sm ttl">Planejar amanhã</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>seg, qua, sex</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="label num dur">15 <small>min</small></span>
+        <span class="caption state"></span>
+        <button class="btn secondary sm act" type="button"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      </div>
+      <div class="trow" aria-hidden="true" style="cursor:default">
+        <span class="skel" style="height:14px;width:40px"></span>
+        <div class="main" style="gap:var(--space-8)"><span class="skel" style="height:14px;width:45%"></span><span class="skel" style="height:10px;width:30%"></span></div>
+        <span class="skel" style="height:4px;width:56px;border-radius:var(--radius-full)"></span>
+        <span class="skel" style="height:12px;width:44px"></span>
+        <span class="skel" style="height:10px;width:56px"></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="legend caption cap">
+      <span>Linha de cima para baixo: feita · não feita (texto gentil, sem vermelho) · agora (selecionada, luz laranja discreta) · próxima · futuras · cotidiana “seg, qua, sex” · carregando.</span>
+      <span>Foco de teclado: anel violet-ink de 2px por dentro da linha; Tab chega à linha e depois ao botão.</span>
+    </div>
+  </section>
+
+  <section class="sec phone">
+    <h2 class="title">Celular (360 px)</h2>
+    <p class="body lead">Passos, duração e estado descem para a segunda linha. O botão de foco é só ícone e fica sempre visível, com 48 px de toque.</p>
+    <div class="card list m" role="listbox" aria-label="Atividades de hoje (compact)">
+      <div class="trow done" role="option" tabindex="0" aria-selected="false" aria-label="07:00, Caminhada, rotina, todo dia, 2 de 2 passos, 30 minutos, feita">
+        <span class="label num time">07:00</span>
+        <div class="main"><span class="title-sm ttl">Caminhada</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>todo dia</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i></div>
+        <span class="caption num dur">30 <small>min</small></span>
+        <span class="caption state"><span class="ms s16">check_circle</span>feita</span>
+        <button class="btn secondary icon act" type="button" aria-label="Rever Caminhada"><span class="ms">replay</span></button>
+      </div>
+      <div class="trow skipped" role="option" tabindex="0" aria-selected="false" aria-label="12:30, Almoço, rotina, todo dia, 45 minutos, não feita">
+        <span class="label num time">12:30</span>
+        <div class="main"><span class="title-sm ttl">Almoço</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>todo dia</span></div></div>
+        <div class="seg mini" aria-hidden="true"></div>
+        <span class="caption num dur">45 <small>min</small></span>
+        <span class="caption state"><span class="ms s16">history</span>não feita</span>
+        <button class="btn secondary icon act" type="button" aria-label="Marcar Almoço como feito"><span class="ms">check</span></button>
+      </div>
+      <div class="trow now" role="option" tabindex="0" aria-selected="false" aria-label="14:00, Estudo de inglês, objetivo Inglês fluente, passo 3 de 5, 60 minutos, agora">
+        <span class="label num time">14:00</span>
+        <div class="main"><span class="title-sm ttl">Estudo de inglês</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-sky)"><i class="gdot" aria-hidden="true"></i><span>Inglês fluente</span></span></div></div>
+        <div class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></div>
+        <span class="caption num dur">60 <small>min</small></span>
+        <span class="overline state"><i aria-hidden="true"></i>AGORA</span>
+        <button class="btn secondary icon act" type="button" aria-label="Continuar Estudo de inglês"><span class="ms">play_arrow</span></button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="15:30, Revisão de código, objetivo Projeto Lume, 0 de 4 passos, 90 minutos, próxima">
+        <span class="label num time">15:30</span>
+        <div class="main"><span class="title-sm ttl">Revisão de código</span><div class="caption meta"><span class="chip xs" style="--gc:var(--goal-violet)"><i class="gdot" aria-hidden="true"></i><span>Projeto Lume</span></span></div></div>
+        <div class="seg mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <span class="caption num dur">90 <small>min</small></span>
+        <span class="caption state">próxima</span>
+        <button class="btn secondary icon act" type="button" aria-label="Entrar em foco em Revisão de código"><span class="ms">play_arrow</span></button>
+      </div>
+      <div class="trow" role="option" tabindex="0" aria-selected="false" aria-label="21:30, Planejar amanhã, rotina, segunda, quarta e sexta, 0 de 3 passos, 15 minutos">
+        <span class="label num time">21:30</span>
+        <div class="main"><span class="title-sm ttl">Planejar amanhã</span><div class="caption meta"><span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>seg, qua, sex</span></div></div>
+        <div class="seg mini" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="caption num dur">15 <small>min</small></span>
+        <span class="caption state"></span>
+        <button class="btn secondary icon act" type="button" aria-label="Entrar em foco em Planejar amanhã"><span class="ms">play_arrow</span></button>
+      </div>
+    </div>
+    <p class="caption cap" style="margin-top:var(--space-8)">Toque na linha abre o detalhe (Sheet); o ícone ▶ vai direto para o Foco.</p>
+  </section>
+</div>
+<script>
+  var html = document.documentElement, tb = document.getElementById('theme');
+  tb.addEventListener('click', function(){ var d = html.getAttribute('data-theme') === 'dark'; html.setAttribute('data-theme', d ? 'light' : 'dark'); tb.setAttribute('aria-pressed', String(d)); });
+  document.querySelectorAll('[role="listbox"]').forEach(function(list){
+    var rows = list.querySelectorAll('.trow[role="option"]');
+    function select(r){ rows.forEach(function(o){ o.setAttribute('aria-selected', String(o === r)); }); }
+    rows.forEach(function(r){
+      r.addEventListener('click', function(e){ if (e.target.closest('.act')) return; select(r); });
+      r.addEventListener('keydown', function(e){
+        if (e.target !== r) return;
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(r); }
+        if (e.key === 'ArrowDown' && r.nextElementSibling && r.nextElementSibling.matches('[role="option"]')) { e.preventDefault(); r.nextElementSibling.focus(); }
+        if (e.key === 'ArrowUp' && r.previousElementSibling && r.previousElementSibling.matches('[role="option"]')) { e.preventDefault(); r.previousElementSibling.focus(); }
+      });
+    });
+  });
+</script>
+</body>
+</html>
