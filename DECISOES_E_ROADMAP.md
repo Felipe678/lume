@@ -120,6 +120,15 @@ Ordem aprovada: E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 (detalhes na
 - **Efeito sobre decisões anteriores:** a D9 (paleta) será substituída; a D2 (tema claro e escuro) continua valendo, e o tema claro definitivo agora faz parte deste trabalho (LUME-23).
 - **Novo modelo de domínio de Tempo** (LUME-82): Atividade (cotidiana ou de objetivo), Passo com estimativa, Anotação e consistência. O Modo Foco v2 vira "foco absoluto" (LUME-84), com encerramento próprio (LUME-85).
 
+### D13 — n8n como orquestrador, IA possível, DS fiel e time multiagente (2026-11-11) · 🟡 em implantação
+- **n8n entra na arquitetura** como orquestrador, convivendo com a D1 (Quarkus continua sendo o núcleo do produto). Estrutura **única e ampla**, ao contrário do hyper-project (dezenas de workflows soltos): dois workflows mestres, um subworkflow `_core` e um painel de estado, versionados em `automations/` e hospedados localmente por `infra/n8n/` (Docker).
+  - **Orquestrador de desenvolvimento:** um canvas em raias (Jira → Plano → Aprovação → Implementação → QA → Segurança → Review → Commit/PR → Registro → Concluída, mais Pausa/Bloqueio). Os hooks do Claude Code enviam eventos ao webhook `POST /webhook/lume-dev-evento`; o histórico de execuções é a trilha visual de cada desenvolvimento.
+  - **Orquestrador de produto:** um canvas com um ramo por módulo do ERP (Tempo, Saúde, Finanças, Patrimônio, Documentos, Visão da vida), desenhado e documentado, nascendo desativado.
+  - **Painel de estado:** página em `/webhook/lume-painel` com o estado atual de cada tarefa e a linha do tempo.
+- **IA em funcionalidades dinâmicas é possível**, ainda sem especificação. Quando vier, passa por `dev-ia-produto`, `seg-privacidade-dpo` e `produto`, com guardrails: nunca recomendar dose, dados de saúde sensíveis (LGPD art. 11), sem gatilhos de vício, pró-humano, consentimento e auditoria. Frameworks como CrewAI, LangGraph e AutoGen foram avaliados e **descartados** para o time de desenvolvimento (o Claude Code já orquestra); para o produto, a preferência é a API do Claude direto.
+- **Fidelidade ao Design System v2 "brasa" (D12):** todo trabalho visual segue o DS; desvio é pendência explícita, nunca silencioso (skill `ds-fidelidade`). O artefato do DS não pôde ser lido na sessão de 11/11 (acesso negado); os agentes usam o que está no código e na D12 até o Felipe compartilhar o artefato.
+- **Time multiagente obrigatório:** todo desenvolvimento é dimensionado em partes com agentes de escopo de arquivos exclusivo; a sessão principal despacha e subagente não chama subagente. Estrutura `.claude/` replicada do hyper-project de forma adaptada (25 agentes, skills, workflows, hooks), sem clientes, tenants, reservas nem duas contas.
+
 ### Restrições de produto já definidas
 - **Dados de saúde são sensíveis (LGPD, art. 11):** exigem criptografia, consentimento explícito e trilha de auditoria.
 - **O app registra doses, nunca recomenda dose.** Vale para canetas (Mounjaro/tirzepatida) e qualquer medicamento.
