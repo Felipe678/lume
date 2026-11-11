@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:lume/core/theme/app_colors.dart';
+import 'package:lume/core/theme/app_motion_scope.dart';
 import 'package:lume/core/theme/app_palette.dart';
 import 'package:lume/core/widgets/brand_logo.dart';
 
@@ -88,9 +89,13 @@ class AppTopBar extends StatelessWidget {
   void _openModules(BuildContext buttonContext) {
     final box = buttonContext.findRenderObject()! as RenderBox;
     final anchor = box.localToGlobal(Offset.zero) & box.size;
-    Navigator.of(
-      buttonContext,
-    ).push(ModulesMenuRoute(anchor: anchor, currentPath: AppNavigation.currentPath(buttonContext)));
+    Navigator.of(buttonContext).push(
+      ModulesMenuRoute(
+        anchor: anchor,
+        currentPath: AppNavigation.currentPath(buttonContext),
+        reduced: AppMotionScope.of(buttonContext).reduced,
+      ),
+    );
   }
 
   Widget _action(IconData icon, String tooltip, AppColors colors, {VoidCallback? onPressed}) {

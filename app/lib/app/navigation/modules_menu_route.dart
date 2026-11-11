@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:lume/core/theme/app_motion.dart';
+
 import 'modules_menu_panel.dart';
 
 /// Menu suspenso ancorado no botão de módulos: abre com fade + escala a partir do canto do botão.
@@ -13,7 +15,10 @@ class ModulesMenuRoute extends PopupRoute<void> {
   final Rect anchor;
   final String? currentPath;
 
-  ModulesMenuRoute({required this.anchor, required this.currentPath});
+  /// Movimento reduzido: o menu abre e fecha só com fade curto.
+  final bool reduced;
+
+  ModulesMenuRoute({required this.anchor, required this.currentPath, required this.reduced});
 
   @override
   Color? get barrierColor => Colors.black.withValues(alpha: 0.25);
@@ -25,10 +30,10 @@ class ModulesMenuRoute extends PopupRoute<void> {
   String? get barrierLabel => 'Fechar menu de módulos';
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 220);
+  Duration get transitionDuration => reduced ? AppMotion.instant : AppMotion.base;
 
   @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 160);
+  Duration get reverseTransitionDuration => reduced ? AppMotion.instant : AppMotion.exit;
 
   @override
   Widget buildPage(
@@ -67,9 +72,10 @@ class ModulesMenuRoute extends PopupRoute<void> {
   ) {
     final curved = CurvedAnimation(
       parent: animation,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
+      curve: AppMotion.easeOut,
+      reverseCurve: AppMotion.easeIn,
     );
+    if (reduced) return FadeTransition(opacity: curved, child: child);
     return FadeTransition(
       opacity: curved,
       child: ScaleTransition(

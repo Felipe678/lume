@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lume/app/lume_app.dart';
 import 'package:lume/app/navigation/app_routes.dart';
 import 'package:lume/app/navigation/modules_menu_panel.dart';
+import 'package:lume/core/theme/app_motion.dart';
 import 'package:lume/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:lume/features/time/presentation/pages/time_page.dart';
 
@@ -146,6 +147,126 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DashboardPage), findsOneWidget);
+    });
+  });
+
+  group('Menu de módulos com reduzir movimento', () {
+    void reduce(WidgetTester tester) {
+      tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+        disableAnimations: true,
+      );
+      addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    }
+
+    Finder aboveMenu(Type t) =>
+        find.ancestor(of: find.byType(ModulesMenuPanel), matching: find.byType(t));
+
+    // Abre pela barra (o AppTopBar lê o escopo), nunca instanciando a rota à mão.
+    Future<void> openByBar(WidgetTester tester) async {
+      await tester.tap(find.byTooltip('Módulos'));
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+    }
+
+    Future<void> setUpReduced(WidgetTester tester, [Size size = const Size(1440, 900)]) async {
+      setScreen(tester, size);
+      reduce(tester);
+      await tester.pumpWidget(const LumeApp());
+    }
+
+    testWidgets('abre opaco em instant, só com fade', (tester) async {
+      await setUpReduced(tester);
+      await openByBar(tester);
+
+      expect(find.byType(ModulesMenuPanel), findsOneWidget);
+      final fade = tester.widget<FadeTransition>(aboveMenu(FadeTransition).first);
+      expect(fade.opacity.value, 1);
+      expect(aboveMenu(ScaleTransition), findsNothing);
+      expect(aboveMenu(SlideTransition), findsNothing);
+    });
+
+    testWidgets('fecha com Esc em no máximo instant', (tester) async {
+      await setUpReduced(tester);
+      await openByBar(tester);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+
+      expect(find.byType(ModulesMenuPanel), findsNothing);
+      expect(tester.binding.hasScheduledFrame, isFalse);
+    });
+
+    testWidgets('fecha ao tocar fora em no máximo instant', (tester) async {
+      await setUpReduced(tester);
+      await openByBar(tester);
+
+      await tester.tapAt(const Offset(40, 800));
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+
+      expect(find.byType(ModulesMenuPanel), findsNothing);
+    });
+
+    testWidgets('fecha com Voltar em no máximo instant', (tester) async {
+      await setUpReduced(tester);
+      await openByBar(tester);
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+
+      expect(find.byType(ModulesMenuPanel), findsNothing);
+    });
+
+    testWidgets('escolher um módulo fecha o menu em instant e navega', (tester) async {
+      await setUpReduced(tester);
+      await openByBar(tester);
+
+      await tester.tap(_inMenu('Tempo e objetivos'));
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+
+      expect(find.byType(ModulesMenuPanel), findsNothing);
+      await tester.pumpAndSettle();
+      expect(find.byType(TimePage), findsOneWidget);
+    });
+
+    testWidgets('a 320 px e fonte 1,3x não estoura o layout', (tester) async {
+      await setUpReduced(tester, const Size(320, 640));
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pump();
+      await openByBar(tester);
+
+      final panel = tester.getRect(find.byType(ModulesMenuPanel));
+      expect(panel.left, greaterThanOrEqualTo(0));
+      expect(panel.right, lessThanOrEqualTo(320));
+      expect(panel.bottom, lessThanOrEqualTo(640));
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('Menu de módulos em movimento normal', () {
+    testWidgets('anima com escala e fecha em exit, não em instant', (tester) async {
+      setScreen(tester, const Size(1440, 900));
+      await tester.pumpWidget(const LumeApp());
+      await _openMenu(tester);
+
+      expect(
+        find.ancestor(of: find.byType(ModulesMenuPanel), matching: find.byType(ScaleTransition)),
+        findsWidgets,
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      await tester.pump(AppMotion.instant);
+      expect(find.byType(ModulesMenuPanel), findsOneWidget);
+
+      await tester.pump(AppMotion.exit - AppMotion.instant);
+      // O overlay sai da árvore no frame seguinte ao fim da animação (um frame de 16 ms).
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(find.byType(ModulesMenuPanel), findsNothing);
     });
   });
 }
