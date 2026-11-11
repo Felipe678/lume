@@ -1,0 +1,2391 @@
+{
+  "name": "Lume · Orquestrador de desenvolvimento",
+  "id": "lumeDev000000001",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Raia 12 · Bloqueios\nFalha ou bloqueio em qualquer etapa. Classifica pelo subworkflow de erro (_core › tratar_erro) e notifica. O estado já foi gravado; a tarefa aparece em \"Precisa de atenção\" no painel.",
+        "height": 260,
+        "width": 1100,
+        "color": 1
+      },
+      "id": "6d4f7c83-5ff0-4bed-a8b8-197ba1ab3303",
+      "name": "Nota · Raia 12 · Bloqueios",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        4030
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Pós-registro\nDepois de gravar, o fluxo decide o que mais fazer: falha ou bloqueio segue para a raia Bloqueios; conclusão da tarefa notifica.",
+        "height": 420,
+        "width": 1100,
+        "color": 3
+      },
+      "id": "e8fcad44-2436-4212-a5c4-ca457b6b2299",
+      "name": "Nota · Pós-registro",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Registro comum\nTodas as etapas passam por aqui: grava `tarefas` e acrescenta em `eventos` (via _core).",
+        "height": 340,
+        "width": 420,
+        "color": 1
+      },
+      "id": "74123670-4f4c-4c71-a8b4-67cfe7268b52",
+      "name": "Nota · Registro comum",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        2075
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 11 · Pausa\nTrabalho parado de propósito (não é falha).",
+        "height": 230,
+        "width": 1460,
+        "color": 2
+      },
+      "id": "e50b1cc0-d263-495d-ada3-358ce750e163",
+      "name": "Nota · Raia 11 · Pausa",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        3760
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 10 · Concluída\nTarefa encerrada; notifica a conclusão.",
+        "height": 230,
+        "width": 1460,
+        "color": 3
+      },
+      "id": "8d02e3ca-ec46-4813-a6dc-069c4dbcab24",
+      "name": "Nota · Raia 10 · Concluída",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        3510
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 9 · Registro no Jira\nComentário e transição da tarefa no Jira.",
+        "height": 230,
+        "width": 1460,
+        "color": 4
+      },
+      "id": "ea6a36af-9986-4d26-ad30-2a3494ebe438",
+      "name": "Nota · Raia 9 · Registro no Jira",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        3260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 8 · Commit e PR\nCommit na branch e abertura do pull request.",
+        "height": 350,
+        "width": 1460,
+        "color": 6
+      },
+      "id": "7ec08bb1-53cb-45d5-af43-87cf9c9cbc09",
+      "name": "Nota · Raia 8 · Commit e PR",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        2890
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 7 · Review\nRevisão de código antes de consolidar.",
+        "height": 230,
+        "width": 1460,
+        "color": 5
+      },
+      "id": "df89f4b7-eb9e-40d0-a014-33459a64c6db",
+      "name": "Nota · Raia 7 · Review",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        2640
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 6 · Segurança\nRevisão de segurança e privacidade (LGPD art. 11 em dados de saúde).",
+        "height": 230,
+        "width": 1460,
+        "color": 7
+      },
+      "id": "d64fd656-cb23-4281-af9c-36edd87e8fa2",
+      "name": "Nota · Raia 6 · Segurança",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        2390
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 5 · QA\nTestes, cobertura e verificação do critério de pronto.",
+        "height": 230,
+        "width": 1460,
+        "color": 2
+      },
+      "id": "89902e11-a091-4961-a1b1-f74fc963a145",
+      "name": "Nota · Raia 5 · QA",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        2140
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 4 · Implementação\nCada agente implementa a sua parte: backend, frontend, design system, devops e IA.",
+        "height": 830,
+        "width": 1460,
+        "color": 3
+      },
+      "id": "1c7a3002-7cea-48e9-a566-38083558cf36",
+      "name": "Nota · Raia 4 · Implementação",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        1290
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 3 · Aprovação\nO plano só avança com aprovação explícita do Felipe.",
+        "height": 230,
+        "width": 1460,
+        "color": 4
+      },
+      "id": "e8f81c9a-e1a0-4967-a754-7b15de17c6f0",
+      "name": "Nota · Raia 3 · Aprovação",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 2 · Plano\nDois agentes planejam: dev-techlead (desenho) e dev-edge-cases (casos de borda).",
+        "height": 350,
+        "width": 1460,
+        "color": 6
+      },
+      "id": "c9b7637f-ea39-4919-a99b-fd534c4a1d4f",
+      "name": "Nota · Raia 2 · Plano",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        670
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Raia 1 · Jira\nA tarefa nasce ou é lida no Jira (LUME-n). O resumo deste evento vira o título no painel.",
+        "height": 230,
+        "width": 1460,
+        "color": 5
+      },
+      "id": "bb5494fe-36ff-4957-a9f8-49552e5d6b56",
+      "name": "Nota · Raia 1 · Jira",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1740,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Entrada · evento do desenvolvimento\nTodo agente do time avisa aqui, por `POST /webhook/lume-dev-evento`, com o cabeçalho `X-Lume-Token` (credencial `lume-token`).\nCorpo: `{tarefa, etapa, agente, status, resumo, sessao, ts}`.\nResponde `200 {\"ok\":true}` logo, depois valida e roteia.",
+        "height": 520,
+        "width": 1900,
+        "color": 7
+      },
+      "id": "626cdb50-d9f6-448d-a155-66e7db654d6f",
+      "name": "Nota · Entrada · evento do desenvolvimento",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lume-dev-evento",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "94f90dee-3151-4f69-abfe-5dd650ea05c2",
+      "name": "Webhook de eventos",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        100
+      ],
+      "webhookId": "f3546fd3-527b-47ec-a816-92ba1ab3d6a9",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "lume-token",
+          "name": "lume-token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "tk1",
+              "leftValue": "={{ $json.headers[\"x-lume-token\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4271034d-e12a-4f96-a114-90e03430aa66",
+      "name": "Token presente no cabeçalho?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "1a56ff6a-f662-4035-a57c-aeab0ad70f6a",
+      "name": "Responder 200 rápido",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"erro\": \"token ausente\" } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "71445c0e-59a3-45f4-af44-810aad1f114f",
+      "name": "Responder 401 sem token",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23ee694f-ff9a-47a4",
+              "name": "operacao",
+              "value": "normalizar_evento",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "48848048-20dd-4ef0-af7f-7fd3498b2ce5",
+      "name": "Preparar: normalizar evento",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "bef0ccec-d981-41c7-a4dc-a37b6ff81f48",
+      "name": "Normalizar evento (_core)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "v1",
+              "leftValue": "={{ $json.valido }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "44912625-8801-4059-a979-59f440102bbd",
+      "name": "Evento válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b119ff24-e7e8-4cb8",
+              "name": "operacao",
+              "value": "tratar_erro",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3a7327be-8e30-4622-a581-9e6ea5acd258",
+      "name": "Preparar: descartar evento",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "42e23416-bbea-44c3-a5e7-2d437aa64e08",
+      "name": "Descartar evento inválido (_core)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1560,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "39e2a97e-803c-4dad",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "jira",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jira"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "629c141c-5e90-489c",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "plano",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "plano"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f4f9f809-cb8c-4c41",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "aprovado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "aprovado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b47a28ef-1557-48f6",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "implementacao",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "implementacao"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "38228722-8856-48dd",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "qa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "qa"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "48db46ab-0fc8-469d",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "seguranca",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "seguranca"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1c774f64-67b2-4ba1",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "review",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "review"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3a0913f0-6efa-4c39",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "commit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "commit"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1b90f647-960e-4997",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "pr",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pr"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5417ef07-76d0-410c",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "registro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "registro"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "94fd91dc-b38f-4344",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "concluida",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "concluida"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f606fb3c-541c-4de8",
+                    "leftValue": "={{ $json.etapa }}",
+                    "rightValue": "pausada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pausada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2dcf3219-5606-46ac-ab82-ded8d63e4369",
+      "name": "Rotear por etapa",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1560,
+        2155
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "8099da73-bfc2-41ea",
+              "name": "raia",
+              "value": "Jira",
+              "type": "string"
+            },
+            {
+              "id": "7bb60186-d6de-4871",
+              "name": "ordem",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "422c8de4-724d-47d9-aa04-9041e4d6617a",
+      "name": "1 · Jira — tarefa lida",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        510
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1cc1654e-d2aa-4727",
+              "leftValue": "={{ $json.agente_curto }}",
+              "rightValue": "edge-cases",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e98fd730-3d37-4704-aa0c-8a84073f61e3",
+      "name": "Plano: quem planeja?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1950,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "7dcfcd2e-2ce6-4d95",
+              "name": "raia",
+              "value": "Plano",
+              "type": "string"
+            },
+            {
+              "id": "2813358c-318b-482c",
+              "name": "ordem",
+              "value": 2,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c569466f-1caa-4922-a00f-7693f80d5705",
+      "name": "2 · Plano — dev-techlead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "7dcfcd2e-2ce6-4d95",
+              "name": "raia",
+              "value": "Plano",
+              "type": "string"
+            },
+            {
+              "id": "2813358c-318b-482c",
+              "name": "ordem",
+              "value": 2,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "8bbd4e75-1d02-4530-ae73-95a9f6af8d1e",
+      "name": "2 · Plano — dev-edge-cases",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "57c3dcbb-d034-439b",
+              "name": "raia",
+              "value": "Aprovação",
+              "type": "string"
+            },
+            {
+              "id": "99fb00cd-9b37-4c5c",
+              "name": "ordem",
+              "value": 3,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "d2eb0c60-0154-4e82-a558-cfd41a10b029",
+      "name": "3 · Aprovação — plano aprovado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1130
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7d896f20-7943-4910",
+                    "leftValue": "={{ $json.agente_curto }}",
+                    "rightValue": "backend",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "backend"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ab35227d-eb0b-4d65",
+                    "leftValue": "={{ $json.agente_curto }}",
+                    "rightValue": "frontend",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "frontend"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6f22a0be-d815-42d3",
+                    "leftValue": "={{ $json.agente_curto }}",
+                    "rightValue": "ds",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ds"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "754ae821-a141-49e8",
+                    "leftValue": "={{ $json.agente_curto }}",
+                    "rightValue": "devops",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devops"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f1d78c6b-5b60-455a",
+                    "leftValue": "={{ $json.agente_curto }}",
+                    "rightValue": "ia",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ia"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "ac5f3985-15d2-4d5c-a4d6-7d0950586805",
+      "name": "Implementação: qual agente?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1950,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e0cbfb2a-6b5b-412d-af13-91422c5f556b",
+      "name": "4 · Implementação — backend",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "0839c3e6-d167-4f2b-a22f-ceda5dd0d522",
+      "name": "4 · Implementação — frontend",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a5047978-7acd-42a4-a93b-7fb7bf69ccc2",
+      "name": "4 · Implementação — design system",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1620
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "6606134d-e444-49d2-ae88-21f132b7f1a0",
+      "name": "4 · Implementação — devops",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1740
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ccb9da89-8de6-4b25-a234-6025f1d04e66",
+      "name": "4 · Implementação — IA",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1860
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "f8527feb-b4d7-449a",
+              "name": "raia",
+              "value": "Implementação",
+              "type": "string"
+            },
+            {
+              "id": "eb1b4449-22de-4c68",
+              "name": "ordem",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "1ffc1e7a-1f9e-4176-a8df-f09daf18b135",
+      "name": "4 · Implementação — outro agente",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        1980
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "2d7a5f23-3579-4386",
+              "name": "raia",
+              "value": "QA",
+              "type": "string"
+            },
+            {
+              "id": "ca1ba72b-bbcb-434c",
+              "name": "ordem",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "46b02ca5-004b-48b6-a696-16e8847aa5c1",
+      "name": "5 · QA — testes e critério de pronto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        2230
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "76ed81b4-c92c-40dc",
+              "name": "raia",
+              "value": "Segurança",
+              "type": "string"
+            },
+            {
+              "id": "f07d87e6-73e9-4bb5",
+              "name": "ordem",
+              "value": 6,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "29085fc3-bac3-46eb-aaec-b7e99091376d",
+      "name": "6 · Segurança — revisão",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        2480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "4b3136fd-364f-4cea",
+              "name": "raia",
+              "value": "Review",
+              "type": "string"
+            },
+            {
+              "id": "7320b08b-8c89-4cc0",
+              "name": "ordem",
+              "value": 7,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ef7a97e8-fde2-427d-a960-a697554812e5",
+      "name": "7 · Review — revisão de código",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        2730
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "65019c31-ff35-471e",
+              "name": "raia",
+              "value": "Commit",
+              "type": "string"
+            },
+            {
+              "id": "9dfe7c33-645c-4046",
+              "name": "ordem",
+              "value": 8,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "cce21db7-91f1-4836-ae1f-8fd8bb609d1f",
+      "name": "8 · Commit — alterações salvas",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        2980
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "6e72da83-1b4f-489f",
+              "name": "raia",
+              "value": "Pull request",
+              "type": "string"
+            },
+            {
+              "id": "9dfe7c33-645c-4046",
+              "name": "ordem",
+              "value": 8,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "0b04cb3f-3d17-4b1e-a1db-a0c329e40df4",
+      "name": "8 · PR — pull request aberto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        3100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "7bbd89f6-5443-4633",
+              "name": "raia",
+              "value": "Registro",
+              "type": "string"
+            },
+            {
+              "id": "3eb403ce-a7bb-4406",
+              "name": "ordem",
+              "value": 9,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "cd19e51a-51ac-4da3-a052-994444d0e7ab",
+      "name": "9 · Registro — Jira atualizado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        3350
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "6be9bf1b-42aa-444d",
+              "name": "raia",
+              "value": "Concluída",
+              "type": "string"
+            },
+            {
+              "id": "e2672301-cdd7-480c",
+              "name": "ordem",
+              "value": 10,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a0d5373c-a779-42cc-add9-ad036d4c8f62",
+      "name": "10 · Concluída — tarefa encerrada",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b79aabfc-5cd4-4b92",
+              "name": "operacao",
+              "value": "registrar_estado",
+              "type": "string"
+            },
+            {
+              "id": "8fc92d89-aa8a-45de",
+              "name": "raia",
+              "value": "Pausa",
+              "type": "string"
+            },
+            {
+              "id": "0e56c1cb-98a0-4837",
+              "name": "ordem",
+              "value": 11,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "52122c42-6c20-4589-a3e4-5bae9898d954",
+      "name": "11 · Pausa — tarefa pausada",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2300,
+        3850
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "30cd6af7-3467-4761-a4e6-8a055ccf457e",
+      "name": "Registrar estado",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3300,
+        2175
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cabd56cd-1563-4151",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "falhou",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c2f10427-da0d-4ebe",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "bloqueada",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "45bc5262-4049-423b-a9f3-e8d3fae7596e",
+      "name": "Falhou ou bloqueou?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3700,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "94fd91dc-b38f-4344",
+              "leftValue": "={{ $json.etapa }}",
+              "rightValue": "concluida",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "e9f77ac2-55de-4509",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "concluida",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a2e65fe7-4f69-4552-a816-9aebd83186c7",
+      "name": "Tarefa concluída?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4000,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e162eda1-c090-47c4",
+              "name": "operacao",
+              "value": "notificar",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "edd5a6a8-733d-4dea-a8ee-83f1b6fff78b",
+      "name": "Preparar: notificar conclusão",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4300,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "d36a8728-5751-4981-a4ea-5092135d03f4",
+      "name": "Notificar conclusão (_core)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        460
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "353059d7-37a0-43e2-aec5-76b09c770006",
+      "name": "Fim do evento",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4300,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b119ff24-e7e8-4cb8",
+              "name": "operacao",
+              "value": "tratar_erro",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3fa5f7c5-07fb-4b76-a401-0715393ac9e5",
+      "name": "Preparar: tratar bloqueio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3700,
+        4130
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "57e7c590-b891-4b34-a7a5-335327ec3c64",
+      "name": "Tratar bloqueio (_core)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3960,
+        4130
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e162eda1-c090-47c4",
+              "name": "operacao",
+              "value": "notificar",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "24b3dd43-e5a7-4cc0-ac38-7536250bd94f",
+      "name": "Preparar: notificar bloqueio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4220,
+        4130
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lumeCore00000001",
+          "mode": "list",
+          "cachedResultName": "Lume · Núcleo (_core)"
+        },
+        "options": {}
+      },
+      "id": "423cef23-06d8-488a-a872-4de3fa2a5dfc",
+      "name": "Notificar bloqueio (_core)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4480,
+        4130
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook de eventos": {
+      "main": [
+        [
+          {
+            "node": "Token presente no cabeçalho?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token presente no cabeçalho?": {
+      "main": [
+        [
+          {
+            "node": "Responder 200 rápido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 401 sem token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder 200 rápido": {
+      "main": [
+        [
+          {
+            "node": "Preparar: normalizar evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar: normalizar evento": {
+      "main": [
+        [
+          {
+            "node": "Normalizar evento (_core)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar evento (_core)": {
+      "main": [
+        [
+          {
+            "node": "Evento válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento válido?": {
+      "main": [
+        [
+          {
+            "node": "Rotear por etapa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar: descartar evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar: descartar evento": {
+      "main": [
+        [
+          {
+            "node": "Descartar evento inválido (_core)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1 · Jira — tarefa lida": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 · Plano — dev-techlead": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 · Plano — dev-edge-cases": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plano: quem planeja?": {
+      "main": [
+        [
+          {
+            "node": "2 · Plano — dev-edge-cases",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2 · Plano — dev-techlead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3 · Aprovação — plano aprovado": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — backend": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — frontend": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — design system": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — devops": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — IA": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4 · Implementação — outro agente": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Implementação: qual agente?": {
+      "main": [
+        [
+          {
+            "node": "4 · Implementação — backend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4 · Implementação — frontend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4 · Implementação — design system",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4 · Implementação — devops",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4 · Implementação — IA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "4 · Implementação — outro agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5 · QA — testes e critério de pronto": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6 · Segurança — revisão": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7 · Review — revisão de código": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8 · Commit — alterações salvas": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8 · PR — pull request aberto": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9 · Registro — Jira atualizado": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10 · Concluída — tarefa encerrada": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11 · Pausa — tarefa pausada": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rotear por etapa": {
+      "main": [
+        [
+          {
+            "node": "1 · Jira — tarefa lida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Plano: quem planeja?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "3 · Aprovação — plano aprovado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Implementação: qual agente?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "5 · QA — testes e critério de pronto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "6 · Segurança — revisão",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "7 · Review — revisão de código",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "8 · Commit — alterações salvas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "8 · PR — pull request aberto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "9 · Registro — Jira atualizado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "10 · Concluída — tarefa encerrada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "11 · Pausa — tarefa pausada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar estado": {
+      "main": [
+        [
+          {
+            "node": "Falhou ou bloqueou?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Falhou ou bloqueou?": {
+      "main": [
+        [
+          {
+            "node": "Preparar: tratar bloqueio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tarefa concluída?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tarefa concluída?": {
+      "main": [
+        [
+          {
+            "node": "Preparar: notificar conclusão",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fim do evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar: notificar conclusão": {
+      "main": [
+        [
+          {
+            "node": "Notificar conclusão (_core)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar: tratar bloqueio": {
+      "main": [
+        [
+          {
+            "node": "Tratar bloqueio (_core)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tratar bloqueio (_core)": {
+      "main": [
+        [
+          {
+            "node": "Preparar: notificar bloqueio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar: notificar bloqueio": {
+      "main": [
+        [
+          {
+            "node": "Notificar bloqueio (_core)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {
+    "Webhook de eventos": [
+      {
+        "json": {
+          "headers": {
+            "x-lume-token": "<definido-na-credencial>"
+          },
+          "body": {
+            "tarefa": "LUME-0",
+            "etapa": "plano",
+            "agente": "dev-techlead",
+            "status": "iniciada",
+            "resumo": "Exemplo para teste manual",
+            "sessao": "exemplo",
+            "ts": "2026-01-01T12:00:00Z"
+          }
+        }
+      }
+    ]
+  },
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

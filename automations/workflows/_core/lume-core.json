@@ -1,0 +1,301 @@
+{
+  "name": "Lume · Núcleo (_core)",
+  "id": "lumeCore00000001",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Núcleo (_core)\nSubworkflow único com os blocos reutilizados pelos mestres e pelo painel.\n\nEntrada: um item com o campo `operacao`:\n- `normalizar_evento`: valida o contrato do evento\n- `registrar_estado`: grava tarefa e evento\n- `tratar_erro`: descarta evento inválido ou gera alerta de falha/bloqueio\n- `notificar`: monta a mensagem (ponto de extensão para Slack/e-mail)\n- `ler_estado`: devolve tarefas, eventos e contadores ao painel\n\nArmazenamento: static data deste workflow (ver README). Para adicionar uma operação: nova saída no roteador + um nó de código.",
+        "height": 420,
+        "width": 640,
+        "color": 4
+      },
+      "id": "5ac35d47-e0e2-4286-a2d3-b0d5a14e98d6",
+      "name": "Nota · Núcleo (_core)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "d0a7810e-3e86-4ee1-ae81-a6b324197f0e",
+      "name": "Quando outro fluxo chamar",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fed76411-26fe-41c5",
+                    "leftValue": "={{ $json.operacao }}",
+                    "rightValue": "normalizar_evento",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "normalizar_evento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e1615dcb-4484-4540",
+                    "leftValue": "={{ $json.operacao }}",
+                    "rightValue": "registrar_estado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "registrar_estado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6f2f0dbf-d9fd-4e00",
+                    "leftValue": "={{ $json.operacao }}",
+                    "rightValue": "tratar_erro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tratar_erro"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "caf93b9c-61c2-4155",
+                    "leftValue": "={{ $json.operacao }}",
+                    "rightValue": "notificar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "notificar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b9ed39a9-f2a3-45fe",
+                    "leftValue": "={{ $json.operacao }}",
+                    "rightValue": "ler_estado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ler_estado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4428ca0-0e92-43d7-a67f-7da505ecec97",
+      "name": "Qual operação?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        300,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Núcleo · Normalizar evento: valida o contrato {tarefa, etapa, agente, status, resumo, sessao, ts}.\nconst ETAPAS = ['jira', 'plano', 'aprovado', 'implementacao', 'qa', 'seguranca', 'review', 'commit', 'pr', 'registro', 'concluida', 'pausada'];\nconst STATUS = ['iniciada', 'concluida', 'falhou', 'bloqueada'];\nconst limpar = (v, max) => String(v === undefined || v === null ? '' : v).replace(/[\\u0000-\\u001f\\u007f]/g, ' ').trim().slice(0, max);\n\nconst saida = [];\nfor (const item of $input.all()) {\n  const j = item.json || {};\n  const b = (j.body && typeof j.body === 'object') ? j.body : ((j.evento && typeof j.evento === 'object') ? j.evento : j);\n  const erros = [];\n\n  const tarefa = limpar(b.tarefa, 40);\n  if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,39}$/.test(tarefa)) erros.push('tarefa ausente ou inválida');\n\n  const etapa = limpar(b.etapa, 24).toLowerCase();\n  if (!ETAPAS.includes(etapa)) erros.push('etapa fora do contrato: ' + (etapa || 'vazia'));\n\n  const status = limpar(b.status, 16).toLowerCase();\n  if (!STATUS.includes(status)) erros.push('status fora do contrato: ' + (status || 'vazio'));\n\n  const agente = limpar(b.agente, 60).toLowerCase() || 'orquestrador';\n  const agente_curto = agente.replace(/^dev-/, '');\n  const resumo = limpar(b.resumo, 400);\n  const sessao = limpar(b.sessao, 80);\n\n  let ts = new Date().toISOString();\n  if (b.ts !== undefined && b.ts !== null && b.ts !== '') {\n    const t = typeof b.ts === 'number' ? b.ts : Date.parse(String(b.ts));\n    if (Number.isFinite(t)) ts = new Date(t).toISOString();\n    else erros.push('ts inválido');\n  }\n\n  saida.push({ json: { operacao: 'normalizar_evento', tarefa, etapa, agente, agente_curto, status, resumo, sessao, ts, valido: erros.length === 0, erros } });\n}\nreturn saida;\n"
+      },
+      "id": "9c04491b-f430-4d45-ac19-76e9a59d091f",
+      "name": "Normalizar evento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Núcleo · Registrar estado e evento.\n// Armazenamento: static data do próprio _core (compartilhado entre os mestres e o painel, que sempre passam por aqui).\n// Estruturas: tarefas { [tarefa]: {tarefa, titulo, etapa, agente, status, atualizado_em} } e eventos [ {ts, tarefa, etapa, agente, status, resumo} ].\nconst MAX_EVENTOS = 500;\nconst MAX_TAREFAS = 200;\nconst est = $getWorkflowStaticData('global');\nest.tarefas = est.tarefas || {};\nest.eventos = est.eventos || [];\n\nconst saida = [];\nfor (const item of $input.all()) {\n  const e = item.json;\n  if (e.valido === false) { saida.push(item); continue; }\n  const t = est.tarefas[e.tarefa] || { tarefa: e.tarefa, titulo: '', etapa: e.etapa, agente: e.agente, status: e.status, atualizado_em: '' };\n  if (!t.titulo && e.etapa === 'jira' && e.resumo) t.titulo = e.resumo.slice(0, 120);\n  // Eventos fora de ordem entram no histórico, mas não rebaixam o estado atual.\n  if (!t.atualizado_em || e.ts >= t.atualizado_em) {\n    t.etapa = e.etapa; t.agente = e.agente; t.status = e.status; t.atualizado_em = e.ts; t.sessao = e.sessao;\n  }\n  est.tarefas[e.tarefa] = t;\n  est.eventos.push({ ts: e.ts, tarefa: e.tarefa, etapa: e.etapa, agente: e.agente, status: e.status, resumo: e.resumo });\n  saida.push({ json: { ...e, registrado: true } });\n}\nif (est.eventos.length > MAX_EVENTOS) est.eventos.splice(0, est.eventos.length - MAX_EVENTOS);\nconst ids = Object.keys(est.tarefas);\nif (ids.length > MAX_TAREFAS) {\n  ids.sort((a, b) => String(est.tarefas[a].atualizado_em).localeCompare(String(est.tarefas[b].atualizado_em)));\n  for (const id of ids.slice(0, ids.length - MAX_TAREFAS)) delete est.tarefas[id];\n}\nreturn saida;\n"
+      },
+      "id": "bc239e1c-0340-496e-ae67-7948e5bcba9a",
+      "name": "Registrar estado e evento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Núcleo · Tratar erro: classifica o problema e guarda um rastro curto.\n// Evento inválido vai para \"descartados\" (nunca entra em tarefas/eventos). Falha/bloqueio vira alerta.\nconst est = $getWorkflowStaticData('global');\nest.descartados = est.descartados || [];\nconst agora = new Date().toISOString();\nconst saida = [];\nfor (const item of $input.all()) {\n  const e = item.json;\n  if (e.valido === false) {\n    est.descartados.push({ ts: agora, motivo: (e.erros || []).join('; ').slice(0, 300) });\n    saida.push({ json: { ...e, alerta: { nivel: 'aviso', mensagem: 'Evento descartado: ' + (e.erros || []).join('; ') } } });\n  } else {\n    const nivel = e.status === 'falhou' ? 'erro' : 'atencao';\n    const verbo = e.status === 'falhou' ? 'falhou' : 'ficou bloqueada';\n    saida.push({ json: { ...e, alerta: { nivel, mensagem: 'A tarefa ' + e.tarefa + ' ' + verbo + ' na etapa ' + e.etapa + ' (' + e.agente + '). ' + (e.resumo || '') } } });\n  }\n}\nif (est.descartados.length > 50) est.descartados.splice(0, est.descartados.length - 50);\nreturn saida;\n"
+      },
+      "id": "c8cca442-8634-4f58-a44d-c68f69270b72",
+      "name": "Tratar erro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Núcleo · Notificar. Hoje só monta a mensagem (canal \"painel\").\n// PONTO DE EXTENSÃO: ligar aqui Slack, e-mail ou push quando houver credencial. Nunca colocar dado de saúde na mensagem.\nreturn $input.all().map((item) => {\n  const e = item.json;\n  const mensagem = (e.alerta && e.alerta.mensagem)\n    ? e.alerta.mensagem\n    : ('Tarefa ' + e.tarefa + ' chegou à etapa ' + e.etapa + ' (' + e.status + ').');\n  return { json: { ...e, notificacao: { canal: 'painel', enviada: false, mensagem } } };\n});\n"
+      },
+      "id": "36fc822d-f20f-4e5e-ab2a-7ce9b2f7f9b8",
+      "name": "Notificar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Núcleo · Ler estado (usado pelo painel).\nconst est = $getWorkflowStaticData('global');\nconst tarefas = Object.values(est.tarefas || {}).sort((a, b) => String(b.atualizado_em).localeCompare(String(a.atualizado_em)));\nconst eventos = (est.eventos || []).slice(-40).reverse();\nconst contadores = {\n  tarefas: tarefas.length,\n  em_andamento: tarefas.filter((t) => t.status === 'iniciada').length,\n  concluidas: tarefas.filter((t) => t.etapa === 'concluida' && t.status === 'concluida').length,\n  bloqueadas: tarefas.filter((t) => t.status === 'falhou' || t.status === 'bloqueada').length,\n  eventos: (est.eventos || []).length,\n  descartados: (est.descartados || []).length,\n};\nreturn [{ json: { operacao: 'ler_estado', tarefas, eventos, contadores, gerado_em: new Date().toISOString() } }];\n"
+      },
+      "id": "76344db0-20f9-4d25-af59-23a62821a7a5",
+      "name": "Ler estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Quando outro fluxo chamar": {
+      "main": [
+        [
+          {
+            "node": "Qual operação?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qual operação?": {
+      "main": [
+        [
+          {
+            "node": "Normalizar evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar estado e evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tratar erro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notificar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ler estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

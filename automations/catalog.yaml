@@ -1,0 +1,26 @@
+# Catálogo dos workflows n8n do Lume. Poucos, amplos e visíveis (ver README.md).
+workflows:
+  - id: lumeDev000000001
+    arquivo: workflows/lume-orquestrador-desenvolvimento.json
+    nome: Lume · Orquestrador de desenvolvimento
+    ativo: true
+    gatilho: POST /webhook/lume-dev-evento (credencial lume-token)
+    descricao: Recebe eventos dos agentes, valida, roteia por etapa em raias e registra o estado; falhas vão para Bloqueios.
+  - id: lumeProd00000001
+    arquivo: workflows/lume-orquestrador-produto.json
+    nome: Lume · Orquestrador de produto
+    ativo: false
+    gatilho: um por módulo do ERP (todos desativados)
+    descricao: Ramos de lembretes, vencimentos e doses registradas (só registro) e raia de extensão de IA futura.
+  - id: lumeCore00000001
+    arquivo: workflows/_core/lume-core.json
+    nome: Lume · Núcleo (_core)
+    ativo: false
+    gatilho: Execute Workflow (campo operacao)
+    descricao: Normalizar evento, registrar estado, tratar erro, notificar e ler estado.
+  - id: lumePainel000001
+    arquivo: workflows/lume-painel.json
+    nome: Lume · Painel
+    ativo: true
+    gatilho: GET /webhook/lume-painel
+    descricao: Página HTML única com o estado atual das tarefas, atualizada a cada 5 s.
