@@ -1,0 +1,116 @@
+<!-- @dsCard group="Feedback" height=820 subtitle="Aviso em vidro: informação, sucesso (check com mola), erro e ritmo gentil; sobe 8px ao entrar, pausa em hover e foco, 'Desfazer' é o padrão" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-24); }
+  .lead { color: var(--text-secondary); max-width: 64ch; }
+  .btns { display: flex; gap: var(--space-12); flex-wrap: wrap; align-items: center; }
+
+  /* palco: um pedaço de tela com aurora para o vidro ter o que desfocar */
+  .stage { position: relative; min-height: 480px; border-radius: var(--radius-lg); overflow: hidden; padding: var(--space-20); display: flex; flex-direction: column; box-shadow: var(--elev-1); }
+  .stage .fake { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+  .stage .fake .card { padding: var(--space-16); min-height: 96px; }
+  .stage .fake .bar { margin-top: var(--space-12); }
+  .region { position: absolute; left: var(--space-16); right: var(--space-16); bottom: var(--space-16); display: flex; flex-direction: column; gap: var(--space-8); align-items: center; pointer-events: none; }
+  .region > * { pointer-events: auto; }
+
+  /* toast */
+  .toast { display: flex; align-items: center; gap: var(--space-12); width: 100%; max-width: 440px; padding: var(--space-12) var(--space-12) var(--space-12) var(--space-12);
+    border-radius: var(--radius-md); color: var(--text-primary);
+    animation: tin var(--dur-base) var(--ease-out-quint) both; }
+  .toast.out { animation: tout var(--dur-exit) var(--ease-in) both; }
+  .toast .t { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .toast .ico-tile.sm .ms { font-size: 18px; width: 18px; height: 18px; }
+  .toast.info .ico-tile { color: var(--blue-ink); }
+  .toast.error .ico-tile { color: var(--danger); }
+  .toast.gentle .ico-tile { color: var(--orange-ink); }
+  .toast.success .ico-tile .ms { animation: popin var(--dur-base) var(--ease-spring) both; animation-delay: var(--dur-fast); }
+  .toast .act { margin: -4px -4px -4px 0; }
+  .toast .btn.sm { min-height: 36px; padding: 0 var(--space-12); }
+  @keyframes tin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes tout { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(4px); } }
+  .toast:focus-within { outline: 2px solid var(--violet-ink); outline-offset: 2px; border-radius: var(--radius-md); }
+
+  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-12); }
+  .legend .item { display: flex; gap: var(--space-12); align-items: flex-start; padding: var(--space-12); }
+  .legend .caption { color: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce) {
+    .toast { animation: fin var(--dur-instant) linear both; }
+    .toast.out { animation: fout var(--dur-instant) linear both; }
+    .toast.success .ico-tile .ms { animation: none; }
+    @keyframes fin { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fout { from { opacity: 1; } to { opacity: 0; } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h2 class="title">Aviso temporário</h2>
+    <p class="body lead">Vidro sobre a tela (<code>.glass</code>, <code>elev-3</code>), ícone em tile pequeno, uma frase e, quando faz sentido, "Desfazer". Some sozinho; para quando o ponteiro ou o foco entra.</p>
+  </div>
+  <div class="btns" role="group" aria-label="Disparar avisos">
+    <button class="btn secondary sm" data-k="info">Informação</button>
+    <button class="btn secondary sm" data-k="success">Sucesso</button>
+    <button class="btn secondary sm" data-k="error">Erro</button>
+    <button class="btn secondary sm" data-k="gentle">Ritmo gentil</button>
+    <button class="btn ember sm" data-k="exit"><span class="ms s20">logout</span>Sair do foco</button>
+    <span class="caption t3">Os avisos somem em 4s (6s quando têm ação).</span>
+  </div>
+
+  <div class="stage aurora">
+    <div class="fake" aria-hidden="true">
+      <div class="card"><div class="caption t3">Tela de exemplo</div><div class="title-sm" style="margin-top:var(--space-4)">Estudo de inglês</div><div class="bar lit" style="--g:var(--orange)"><i style="--p:62%"></i></div></div>
+      <div class="card"><div class="caption t3">Hoje</div><div class="title-sm" style="margin-top:var(--space-4)">4 de 7 atividades</div><div class="bar"><i style="--p:57%"></i></div></div>
+    </div>
+    <div class="region" id="region" aria-live="polite" aria-atomic="false">
+      <div class="toast glass info" role="status"><span class="ico-tile sm"><span class="ms">info</span></span><span class="t body-sm">Seus dados foram atualizados.</span></div>
+      <div class="toast glass success" role="status"><span class="ico-tile sm violet"><span class="ms">check</span></span><span class="t body-sm">Passo concluído. Levou 12 min a mais, e isso ajusta a próxima estimativa.</span><span class="act"><button class="btn ghost sm">Desfazer</button></span></div>
+      <div class="toast glass error" role="status"><span class="ico-tile sm"><span class="ms">error</span></span><span class="t body-sm">Não foi possível salvar. Tente de novo em instantes.</span><span class="act"><button class="btn ghost sm">Tentar de novo</button></span></div>
+      <div class="toast glass gentle" role="status"><span class="ico-tile sm"><span class="ms">spa</span></span><span class="t body-sm">Constância vale mais que intensidade.</span></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="block item"><span class="ico-tile sm"><span class="ms s20" style="color:var(--blue-ink)">info</span></span><div><div class="label">Informação</div><div class="caption">Tile neutro, ícone em blue-ink.</div></div></div>
+    <div class="block item"><span class="ico-tile sm violet"><span class="ms s20">check</span></span><div><div class="label">Sucesso</div><div class="caption">Tile violeta: concluir esfria para violet. O check entra com mola.</div></div></div>
+    <div class="block item"><span class="ico-tile sm"><span class="ms s20" style="color:var(--danger)">error</span></span><div><div class="label">Erro</div><div class="caption">Tile neutro, ícone em danger. Sem vermelho de fundo.</div></div></div>
+    <div class="block item"><span class="ico-tile sm"><span class="ms s20" style="color:var(--orange-ink)">spa</span></span><div><div class="label">Ritmo gentil</div><div class="caption">Tile neutro, ícone em orange-ink. Tom de parceiro calmo.</div></div></div>
+  </div>
+</div>
+<script>
+  var region = document.getElementById('region');
+  var kinds = {
+    info:    { tile: '', icon: 'info', text: 'Seus dados foram atualizados.' },
+    success: { tile: 'violet', icon: 'check', text: 'Passo concluído.', action: 'Desfazer' },
+    error:   { tile: '', icon: 'error', text: 'Não foi possível salvar. Tente de novo em instantes.', action: 'Tentar de novo' },
+    gentle:  { tile: '', icon: 'spa', text: 'Constância vale mais que intensidade.' },
+    exit:    { tile: '', icon: 'logout', text: 'Você saiu do foco. Estudo de inglês fica para depois.', action: 'Desfazer', k: 'info' }
+  };
+  function show(key){
+    var d = kinds[key], k = d.k || key, el = document.createElement('div');
+    el.className = 'toast glass ' + k; el.setAttribute('role', 'status');
+    el.innerHTML = '<span class="ico-tile sm ' + d.tile + '"><span class="ms">' + d.icon + '</span></span><span class="t body-sm"></span>' + (d.action ? '<span class="act"><button class="btn ghost sm"></button></span>' : '');
+    el.querySelector('.t').textContent = d.text;
+    var left = d.action ? 6000 : 4000, start = 0, timer = null;
+    function run(){ start = Date.now(); timer = setTimeout(close, left); }
+    function pause(){ if (timer) { clearTimeout(timer); timer = null; left -= Date.now() - start; } }
+    function close(){ pause(); if (el.classList.contains('out')) return; el.classList.add('out'); setTimeout(function(){ el.remove(); }, 180); }
+    if (d.action) { var b = el.querySelector('.btn'); b.textContent = d.action; b.addEventListener('click', close); }
+    el.addEventListener('mouseenter', pause); el.addEventListener('mouseleave', function(){ if (!el.contains(document.activeElement) && !timer) run(); });
+    el.addEventListener('focusin', pause); el.addEventListener('focusout', function(){ if (!el.matches(':hover') && !timer) run(); });
+    el.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+    region.appendChild(el); run();
+    var live = region.querySelectorAll('.toast:not(.out)');
+    while (live.length > 4) { var o = live[0]; o.classList.add('out'); setTimeout(function(x){ return function(){ x.remove(); }; }(o), 180); live = region.querySelectorAll('.toast:not(.out)'); }
+  }
+  document.querySelectorAll('[data-k]').forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.k); }); });
+</script>
+</body>
+</html>

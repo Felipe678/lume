@@ -1,0 +1,168 @@
+<!-- @dsCard group="Foco" height=600 subtitle="Barra segmentada da atividade: feitos esfriam para violeta, o atual acende em laranja, os próximos esperam; linha de pontos e rótulo 'Passo 3 de 5'" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { background: var(--bg); padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-24); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-16); align-items: start; }
+  .card { padding: var(--space-20); display: grid; gap: var(--space-16); }
+  .hd { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-12); }
+  .cap { color: var(--text-muted); }
+  .lead { color: var(--text-secondary); max-width: 68ch; }
+
+  /* StepProgress: o kit tem .seg; o pulso precisa sair do segmento (overflow) */
+  .seg > i.pulse { overflow: visible; }
+  .seg > i.now.over::after { background: var(--orange); }            /* passou do tempo: cheio, laranja estável, sem cabeça */
+  .seg.lg { height: 8px; gap: 6px; }
+
+  /* linha de pontos dos passos (sugestão para o kit: .dots) */
+  .dots { display: flex; justify-content: center; gap: 10px; }
+  .dots > i { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--ring-track); transition: background-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-spring); }
+  .dots > i.done { background: var(--violet); }
+  .dots > i.now { background: var(--orange); box-shadow: 0 0 10px color-mix(in srgb, var(--orange) 70%, transparent); transform: scale(1.25); }
+
+  /* rótulo "Passo 3 de 5" com o extra de tempo discreto */
+  .steplbl { display: flex; align-items: baseline; gap: var(--space-8); }
+  .steplbl .extra { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .steplbl .extra .ms { vertical-align: -3px; margin-right: 2px; }
+
+  /* lista de passos ao lado da barra (contexto) */
+  .steps { display: grid; gap: var(--space-4); }
+  .step { display: flex; align-items: center; gap: var(--space-12); min-height: 36px; padding: 0 var(--space-12); border-radius: var(--radius-sm); }
+  .step.now { background: var(--surface-tint); box-shadow: inset 0 1px 0 var(--hairline); }
+  .step .ms { color: var(--text-muted); }
+  .step.done .ms { color: var(--violet-ink); }
+  .step.now .ms { color: var(--orange-ink); }
+  .step .d { margin-left: auto; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .step.done .t { color: var(--text-secondary); }
+
+  .stage { display: grid; gap: var(--space-12); }
+  .ctl { display: flex; gap: var(--space-8); flex-wrap: wrap; align-items: center; }
+  .pill-row { display: flex; gap: var(--space-24); flex-wrap: wrap; align-items: center; }
+  .mini-ctx { display: flex; align-items: center; gap: var(--space-12); min-width: 0; }
+  .mini-ctx .time { width: 44px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) {
+    .dots > i, .seg > i { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div>
+    <h2 class="title">Progresso da atividade por passos</h2>
+    <p class="body lead">Um segmento por passo. Os feitos ficam em violeta (frio), o atual acende em laranja com cabeça luminosa, os próximos esperam vazios. Concluir um passo solta um pulso de luz e o segmento esfria.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- interativo -->
+    <section class="card" aria-label="Interativo">
+      <div class="hd"><span class="label t2">Atividade · Estudo de inglês</span><span class="caption cap">interativo</span></div>
+      <div class="stage">
+        <div class="steplbl"><span class="label t1" id="lbl">Passo 3 de 5</span></div>
+        <div class="seg lg" id="seg" role="progressbar" aria-label="Passos da atividade" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2" aria-valuetext="Passo 3 de 5">
+          <i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i>
+        </div>
+        <div class="dots" id="dots" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
+      </div>
+      <div class="steps" id="steps" aria-label="Passos">
+        <div class="step done"><span class="ms s20">check_circle</span><span class="body-sm t">Rever vocabulário</span><span class="body-sm d">10 <small>min</small></span></div>
+        <div class="step done"><span class="ms s20">check_circle</span><span class="body-sm t">Assistir aula</span><span class="body-sm d">25 <small>min</small></span></div>
+        <div class="step now"><span class="ms s20">radio_button_checked</span><span class="body-sm t">Anotar 3 frases novas</span><span class="body-sm d">10 <small>min</small></span></div>
+        <div class="step"><span class="ms s20 outl">circle</span><span class="body-sm t">Exercício de escuta</span><span class="body-sm d">10 <small>min</small></span></div>
+        <div class="step"><span class="ms s20 outl">circle</span><span class="body-sm t">Resumo do dia</span><span class="body-sm d">5 <small>min</small></span></div>
+      </div>
+      <div class="ctl">
+        <button class="btn primary sm" id="go"><span class="ms s20">check</span>Concluir passo</button>
+        <button class="btn ghost sm" id="reset">Recomeçar</button>
+        <span class="caption cap">Pulso em dur-pulse · esfria em dur-base</span>
+      </div>
+    </section>
+
+    <!-- estados estáticos -->
+    <section class="card" aria-label="Estados">
+      <div class="hd"><span class="label t2">Estados</span><span class="caption cap">estáticos</span></div>
+
+      <div class="stage">
+        <div class="steplbl"><span class="label t1">Passo 1 de 5</span><span class="caption t3">começando</span></div>
+        <div class="seg lg"><i class="now" style="--p:6%"></i><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="stage">
+        <div class="steplbl"><span class="label t1">Passo 3 de 5</span><span class="caption t3">em andamento</span></div>
+        <div class="seg lg"><i class="done"></i><i class="done"></i><i class="now" style="--p:62%"></i><i></i><i></i></div>
+      </div>
+
+      <div class="stage">
+        <div class="steplbl"><span class="label t1">Passo 3 de 5</span><span class="caption extra"><span class="ms s16">schedule</span>+02:10</span></div>
+        <div class="seg lg"><i class="done"></i><i class="done"></i><i class="now over" style="--p:100%"></i><i></i><i></i></div>
+        <p class="caption cap">Passou do tempo: o segmento fica cheio em laranja estável; o extra aparece em text-secondary. Sem vermelho, sem piscar.</p>
+      </div>
+
+      <div class="stage">
+        <div class="steplbl"><span class="label t1">5 de 5 passos</span><span class="caption t3">concluída</span></div>
+        <div class="seg lg"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+      </div>
+
+      <div class="stage">
+        <div class="steplbl"><span class="label t1">Passo 3 de 5</span><span class="caption t3">pausada</span></div>
+        <div class="seg lg" style="--glow-orange: none"><i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i></div>
+        <p class="caption cap">Pausada: o glow do segmento atual apaga; o preenchimento fica.</p>
+      </div>
+    </section>
+
+    <!-- pontos e mini -->
+    <section class="card" aria-label="Pontos e mini">
+      <div class="hd"><span class="label t2">Linha de pontos e mini</span><span class="caption cap">variações</span></div>
+      <div class="stage">
+        <p class="caption cap">Pontos dos passos (rodapé do Foco): o atual aceso e 25% maior.</p>
+        <div class="dots"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
+        <div class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+        <div class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+      </div>
+      <div class="stage">
+        <p class="caption cap">Mini (56 × 4) na linha da lista de atividades.</p>
+        <div class="mini-ctx"><span class="body-sm time">14:00</span><span class="body-sm t1 truncate">Estudo de inglês</span><span class="seg mini sp"><i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i></span><span class="caption t2 num">3/5</span></div>
+        <div class="mini-ctx"><span class="body-sm time">15:30</span><span class="body-sm t1 truncate">Revisão de código</span><span class="seg mini sp"><i></i><i></i><i></i><i></i></span><span class="caption t2 num">0/4</span></div>
+        <div class="mini-ctx"><span class="body-sm time">07:00</span><span class="body-sm t1 truncate">Caminhada</span><span class="seg mini sp"><i class="done"></i><i class="done"></i></span><span class="caption t2 num">2/2</span></div>
+      </div>
+      <div class="stage">
+        <p class="caption cap">Altura padrão (6px) com 8 passos: os segmentos encolhem, o vão fica em 4px.</p>
+        <div class="seg"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now" style="--p:50%"></i><i></i><i></i></div>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+  var seg = document.getElementById('seg'), dots = document.getElementById('dots'), lbl = document.getElementById('lbl'), steps = document.getElementById('steps');
+  var names = ['Rever vocabulário', 'Assistir aula', 'Anotar 3 frases novas', 'Exercício de escuta', 'Resumo do dia'];
+  function render(cur, p) {
+    var n = seg.children.length;
+    for (var i = 0; i < n; i++) {
+      var s = seg.children[i], d = dots.children[i], row = steps.children[i], ico = row.querySelector('.ms');
+      s.className = i < cur ? 'done' : i === cur ? 'now' : ''; s.style.removeProperty('--p');
+      if (i === cur) s.style.setProperty('--p', p);
+      d.className = i < cur ? 'done' : i === cur ? 'now' : '';
+      row.className = 'step' + (i < cur ? ' done' : i === cur ? ' now' : '');
+      ico.className = 'ms s20' + (i < cur || i === cur ? '' : ' outl'); ico.textContent = i < cur ? 'check_circle' : i === cur ? 'radio_button_checked' : 'circle';
+    }
+    lbl.textContent = cur >= n ? n + ' de ' + n + ' passos' : 'Passo ' + (cur + 1) + ' de ' + n;
+    seg.setAttribute('aria-valuenow', String(Math.min(cur, n))); seg.setAttribute('aria-valuetext', lbl.textContent);
+    document.getElementById('go').disabled = cur >= n;
+  }
+  var cur = 2;
+  document.getElementById('go').addEventListener('click', function () {
+    var now = seg.children[cur]; if (!now) return;
+    now.classList.add('pulse', 'go'); now.style.setProperty('--c', 'var(--orange)');
+    setTimeout(function () { cur++; render(cur, '0%'); if (seg.children[cur]) requestAnimationFrame(function () { seg.children[cur].style.setProperty('--p', '8%'); }); }, 220);
+  });
+  document.getElementById('reset').addEventListener('click', function () { cur = 2; render(cur, '34%'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!-- @dsCard group="Dashboard" height=940 subtitle="Horas dedicadas nos últimos 14 dias em um card com hairline; hoje acende em cyan" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<script>if(/[?&]still=1/.test(location.search))document.documentElement.classList.add('still')</script>
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .toolbar{display:flex;flex-wrap:wrap;gap:var(--space-12);align-items:center;margin-bottom:var(--space-24)}
+  .stack{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  figure{margin:0;display:flex;flex-direction:column;gap:var(--space-12)}
+  figcaption{color:var(--text-muted)}
+
+  /* RhythmCard: .card do kit */
+  .rc{width:522px;max-width:100%;padding:var(--space-24)}
+  .rc.compact{width:360px;padding:var(--space-16)}
+  .rc h3{margin-bottom:var(--space-16)}
+  .chart{display:grid;grid-template-columns:auto 1fr;column-gap:var(--space-8)}
+  .yax{display:flex;flex-direction:column-reverse;justify-content:space-between;width:28px;height:177px;margin:-6px 0}
+  .yax span{display:block;height:12px;line-height:12px;text-align:right;color:var(--text-muted)}
+  .plot{position:relative;height:165px;display:flex;align-items:stretch}
+  .grid-lines{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+  .grid-lines i{display:block;height:1px;background:var(--divider)}
+  .slot{position:relative;flex:1;display:flex;align-items:flex-end;justify-content:center;cursor:default;border-radius:var(--radius-xs)}
+  .slot:focus-visible{outline:2px solid var(--violet-ink);outline-offset:2px}
+  .b{display:block;width:60%;max-width:18px;height:var(--hh);background:var(--bar-color);border-radius:var(--radius-xs) var(--radius-xs) 0 0;transform-origin:bottom}
+  .b.today{box-shadow:var(--glow-cyan)}
+  .play .b{animation:grow var(--dur-slow) var(--ease-settle) both;animation-delay:calc(var(--i) * 30ms)}
+  @keyframes grow{from{transform:scaleY(0)}}
+  .slot.sel .b{outline:2px solid var(--text-primary);outline-offset:2px}
+  @media (hover:hover) and (pointer:fine){.slot:hover .b{filter:brightness(1.18)}}
+  .xax{display:grid;grid-template-columns:auto 1fr;column-gap:var(--space-8);margin-top:var(--space-8)}
+  .xrow{display:flex}
+  .xrow span{flex:1;text-align:center;color:var(--text-muted)}
+  .xrow span.now{color:var(--cyan-ink);font-weight:700}
+  .readout{margin-top:var(--space-12);min-height:19px;color:var(--text-primary)}
+  .summary{margin-top:var(--space-8);color:var(--text-secondary)}
+  .legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-16);margin:var(--space-16) 0 0;padding:0;list-style:none;color:var(--text-secondary)}
+  .legend li{display:inline-flex;align-items:center;gap:var(--space-8)}
+  .legend i{width:12px;height:12px;border-radius:var(--radius-xs);background:var(--sw)}
+  .empty{height:165px;display:grid;place-items:center;text-align:center;color:var(--text-secondary);padding:0 var(--space-16)}
+  .hide-x{width:28px}
+  .still .b{animation-duration:0s!important;animation-delay:0s!important}
+  @media (prefers-reduced-motion:reduce){ .play .b{animation:none} }
+</style>
+</head>
+<body class="aurora">
+<div class="toolbar">
+  <button class="btn secondary sm" id="replay" type="button"><span class="ms s20" aria-hidden="true">replay</span>Repetir entrada das barras</button>
+  <span class="caption t3">As barras crescem da base em dur-slow com ease-settle, 30 ms entre elas. Hoje acende em cyan (glow-cyan). Passe o mouse, toque ou use Tab e as setas para ver cada dia.</span>
+</div>
+
+<div class="stack">
+  <figure>
+    <section class="card rc" id="wide" aria-labelledby="t1">
+      <h3 class="title" id="t1">Ritmo da semana</h3>
+      <div data-chart></div>
+    </section>
+    <figcaption class="caption">Desktop: card de 522px, padding space-24, gráfico com 14 dias</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card rc compact" id="compact" aria-labelledby="t2">
+      <h3 class="title" id="t2">Ritmo da semana</h3>
+      <div data-chart></div>
+    </section>
+    <figcaption class="caption">Celular: card de 360px, padding space-16</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card rc compact" aria-labelledby="t3">
+      <h3 class="title" id="t3">Ritmo da semana</h3>
+      <div class="empty body-sm block">Sem registros de dedicação ainda</div>
+    </section>
+    <figcaption class="caption">Vazio: um bloco na mesma altura do gráfico, com a mensagem</figcaption>
+  </figure>
+</div>
+
+<script>
+(function(){
+  var HOURS=[1.5,2,0,2.5,1,0.5,3, 2,1.5,2.5,0,3,1,2.5]; // 14 dias; o último é hoje (09/11)
+  var TODAY=new Date(2026,10,9);
+  function fmt(h){var m=Math.round(h*60); if(m<60) return m+' min'; var hh=Math.floor(m/60), mm=m%60; return mm? hh+' h '+(mm<10?'0'+mm:mm) : hh+' h';}
+  function dd(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
+  var days=HOURS.map(function(h,i){var d=new Date(TODAY); d.setDate(TODAY.getDate()-(13-i)); return {h:h,d:d,i:i,today:i===13,recent:i>=7};});
+  var max=Math.max.apply(null,HOURS);
+  var axisMax=Math.max(4,Math.ceil(max*1.2/4)*4);
+  var recent=days.slice(7).reduce(function(s,x){return s+x.h},0), prev=days.slice(0,7).reduce(function(s,x){return s+x.h},0);
+  var diff=Math.round((recent-prev)*2)/2;
+  var summary=diff===0? fmt(recent)+' nos últimos 7 dias, no mesmo ritmo dos 7 anteriores.'
+    : diff>0? fmt(recent)+' nos últimos 7 dias, '+fmt(diff)+' a mais que nos 7 anteriores.'
+    : fmt(recent)+' nos últimos 7 dias, '+fmt(-diff)+' a menos que nos 7 anteriores. Constância vale mais que intensidade.';
+
+  function color(x){return x.today?'var(--cyan)': x.recent?'var(--violet)':'var(--bar-muted)';}
+  function label(x){return dd(x.d)+(x.today?' (hoje)':'')+': '+fmt(x.h);}
+
+  function build(host){
+    var y='';for(var k=0;k<=4;k++){y+='<span class="micro">'+(axisMax*k/4)+(k===4?' h':'')+'</span>';}
+    var lines='';for(var k=0;k<=4;k++){lines+='<i></i>';}
+    var cols=days.map(function(x){
+      return '<button type="button" class="slot" data-i="'+x.i+'" aria-label="'+label(x)+'" style="--i:'+x.i+'">'
+        +'<span class="b'+(x.today?' today':'')+'" style="--hh:'+(x.h/axisMax*100)+'%;--bar-color:'+color(x)+'"></span></button>';
+    }).join('');
+    var xs=days.map(function(x){return '<span class="micro'+(x.today?' now':'')+'">'+x.d.getDate()+'</span>';}).join('');
+    host.innerHTML=
+      '<div class="chart play"><div class="yax" aria-hidden="true">'+y+'</div>'
+      +'<div class="plot"><div class="grid-lines" aria-hidden="true">'+lines+'</div>'+cols+'</div></div>'
+      +'<div class="xax" aria-hidden="true"><span class="hide-x"></span><div class="xrow">'+xs+'</div></div>'
+      +'<p class="readout body-sm" aria-live="polite">'+label(days[13])+'</p>'
+      +'<p class="summary body-sm">'+summary+'</p>'
+      +'<ul class="legend caption">'
+      +'<li><i style="--sw:var(--cyan)"></i>Hoje</li>'
+      +'<li><i style="--sw:var(--violet)"></i>Últimos 7 dias</li>'
+      +'<li><i style="--sw:var(--bar-muted)"></i>7 dias anteriores</li></ul>';
+    var readout=host.querySelector('.readout'), cs=host.querySelectorAll('.slot');
+    function sel(i){cs.forEach(function(c){c.classList.toggle('sel',+c.dataset.i===i)}); readout.textContent=label(days[i]);}
+    cs.forEach(function(c){
+      var i=+c.dataset.i;
+      c.addEventListener('mouseenter',function(){sel(i)});
+      c.addEventListener('focus',function(){sel(i)});
+      c.addEventListener('click',function(){sel(i)});
+      c.addEventListener('keydown',function(e){
+        var n=e.key==='ArrowRight'?i+1:e.key==='ArrowLeft'?i-1:null;
+        if(n!==null&&n>=0&&n<14){e.preventDefault();cs[n].focus();}
+      });
+    });
+  }
+  document.querySelectorAll('[data-chart]').forEach(build);
+  document.getElementById('replay').addEventListener('click',function(){
+    document.querySelectorAll('.chart').forEach(function(c){ c.classList.remove('play'); void c.offsetWidth; c.classList.add('play'); });
+  });
+})();
+</script>
+</body>
+</html>

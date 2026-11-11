@@ -19,7 +19,7 @@ sprint_dias: 7
 
 ## 2. Documentos de referência
 - `DECISOES_E_ROADMAP.md`: visão do produto, decisões D1 a D13, roadmap E0 a E7 e Jira. Em conflito, vale ele (o usuário atualiza; agentes propõem).
-- **Design System v2 "brasa" (D12):** artefato https://claude.ai/artifact/9TAdTj4LkKjQRPiaVbH9XK (versão 4): brand book, movimento, responsividade, tradução para widgets Flutter e tokens. É a fonte visual; `ds-fidelidade` verifica.
+- **Design System v2 "brasa" (D12):** cópia de referência em **`docs/design-system/`** (comece por `ORIGEM.md` e `README.md`; tokens em `tokens.json`, tradução Flutter em `flutter.md`, componentes e telas em `components/`). Fonte original: artefato https://claude.ai/artifact/9TAdTj4LkKjQRPiaVbH9XK; em conflito vale o artefato. É a fonte visual; `ds-fidelidade` verifica.
 - `app/README.md` (app Flutter), `docs/org/` (organização), `docs/decisoes/` (ADRs), `docs/dev/licoes.md`.
 - n8n: `automations/README.md` e `infra/n8n/README.md`.
 - `src/` (app React) e `server/` (Express + MongoDB) são **legado de referência**: portar o domínio de `src/domain/`, não copiar telas.

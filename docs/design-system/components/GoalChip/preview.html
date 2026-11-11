@@ -1,0 +1,124 @@
+<!-- @dsCard group="Dashboard" height=840 subtitle="Chip de objetivo ativo sobre o .chip do kit: ponto, nome e percentual; normal, hover, selecionado, foco e desabilitado" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .stack{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  figure{margin:0;display:flex;flex-direction:column;gap:var(--space-12)}
+  figcaption{color:var(--text-muted)}
+  .panel{padding:var(--space-20)}
+  .panel.compact{width:360px;max-width:100%;padding:var(--space-16)}
+  .panel.wide{width:640px;max-width:100%;padding:var(--space-24)}
+  .panel h3{margin-bottom:var(--space-16)}
+  .wrap{display:flex;flex-wrap:wrap;gap:var(--space-12)}
+  .wrap.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-8)}
+  .states{display:flex;flex-wrap:wrap;gap:var(--space-24) var(--space-32)}
+  .states figure{align-items:flex-start}
+
+  /* GoalChip: .chip do kit + ponto, nome e percentual */
+  .chip.goal{--goal:var(--goal-obligatory);position:relative;max-width:100%;padding-right:var(--space-16);color:var(--text-primary);transition:background-color var(--dur-instant) var(--ease-out),box-shadow var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+  .chip.goal::before{content:"";position:absolute;inset:-6px 0}
+  .chip.goal .dot{width:8px;height:8px;border-radius:var(--radius-full);background:var(--goal);flex:none}
+  .chip.goal .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+  .chip.goal .pct{font-weight:700;margin-left:auto}
+  .chip.goal .ck{display:none;color:var(--text-primary)}
+  .chip.goal.is-focus{outline:2px solid var(--violet-ink);outline-offset:2px}
+  .chip.goal:active,.chip.goal.is-pressed{transform:scale(.97);transition-timing-function:var(--ease-out)}
+  @media (hover:hover) and (pointer:fine){.chip.goal:hover{background:var(--surface-tint)}}
+  .chip.goal.is-hover{background:var(--surface-tint)}
+  .chip.goal[aria-pressed="true"]{box-shadow:inset 0 1px 0 var(--hairline),inset 0 0 0 2px var(--text-primary)}
+  .chip.goal[aria-pressed="true"] .ck{display:inline-block}
+  .chip.goal[aria-disabled="true"],.chip.goal.is-disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+  /* compact em 2 colunas: o chip vira bloco de duas linhas (nome inteiro, percentual embaixo), raio radius-md */
+  .two .chip.goal{width:100%;min-height:52px;text-align:left;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--space-8);row-gap:var(--space-2);align-items:start;padding:var(--space-8) var(--space-12);border-radius:var(--radius-md)}
+  .two .chip.goal .dot{margin-top:4px}
+  .two .chip.goal .ck{grid-column:1;display:none}
+  .two .chip.goal[aria-pressed="true"] .ck{display:inline-block}
+  .two .chip.goal .name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .two .chip.goal .pct{grid-column:2;margin-left:0;font-size:12px;line-height:16px}
+  @media (prefers-reduced-motion:reduce){ .chip.goal{transition:none} .chip.goal:active,.chip.goal.is-pressed{transform:none} }
+</style>
+</head>
+<body class="aurora">
+<div class="stack">
+  <figure>
+    <section class="card panel wide" aria-labelledby="w1">
+      <h3 class="title" id="w1">Objetivos ativos</h3>
+      <div class="wrap" data-goals="all"></div>
+    </section>
+    <figcaption class="caption">Desktop: oito cores de objetivo, clique para selecionar (aria-pressed); hover em surface-tint</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel compact" aria-labelledby="w2">
+      <h3 class="title" id="w2">Objetivos ativos</h3>
+      <div class="wrap two" data-goals="compact"></div>
+    </section>
+    <figcaption class="caption">Celular (360px): duas colunas; o chip vira bloco de duas linhas (nome inteiro em até 2 linhas, percentual embaixo), alvo de 52</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel compact" aria-labelledby="w3">
+      <h3 class="title" id="w3">Estados</h3>
+      <div class="states" data-goals="states"></div>
+    </section>
+    <figcaption class="caption">Estados forçados para visualização; hover só com ponteiro fino</figcaption>
+  </figure>
+
+  <figure>
+    <section class="card panel compact" aria-labelledby="w4">
+      <h3 class="title" id="w4">Objetivos ativos</h3>
+      <p class="body-sm t2">Nenhum objetivo ativo</p>
+    </section>
+    <figcaption class="caption">Vazio</figcaption>
+  </figure>
+</div>
+
+<script>
+(function(){
+  var GC={sky:'var(--goal-sky)',emerald:'var(--goal-emerald)',amber:'var(--goal-amber)',rose:'var(--goal-rose)',violet:'var(--goal-violet)',lime:'var(--goal-lime)',cyan:'var(--goal-cyan)',fuchsia:'var(--goal-fuchsia)'};
+  var G=[
+    ['Inglês','sky',60],['Saúde','emerald',45],['Leitura','amber',30],['Corrida de 10 km','rose',20],
+    ['Violão','violet',75],['Horta','lime',10],['Viagem','cyan',90],['Escrita','fuchsia',5]
+  ];
+  function chip(name,color,pct,o){
+    o=o||{};
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='chip goal label'+(o.cls?' '+o.cls:'');
+    b.style.setProperty('--goal',GC[color]);
+    b.setAttribute('aria-pressed',o.sel?'true':'false');
+    if(o.dis){b.setAttribute('aria-disabled','true');b.tabIndex=-1;}
+    b.setAttribute('aria-label',name+': '+pct+'% concluído'+(o.sel?', selecionado':''));
+    b.innerHTML='<span class="dot" aria-hidden="true"></span><span class="ms s16 ck" aria-hidden="true">check</span>'
+      +'<span class="name">'+name+'</span><span class="pct">'+pct+'%</span>';
+    b.addEventListener('click',function(){
+      if(b.getAttribute('aria-disabled')==='true') return;
+      var on=b.getAttribute('aria-pressed')!=='true';
+      b.setAttribute('aria-pressed',on?'true':'false');
+      b.setAttribute('aria-label',name+': '+pct+'% concluído'+(on?', selecionado':''));
+    });
+    return b;
+  }
+  document.querySelectorAll('[data-goals]').forEach(function(host){
+    var k=host.dataset.goals;
+    if(k==='all'){ G.forEach(function(g,i){host.appendChild(chip(g[0],g[1],g[2],{sel:i===0}));}); }
+    else if(k==='compact'){ G.slice(0,5).forEach(function(g){host.appendChild(chip(g[0],g[1],g[2]));}); host.appendChild(chip('Aprender a tocar violão clássico com partituras','violet',75)); }
+    else {
+      [['Normal',{}],['Hover',{cls:'is-hover'}],['Pressionado',{cls:'is-pressed'}],['Foco',{cls:'is-focus'}],['Selecionado',{sel:true}],['Desabilitado',{dis:true,cls:'is-disabled'}]].forEach(function(s){
+        var f=document.createElement('figure');
+        f.appendChild(chip('Inglês','sky',60,s[1]));
+        var c=document.createElement('figcaption'); c.className='caption'; c.textContent=s[0]; f.appendChild(c);
+        host.appendChild(f);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

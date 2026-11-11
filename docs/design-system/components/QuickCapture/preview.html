@@ -1,0 +1,189 @@
+<!-- @dsCard group="Foco" height=1210 subtitle="Composer inline de anotação no Foco: uma linha embaixo do título, salva com Enter, vira chip com contador; nunca modal" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { background: var(--bg); padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-24); }
+  .lead { color: var(--text-secondary); max-width: 68ch; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: var(--space-24); align-items: start; }
+  .card { padding: var(--space-20); display: grid; gap: var(--space-16); }
+  .hd { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-12); }
+  .cap { color: var(--text-muted); }
+  .states { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16); }
+  .states .card { gap: var(--space-12); }
+  input { font: inherit; color: inherit; background: none; border: 0; outline: 0; }
+  input::placeholder { color: var(--text-muted); }
+
+  /* ---------- QuickCapture (sugestão para o kit) ---------- */
+  .capture { display: grid; gap: var(--space-12); }
+  .capture .titlerow { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
+  .capture .composer { display: none; align-items: center; gap: var(--space-8); min-height: 48px; padding: 0 var(--space-8) 0 var(--space-12); border-radius: var(--radius-md); background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--border-control), inset 0 1px 0 var(--hairline); }
+  .capture .composer:focus-within { box-shadow: inset 0 0 0 2px var(--violet-ink), inset 0 1px 0 var(--hairline); }
+  .capture .composer .ms { color: var(--text-muted); }
+  .capture .composer input { flex: 1; min-width: 0; font-size: 15px; line-height: 22px; height: 44px; }
+  .capture.open .composer { display: flex; animation: capin var(--dur-fast) var(--ease-out) both; }
+  .capture.open .composer.static { animation: none; }
+  @keyframes capin { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .capture .hint { color: var(--text-muted); display: flex; gap: var(--space-8); align-items: center; }
+  .capture kbd { font: inherit; font-size: 11px; line-height: 14px; font-weight: 600; padding: 1px 6px; border-radius: var(--radius-xs); background: var(--chip); box-shadow: inset 0 0 0 1px var(--hairline-strong); color: var(--text-secondary); }
+  /* chip com contador animado */
+  .notechip .count { display: inline-grid; height: 16px; overflow: hidden; font-variant-numeric: tabular-nums; }
+  .notechip .count > span { grid-area: 1 / 1; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out); }
+  .notechip .count > span.out { transform: translateY(-16px); opacity: 0; }
+  .notechip .count > span.in { transform: translateY(16px); opacity: 0; }
+  .notechip .ms { color: var(--violet-ink); }
+  .saved { color: var(--text-secondary); display: inline-flex; align-items: center; gap: var(--space-4); opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); }
+  .saved.show { opacity: 1; transition: opacity var(--dur-fast) var(--ease-out); }
+  .saved .ms { color: var(--green-ink); }
+  /* lista colapsável, só leitura */
+  .notes { padding: 0; overflow: hidden; }
+  .notes .sum { width: 100%; display: flex; align-items: center; gap: var(--space-8); min-height: 44px; padding: 0 var(--space-12) 0 var(--space-16); text-align: left; color: var(--text-primary); }
+  .notes .sum .ms { color: var(--text-muted); margin-left: auto; transition: transform var(--dur-base) var(--ease-in-out); }
+  .notes[aria-expanded="true"] .sum .ms { transform: rotate(180deg); }
+  .notes .list { display: none; padding: 0 var(--space-16) var(--space-12); }
+  .notes[aria-expanded="true"] .list { display: grid; gap: var(--space-8); }
+  .note { display: grid; grid-template-columns: 44px 1fr; gap: var(--space-8); align-items: baseline; }
+  .note .at { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .note .tx { color: var(--text-primary); }
+
+  /* celular */
+  .phone { width: 390px; height: 560px; border-radius: var(--radius-xl); overflow: hidden; position: relative; display: flex; flex-direction: column; background: var(--bg); box-shadow: var(--elev-2), inset 0 0 0 1px var(--hairline-strong); }
+  .phone .top { padding: var(--space-16) var(--space-16) 0; display: grid; gap: var(--space-12); }
+  .phone .kbd { margin-top: auto; height: 236px; background: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline-strong); display: grid; align-content: center; justify-items: center; gap: var(--space-8); color: var(--text-muted); padding: var(--space-12); }
+  .phone .kbd .krow { display: flex; gap: 6px; }
+  .phone .kbd .krow i { width: 30px; height: 40px; border-radius: var(--radius-xs); background: var(--chip); box-shadow: inset 0 1px 0 var(--hairline); }
+  .phone .kbd .krow.r2 i { width: 30px; } .phone .kbd .krow.r3 i { width: 30px; }
+  .phone .kbd .krow.r4 i { width: 100px; } .phone .kbd .krow.r4 i:first-child, .phone .kbd .krow.r4 i:last-child { width: 40px; }
+  .phone .composer-wrap { padding: var(--space-8) var(--space-16) var(--space-12); display: grid; gap: var(--space-8); }
+  .phone .dim { color: var(--text-secondary); }
+  @media (prefers-reduced-motion: reduce) {
+    .capture.open .composer { animation: none; }
+    .notechip .count > span, .saved, .notes .sum .ms { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h2 class="title">Anotar sem sair do passo</h2>
+    <p class="body lead">Uma linha de texto que aparece embaixo do título do passo, salva com Enter e vira um chip com contador. A lista fica num bloco colapsável, só leitura: editar é na tela da atividade, não no Foco.</p>
+  </div>
+
+  <div class="two">
+    <section class="card" aria-label="Interativo">
+      <div class="hd"><span class="label t2">Interativo</span><span class="caption cap">Enter salva · Esc fecha</span></div>
+      <div class="capture" id="cap">
+        <div class="titlerow">
+          <h3 class="headline t1" style="margin-right:auto">Anotar 3 frases novas</h3>
+          <button class="btn secondary sm" id="open" aria-expanded="false" aria-controls="composer"><span class="ms s20">add</span>Anotar</button>
+        </div>
+        <div class="composer" id="composer">
+          <span class="ms s20">edit_note</span>
+          <input id="inp" type="text" aria-label="Nova anotação" placeholder="Um pensamento, uma frase nova…" autocomplete="off">
+          <button class="btn ghost sm" id="cancel">Cancelar</button>
+        </div>
+        <div class="row" style="gap:var(--space-12)">
+          <span class="chip notechip label"><span class="ms s16">sticky_note_2</span><span class="count" id="count"><span>2</span></span><span id="plural">anotações</span></span>
+          <span class="caption saved" id="saved"><span class="ms s16">check</span>Anotado</span>
+          <span class="caption hint sp"><kbd>Enter</kbd> salva</span>
+        </div>
+        <div class="block notes" id="notes" aria-expanded="false">
+          <button class="sum body-sm" id="toggle"><span>Anotações desta atividade</span><span class="ms s20">expand_more</span></button>
+          <div class="list" id="list">
+            <div class="note"><span class="caption at">14:12</span><span class="body-sm tx">Phrasal verbs: 'carry on', 'figure out'</span></div>
+            <div class="note"><span class="caption at">14:31</span><span class="body-sm tx">Rever a pronúncia de 'thought'</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="padding:0;background:none;box-shadow:none;gap:var(--space-8)">
+      <div class="phone" aria-label="Celular: composer acima do teclado">
+        <div class="top">
+          <div class="row"><span class="caption t2 truncate" style="flex:1">Estudo de inglês · Inglês fluente</span><span class="caption t2">06:40</span></div>
+          <div class="seg"><i class="done"></i><i class="done"></i><i class="now" style="--p:34%"></i><i></i><i></i></div>
+          <div class="caption t2">Passo 3 de 5</div>
+          <h3 class="display t1">Anotar 3 frases novas</h3>
+          <p class="caption dim">O anel e as ações ficam acima; o teclado empurra o composer para o alcance do polegar.</p>
+        </div>
+        <div class="composer-wrap capture open">
+          <div class="composer static" style="box-shadow: inset 0 0 0 2px var(--violet-ink), inset 0 1px 0 var(--hairline)"><span class="ms s20">edit_note</span><input type="text" aria-label="Nova anotação" value="Phrasal verbs: 'carry on', 'figure out'" tabindex="-1"></div>
+          <div class="row"><span class="chip notechip label"><span class="ms s16">sticky_note_2</span><span class="count"><span>1</span></span>anotação</span><span class="caption hint sp"><kbd>Enter</kbd> salva</span></div>
+        </div>
+        <div class="kbd caption" aria-hidden="true">
+          <div class="krow"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="krow r2"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="krow r3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="krow r4"><i></i><i></i><i></i><i></i></div>
+          <span>teclado do sistema</span>
+        </div>
+      </div>
+      <p class="caption cap" style="text-align:center">Celular: o composer sobe acima do teclado; o resto rola por trás.</p>
+    </section>
+  </div>
+
+  <div>
+    <h2 class="title" style="margin-bottom:var(--space-4)">Estados</h2>
+    <p class="body-sm t2" style="margin-bottom:var(--space-12)">Fechado, aberto, com texto e salvo.</p>
+    <div class="states">
+      <section class="card">
+        <div class="capture">
+          <div class="titlerow"><h3 class="title t1" style="margin-right:auto">Anotar 3 frases novas</h3><button class="btn secondary sm" tabindex="-1"><span class="ms s20">add</span>Anotar</button></div>
+          <div class="row"><span class="chip notechip label"><span class="ms s16">sticky_note_2</span><span class="count"><span>2</span></span>anotações</span></div>
+        </div>
+        <p class="caption cap">Fechado: só o botão e o chip. Sem anotações o chip não aparece.</p>
+      </section>
+      <section class="card">
+        <div class="capture open">
+          <div class="titlerow"><h3 class="title t1" style="margin-right:auto">Anotar 3 frases novas</h3><button class="btn secondary sm" tabindex="-1" aria-expanded="true"><span class="ms s20">add</span>Anotar</button></div>
+          <div class="composer static"><span class="ms s20">edit_note</span><input type="text" aria-label="Nova anotação" placeholder="Um pensamento, uma frase nova…" tabindex="-1"><button class="btn ghost sm" tabindex="-1">Cancelar</button></div>
+        </div>
+        <p class="caption cap">Aberto: a linha aparece em dur-fast com ease-out, 4px de cima para baixo, e já recebe foco.</p>
+      </section>
+      <section class="card">
+        <div class="capture open">
+          <div class="titlerow"><h3 class="title t1" style="margin-right:auto">Anotar 3 frases novas</h3><button class="btn secondary sm" tabindex="-1" aria-expanded="true"><span class="ms s20">add</span>Anotar</button></div>
+          <div class="composer static" style="box-shadow: inset 0 0 0 2px var(--violet-ink), inset 0 1px 0 var(--hairline)"><span class="ms s20">edit_note</span><input type="text" aria-label="Nova anotação" value="Rever a pronúncia de 'thought'" tabindex="-1"><button class="btn ghost sm" tabindex="-1">Cancelar</button></div>
+        </div>
+        <p class="caption cap">Com texto e foco: anel de foco violet-ink de 2px por dentro. Uma linha; texto longo rola dentro do campo.</p>
+      </section>
+      <section class="card">
+        <div class="capture">
+          <div class="titlerow"><h3 class="title t1" style="margin-right:auto">Anotar 3 frases novas</h3><button class="btn secondary sm" tabindex="-1"><span class="ms s20">add</span>Anotar</button></div>
+          <div class="row"><span class="chip notechip label"><span class="ms s16">sticky_note_2</span><span class="count"><span>3</span></span>anotações</span><span class="caption saved show"><span class="ms s16">check</span>Anotado</span></div>
+        </div>
+        <p class="caption cap">Salvo: o contador rola para o novo número e "Anotado" aparece por 1,6s e some em dur-exit.</p>
+      </section>
+    </div>
+  </div>
+</div>
+<script>
+  var cap = document.getElementById('cap'), open = document.getElementById('open'), inp = document.getElementById('inp'), count = document.getElementById('count'), saved = document.getElementById('saved'), list = document.getElementById('list'), notes = document.getElementById('notes'), plural = document.getElementById('plural');
+  var n = 2, t;
+  function setOpen(o) { cap.classList.toggle('open', o); open.setAttribute('aria-expanded', String(o)); if (o) setTimeout(function () { inp.focus(); }, 30); }
+  open.addEventListener('click', function () { setOpen(!cap.classList.contains('open')); });
+  document.getElementById('cancel').addEventListener('click', function () { inp.value = ''; setOpen(false); open.focus(); });
+  inp.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { inp.value = ''; setOpen(false); open.focus(); }
+    if (e.key === 'Enter' && inp.value.trim()) { save(inp.value.trim()); }
+  });
+  function roll(to) {
+    var old = count.firstElementChild, nw = document.createElement('span'); nw.className = 'in'; nw.textContent = to; count.appendChild(nw);
+    old.classList.add('out'); void nw.offsetWidth; nw.classList.remove('in'); setTimeout(function () { old.remove(); }, 260);
+  }
+  function save(text) {
+    n++; roll(n); plural.textContent = n === 1 ? 'anotação' : 'anotações';
+    var d = new Date(), hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
+    var row = document.createElement('div'); row.className = 'note'; row.innerHTML = '<span class="caption at">' + hh + ':' + mm + '</span><span class="body-sm tx"></span>'; row.lastElementChild.textContent = text; list.appendChild(row);
+    inp.value = ''; setOpen(false); open.focus();
+    saved.classList.add('show'); clearTimeout(t); t = setTimeout(function () { saved.classList.remove('show'); }, 1600);
+  }
+  document.getElementById('toggle').addEventListener('click', function () { notes.setAttribute('aria-expanded', notes.getAttribute('aria-expanded') !== 'true'); });
+</script>
+</body>
+</html>

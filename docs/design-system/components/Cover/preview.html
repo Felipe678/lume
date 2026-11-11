@@ -1,0 +1,53 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=960">
+<style>
+  html, body { margin: 0; background: var(--bg); }
+  svg { display: block; width: 960px; height: 288px; }
+  .ground { fill: var(--bg); }
+  .blk { rx: var(--radius-xl); ry: var(--radius-xl); }
+  .violet { fill: var(--violet); }
+  .navy { fill: var(--card-3); }
+  .orange { fill: var(--orange); }
+  .cyan { fill: var(--cyan); }
+  .track { fill: none; stroke: var(--card-2); stroke-width: 12; }
+  .arc { fill: none; stroke-width: 12; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 788px 120px; }
+  .arc-o { stroke: var(--orange); }
+  .arc-c { stroke: var(--cyan); }
+  .arc-w { stroke: var(--card-fg); }
+  .name { font-family: var(--font-sans); font-weight: 800; font-size: 120px; letter-spacing: -4px; fill: var(--text-primary); }
+  .tag { font-family: var(--font-sans); font-weight: 500; font-size: 14px; fill: var(--text-muted); }
+</style>
+</head>
+<body>
+<!--
+  Derivação:
+  blocos: violet 216×168 (bleed topo), card-3 168×144, orange 104×120 (bleed direita), cyan 144×136 (bleed base); lados em múltiplos de 24 (space-24), cantos radius-xl (24).
+  arranjo: bloco violeta no topo à esquerda da caixa, o azul-marinho ao centro com os anéis, o laranja sangrando à direita, o ciano sangrando embaixo.
+  padrão: anéis concêntricos (o próprio MetricRing do dia, em violet/cyan/orange), porque o anel de progresso é o objeto que mais identifica o Lume; três arcos de 72%, 55% e 85%.
+  passos e raios: raios 60/42/24 com traço de 12; gap de 18; tudo à direita de x = 480.
+-->
+<svg viewBox="0 0 960 288" role="img" aria-label="Lume: blocos nas cores da marca com três anéis de progresso">
+  <rect class="ground" x="0" y="0" width="960" height="288"/>
+  <rect class="blk violet" x="480" y="-24" width="216" height="192"/>
+  <rect class="blk navy" x="704" y="48" width="168" height="144"/>
+  <rect class="blk orange" x="880" y="-24" width="104" height="144"/>
+  <rect class="blk cyan" x="480" y="176" width="144" height="136"/>
+
+  <g>
+    <circle class="track" cx="788" cy="120" r="60"/>
+    <circle class="track" cx="788" cy="120" r="42"/>
+    <circle class="track" cx="788" cy="120" r="24"/>
+    <circle class="arc arc-o" cx="788" cy="120" r="60" stroke-dasharray="271.4 377"/>
+    <circle class="arc arc-c" cx="788" cy="120" r="42" stroke-dasharray="145.1 264"/>
+    <circle class="arc arc-w" cx="788" cy="120" r="24" stroke-dasharray="128.2 151"/>
+  </g>
+
+  <text class="name" x="48" y="196">Lume</text>
+  <text class="tag" x="52" y="232">Um ERP pessoal, calmo, para o dia inteiro.</text>
+</svg>
+</body>
+</html>

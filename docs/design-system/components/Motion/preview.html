@@ -1,0 +1,278 @@
+<!-- @dsCard group="Movimento" height=2220 subtitle="Sistema de movimento v2: oito durações, sete curvas com a bolinha, demos ao vivo do kit (acender, segmentos, pulso, mola, duas ondas, respiração, vidro) e o interruptor de reduzir movimento" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-24); }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-16); flex-wrap: wrap; }
+  .top p { margin-top: var(--space-4); color: var(--text-secondary); max-width: 60ch; }
+  .tools { display: flex; gap: var(--space-8); align-items: center; flex-wrap: wrap; }
+  .btn.icon.sm { width: 36px; padding: 0; }
+  .cap { color: var(--text-muted); }
+  .sec { padding: var(--space-20); }
+  .sec h2 { margin-bottom: var(--space-12); }
+  .sec .sub { color: var(--text-secondary); margin: calc(var(--space-8) * -1) 0 var(--space-12); }
+
+  /* interruptor */
+  .sw { gap: var(--space-12); min-height: 44px; padding: 0 var(--space-16) 0 var(--space-12); cursor: pointer; }
+  .sw .tr { width: 40px; height: 24px; border-radius: var(--radius-full); background: var(--border-control); position: relative; transition: background-color var(--dur-fast) var(--ease-out); }
+  .sw .tr::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: var(--radius-full); background: var(--bg); transition: transform var(--dur-base) var(--ease-spring); }
+  .sw[aria-checked="true"] .tr { background: var(--violet); } .sw[aria-checked="true"] .tr::after { transform: translateX(16px); background: var(--on-violet); }
+
+  /* tabela de durações */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 0 var(--space-12) var(--space-8) 0; color: var(--text-muted); font-weight: 500; }
+  td { padding: var(--space-8) var(--space-12) var(--space-8) 0; border-top: 1px solid var(--divider); vertical-align: middle; }
+  td:last-child, th:last-child { padding-right: 0; text-align: right; }
+  .dtrack { height: 6px; border-radius: var(--radius-full); background: var(--ring-track); overflow: hidden; min-width: 140px; }
+  .fill { display: block; height: 100%; width: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--violet) calc(100% - var(--glow-head)), color-mix(in srgb, var(--violet) 60%, white)); transform: scaleX(0); transform-origin: left; animation: sweep var(--d) var(--e) forwards; }
+  @keyframes sweep { to { transform: scaleX(1); } }
+  .mini-dot { width: 20px; height: 20px; border-radius: var(--radius-full); background: var(--violet); display: inline-block; vertical-align: middle; }
+  .mini-ember { width: 20px; height: 20px; border-radius: var(--radius-sm); background: linear-gradient(180deg, var(--ember), var(--orange)); display: inline-block; vertical-align: middle; }
+
+  /* curvas */
+  .curves { display: grid; grid-template-columns: repeat(auto-fit, minmax(136px, 1fr)); gap: var(--space-12); }
+  .curve .label { white-space: nowrap; }
+  .curve .caption { color: var(--text-muted); min-height: 32px; }
+  .curve svg { width: 100%; height: auto; display: block; margin-top: var(--space-4); }
+  .ctrack { position: relative; height: 20px; margin: var(--space-8) 10px 0; }
+  .ctrack::before { content: ""; position: absolute; left: 10px; right: 10px; top: 9px; height: 2px; background: var(--ring-track); border-radius: var(--radius-full); }
+  .ball { position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: var(--radius-full); background: var(--cyan); }
+
+  /* demos */
+  .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-16); }
+  .demo { padding: var(--space-16); display: grid; grid-template-rows: auto 1fr; gap: var(--space-12); min-height: 220px; }
+  .demo .hd { display: flex; justify-content: space-between; gap: var(--space-8); align-items: flex-start; }
+  .demo .hd .caption { color: var(--text-muted); }
+  .demo .area { display: grid; place-items: center; min-height: 120px; padding: var(--space-12); position: relative; overflow: hidden; }
+  .demo .area.col2 { place-items: stretch; align-content: center; gap: var(--space-8); }
+  .lbl { display: flex; justify-content: space-between; margin-bottom: var(--space-8); }
+  .now-mini { width: 100%; padding: var(--space-16); min-height: 112px; display: flex; flex-direction: column; }
+  .now-mini .overline { color: var(--card-fg); opacity: .8; }
+  .now-mini .title { margin-top: var(--space-4); }
+  .now-mini .bar { margin-top: auto; }
+  .now-mini.paused { filter: saturate(.6); }
+  .now-mini.paused .muted { color: var(--card-fg-muted); }
+  .rowline { display: flex; align-items: center; gap: var(--space-12); min-height: 36px; padding: 0 var(--space-12); }
+  .pdot { width: 44px; height: 44px; border-radius: var(--radius-full); background: var(--violet); display: grid; place-items: center; color: var(--on-violet); }
+  .meter { position: relative; width: 100%; height: 20px; }
+  .meter::before { content: ""; position: absolute; left: 10px; right: 10px; top: 9px; height: 2px; background: var(--ring-track); border-radius: var(--radius-full); }
+  .meter .ball { background: var(--violet); transition: transform var(--dur-base) var(--ease-spring); }
+  .meter.go .ball { transform: translateX(calc(100% * 7)); }
+  .stage { width: 100%; height: 160px; border-radius: var(--radius-md); overflow: hidden; position: relative; box-shadow: inset 0 0 0 1px var(--hairline-strong); }
+  .stage .bgc { position: absolute; left: 12px; top: 12px; right: 12px; padding: var(--space-12); }
+  .stage .scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); pointer-events: none; }
+  .stage .sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--space-8) var(--space-16) var(--space-16); border-radius: var(--radius-lg) var(--radius-lg) 0 0; transform: translateY(100%); transition: transform var(--dur-exit) var(--ease-in); }
+  .stage.open .scrim { opacity: 1; pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out-quint); }
+  .stage.open .sheet { transform: none; transition: transform var(--dur-base) var(--ease-out-quint); }
+  .grab { width: 36px; height: 4px; border-radius: var(--radius-full); background: var(--border-control); margin: 0 auto var(--space-12); }
+  .toast { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border-radius: var(--radius-md); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity var(--dur-exit) var(--ease-in), transform var(--dur-exit) var(--ease-in); }
+  .toast.show { opacity: 1; transform: none; pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out-quint), transform var(--dur-base) var(--ease-out-quint); }
+  .toast .ico-tile.sm .ms { font-size: 18px; width: 18px; height: 18px; }
+  .toast.show .ico-tile .ms { animation: popin var(--dur-base) var(--ease-spring) both; animation-delay: var(--dur-fast); }
+  .nope { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--space-8) var(--space-16); list-style: none; margin: 0; padding: 0; }
+  .nope li { display: flex; gap: var(--space-8); align-items: center; min-height: 32px; }
+  .nope .ms { color: var(--danger); }
+
+  /* reduzir movimento emulado na página (html.rm): o mesmo que o kit faz no @media */
+  html.rm { --dur-instant: 1ms; --dur-fast: 1ms; --dur-exit: 1ms; --dur-base: 1ms; --dur-slow: 1ms; --dur-page: 1ms; --dur-pulse: 1ms; --dur-breathe: 1ms; --ease-spring: var(--ease-out); }
+  html.rm .breathe, html.rm .skel, html.rm .pulse.go::before, html.rm .toast.show .ico-tile .ms, html.rm .check.on .ms { animation: none; }
+  html.rm .rise { animation: none; opacity: 1; transform: none; }
+  html.rm .btn:active, html.rm .check { transform: none; }
+  html.rm .fill { animation: none; transform: none; }
+  html.rm .toast, html.rm .sheet { transform: none; }
+  html.rm .sheet { opacity: 0; transition: opacity 1ms linear; } html.rm .stage.open .sheet { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .fill { animation: none; transform: none; }
+    .sw .tr, .sw .tr::after, .meter .ball { transition: none; }
+    .toast, .sheet { transform: none; }
+    .sheet { opacity: 0; } .stage.open .sheet { opacity: 1; }
+    .toast.show .ico-tile .ms { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1 class="display">Movimento</h1><p class="body">Calmo, com contexto, nunca para prender atenção. Três assinaturas, e só elas: progresso <b>acende</b>, concluir solta um <b>pulso</b>, o elemento aceso <b>respira</b>. Tudo vem dos tokens <code>dur-*</code> e <code>ease-*</code>.</p></div>
+    <div class="tools">
+      <button class="btn secondary" id="all"><span class="ms s20">replay</span>Repetir tudo</button>
+      <button class="chip label sw" role="switch" aria-checked="false" id="rm"><span class="tr" aria-hidden="true"></span>Reduzir movimento</button>
+    </div>
+  </div>
+
+  <section class="card sec">
+    <h2 class="title">Durações</h2>
+    <p class="body-sm sub">Valores lidos dos tokens. Entrar usa <code>ease-out</code> (ou <code>ease-out-quint</code> em elementos grandes); sair é 20% mais curto, em <code>ease-in</code>.</p>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th class="caption">Token</th><th class="caption">Valor</th><th class="caption">Uso</th><th class="caption" style="width:28%">Demo</th><th></th></tr></thead>
+      <tbody id="durs"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card sec">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:var(--space-12)">
+      <div><h2 class="title" style="margin:0">Curvas</h2><p class="body-sm" style="color:var(--text-secondary)">Câmera lenta: 3× <code>dur-page</code>. O ponto no gráfico e a bolinha seguem a mesma curva; a mola passa do fim e volta.</p></div>
+      <button class="btn secondary sm" id="cv"><span class="ms s20">replay</span>Repetir</button>
+    </div>
+    <div class="curves" id="curves"></div>
+  </section>
+
+  <section>
+    <h2 class="title" style="margin-bottom:var(--space-12)">Demos ao vivo, com as classes do kit</h2>
+    <div class="demos">
+
+      <div class="card demo" id="d-lit">
+        <div class="hd"><div><div class="label">Acender</div><div class="caption"><code>.bar.lit</code>: preenche em dur-slow, ease-settle, com cabeça luminosa.</div></div><button class="btn ghost icon sm" aria-label="Repetir acender"><span class="ms s20">replay</span></button></div>
+        <div class="block area col2"><div><div class="lbl caption t2"><span>Etapas do objetivo</span><span class="num t1">14 de 26</span></div><div class="bar lit" style="--g:var(--orange)"><i id="lit1" style="--p:54%"></i></div></div><div><div class="lbl caption t2"><span>Blocos do dia</span><span class="num t1">4 de 7</span></div><div class="bar lit"><i id="lit2" style="--p:57%"></i></div></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Segmentos: concluir passo</div><div class="caption"><code>.seg</code>: o atual esfria de orange para violet com um pulso; o próximo acende.</div></div></div>
+        <div class="block area col2"><div><div class="lbl caption t2"><span>Passos da atividade</span><span class="num t1" id="segn">3 de 5</span></div><div class="seg" id="seg"><i class="done"></i><i class="done"></i><i class="now" style="--p:45%"></i><i></i><i></i></div></div><button class="btn secondary sm" id="step" style="justify-self:start">Concluir passo</button></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Pulso de conclusão</div><div class="caption"><code>.pulse.go</code>: um anel de luz que expande e some em dur-pulse, ease-out-expo.</div></div><button class="btn ghost icon sm" id="fire" aria-label="Repetir pulso"><span class="ms s20">replay</span></button></div>
+        <div class="block area"><span class="pdot pulse" id="pulse" style="--c:var(--violet)"><span class="ms">check</span></span></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Check com mola</div><div class="caption"><code>.check.on</code>: o traço entra em dur-base com ease-spring. Toque para alternar.</div></div></div>
+        <div class="block area"><div class="row" style="gap:var(--space-16)"><span class="check" id="chk" role="checkbox" aria-checked="false" tabindex="0"><span class="ms s16">check</span></span><span class="body-sm t1">Anotar 3 frases novas</span><span class="caption t2" id="chkt"></span></div></div>
+      </div>
+
+      <div class="card demo" id="d-rise">
+        <div class="hd"><div><div class="label">Entrada em duas ondas</div><div class="caption">Hero em 240ms (<code>.rise.hero</code>); depois os blocos em duas ondas (<code>--w:0</code>, <code>--w:1</code>). Nunca um card por vez.</div></div><button class="btn ghost icon sm" aria-label="Repetir entrada" data-rst="d-rise"><span class="ms s20">replay</span></button></div>
+        <div class="block area col2"><div class="rowline rise hero" style="background:var(--surface-tint);border-radius:var(--radius-sm)"><span class="label">Hero</span></div><div class="rowline rise" style="--w:0"><span class="dot" style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--violet-ink)"></span><span class="body-sm">Onda 1</span></div><div class="rowline rise" style="--w:0"><span style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--violet-ink)"></span><span class="body-sm">Onda 1</span></div><div class="rowline rise" style="--w:1"><span style="width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan)"></span><span class="body-sm">Onda 2</span></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Respiração do elemento aceso</div><div class="caption"><code>.breathe</code>: brilho de 1 a 1,08 em dur-breathe. Pausar para e esfria o número.</div></div><button class="btn ghost sm" id="pause">Pausar</button></div>
+        <div class="area" style="padding:0"><div class="navy now-mini breathe" id="now"><span class="overline">AGORA</span><span class="title">Estudo de inglês</span><span class="body-sm muted" id="nowt">faltam 40 min</span><div class="bar lit" style="--g:var(--card-fg)"><i style="--p:62%"></i></div></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Hover de card</div><div class="caption"><code>.card.lift</code>: sobe 2px e passa a elev-2 em dur-fast. Só com ponteiro fino.</div></div></div>
+        <div class="block area"><div class="card lift" tabindex="0" style="width:200px;padding:var(--space-16)"><div class="title-sm">Revisão de código</div><div class="body-sm t2">15:30 · 60 <small style="font-size:12px">min</small></div></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Pressionar e soltar</div><div class="caption"><code>.btn</code>: encolhe para 0,97 em ease-out; solta em ease-spring. A bolinha repete a mola.</div></div></div>
+        <div class="block area col2"><button class="btn primary" id="press" style="justify-self:center">Salvar bloco</button><div class="meter" id="meter" aria-hidden="true"><span class="ball"></span></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Sheet em vidro</div><div class="caption">Abre em dur-base, ease-out-quint; fecha em dur-exit, ease-in. Scrim junto.</div></div><button class="btn secondary sm" id="tgs">Abrir</button></div>
+        <div class="area" style="padding:0"><div class="stage aurora" id="sh"><div class="bgc card"><div class="caption t3">Tela atrás</div><div class="title-sm">Hoje · 4 de 7</div></div><div class="scrim"></div><div class="sheet glass"><div class="grab"></div><div class="title-sm">Módulos</div><div class="body-sm t2">Cada área da sua vida</div></div></div></div>
+      </div>
+
+      <div class="card demo">
+        <div class="hd"><div><div class="label">Toast em vidro</div><div class="caption">Sobe 8px em dur-base, ease-out-quint; some em 4s; sai em dur-exit; para com hover ou foco.</div></div><button class="btn secondary sm" id="tgt">Mostrar</button></div>
+        <div class="area" style="padding:0"><div class="stage aurora"><div class="bgc card"><div class="caption t3">Tela atrás</div><div class="title-sm">Estudo de inglês</div></div><div class="toast glass" id="ts" role="status" tabindex="0"><span class="ico-tile sm violet"><span class="ms">check</span></span><span class="body-sm t1" style="flex:1">Passo concluído.</span><button class="btn ghost sm">Desfazer</button></div></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="card sec">
+    <h2 class="title">Nunca no Lume</h2>
+    <ul class="nope body-sm t1">
+      <li><span class="ms s20">block</span>Confete, partículas e chama</li>
+      <li><span class="ms s20">block</span>Tremor e piscar vermelho</li>
+      <li><span class="ms s20">block</span>Contagem regressiva pulsante</li>
+      <li><span class="ms s20">block</span>Som ou vibração de recompensa</li>
+      <li><span class="ms s20">block</span>Fade-up em cada card da tela</li>
+      <li><span class="ms s20">block</span>Loop além da respiração e do esqueleto</li>
+      <li><span class="ms s20">block</span>Mola fora de soltar, check e troca de passo</li>
+      <li><span class="ms s20">block</span>Animar o que se vê 100 vezes por dia (troca de aba)</li>
+    </ul>
+  </section>
+</div>
+<script>
+  var R = document.documentElement, CS = getComputedStyle(R);
+  function tok(n){ return CS.getPropertyValue('--' + n).trim(); }
+  var TOK = {}; ['dur-instant','dur-fast','dur-exit','dur-base','dur-slow','dur-page','dur-pulse','dur-breathe','ease-out','ease-in','ease-settle','ease-out-quint','ease-out-expo','ease-in-out','ease-spring'].forEach(function(n){ TOK[n] = tok(n); });
+  function msv(v){ return v.slice(-2) === 'ms' ? parseFloat(v) : parseFloat(v) * 1000; }
+  function fmt(v){ var m = msv(v); return m >= 1000 ? (m / 1000).toString().replace('.', ',') + ' s' : m + ' ms'; }
+
+  // durações
+  var D = [
+    ['dur-instant', 'Troca de cor em hover e foco', 'ease-out'], ['dur-fast', 'Pressionar, soltar e trocar aba', 'ease-out'], ['dur-exit', 'Fechar menu, sheet, diálogo e toast', 'ease-in'],
+    ['dur-base', 'Abrir menu, sheet, diálogo e toast', 'ease-out-quint'], ['dur-slow', 'Acender anel e barras', 'ease-settle'], ['dur-page', 'Entrada da tela em duas ondas', 'ease-out-quint'],
+    ['dur-pulse', 'Pulso de luz ao concluir', 'ease-out-expo'], ['dur-breathe', 'Ciclo da respiração do elemento aceso', 'ease-in-out']
+  ];
+  var tb = document.getElementById('durs');
+  D.forEach(function(d){
+    var tr = document.createElement('tr'), demo;
+    if (d[0] === 'dur-pulse') demo = '<span class="mini-dot pulse" style="--c:var(--violet)"></span>';
+    else if (d[0] === 'dur-breathe') demo = '<span class="mini-ember breathe lit-orange"></span>';
+    else demo = '<div class="dtrack"><i class="fill" style="--d:var(--' + d[0] + ');--e:var(--' + d[2] + ')"></i></div>';
+    tr.innerHTML = '<td class="label">' + d[0] + '</td><td class="label num">' + fmt(TOK[d[0]]) + '</td><td class="body-sm t2">' + d[1] + ' <span class="t3">· ' + d[2] + '</span></td><td>' + demo + '</td><td><button class="btn ghost icon sm" aria-label="Repetir ' + d[0] + '"><span class="ms s20">replay</span></button></td>';
+    tr.querySelector('button').addEventListener('click', function(){ rep(tr); });
+    tb.appendChild(tr);
+  });
+  function rep(tr){ var f = tr.querySelector('.fill, .pulse'); if (!f) return; if (f.classList.contains('pulse')) { f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); } else { f.style.animation = 'none'; void f.offsetWidth; f.style.animation = ''; } }
+
+  // curvas
+  var CV = [['ease-out', 'Entra ou aparece'], ['ease-in', 'Sai ou fecha'], ['ease-settle', 'Anel e barras assentam'], ['ease-out-quint', 'Elementos grandes entram'], ['ease-out-expo', 'Pulso que some'], ['ease-in-out', 'Já está na tela e se move'], ['ease-spring', 'Mola contida: soltar, check, passo']];
+  function bz(n){ return TOK[n].match(/cubic-bezier\(([^)]+)\)/)[1].split(',').map(Number); }
+  function ev(p, x){ var lo = 0, hi = 1, t = x; for (var i = 0; i < 30; i++) { t = (lo + hi) / 2; var cx = 3 * (1 - t) * (1 - t) * t * p[0] + 3 * (1 - t) * t * t * p[2] + t * t * t; if (cx < x) lo = t; else hi = t; } return 3 * (1 - t) * (1 - t) * t * p[1] + 3 * (1 - t) * t * t * p[3] + t * t * t; }
+  var cw = document.getElementById('curves'), svgs = [];
+  CV.forEach(function(c){
+    var p = bz(c[0]), X = function(x){ return 20 + x * 120; }, Y = function(y){ return 160 - y * 120; };
+    var el = document.createElement('div'); el.className = 'curve';
+    el.innerHTML = '<div class="label">' + c[0] + '</div><div class="caption">' + c[1] + '</div><svg viewBox="0 0 160 180" role="img" aria-label="Curva ' + c[0] + '" data-curve="' + c[0] + '"><rect x="20" y="40" width="120" height="120" fill="none" stroke="var(--divider)"/><path fill="none" stroke="var(--violet-ink)" stroke-width="2.5" stroke-linecap="round" d="M20,160 C' + X(p[0]) + ',' + Y(p[1]) + ' ' + X(p[2]) + ',' + Y(p[3]) + ' 140,40"/><path fill="none" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3 3" d="M20,160 L' + X(p[0]) + ',' + Y(p[1]) + ' M140,40 L' + X(p[2]) + ',' + Y(p[3]) + '"/><circle class="d" r="5" fill="var(--cyan)" cx="20" cy="160"/></svg><div class="ctrack"><span class="ball"></span></div>';
+    cw.appendChild(el); svgs.push({ n: c[0], p: p, d: el.querySelector('.d'), b: el.querySelector('.ball'), t: el.querySelector('.ctrack') });
+  });
+  var raf; function place(x){ svgs.forEach(function(s){ var y = ev(s.p, x); s.d.setAttribute('cx', 20 + x * 120); s.d.setAttribute('cy', 160 - y * 120); s.b.style.transform = 'translateX(' + (y * (s.t.clientWidth - 20)) + 'px)'; }); }
+  function playCurves(){ cancelAnimationFrame(raf); if (isRm()) { place(1); return; } var T = msv(TOK['dur-page']) * 3, t0 = null; function f(ts){ if (t0 === null) t0 = ts; var x = Math.min(1, (ts - t0) / T); place(x); if (x < 1) raf = requestAnimationFrame(f); } place(0); raf = requestAnimationFrame(f); }
+  document.getElementById('cv').addEventListener('click', playCurves);
+
+  // demos
+  function rst(id){ var e = document.getElementById(id); e.classList.add('rst'); void e.offsetWidth; requestAnimationFrame(function(){ e.classList.remove('rst'); }); }
+  document.querySelectorAll('[data-rst]').forEach(function(b){ b.addEventListener('click', function(){ rst(b.getAttribute('data-rst')); }); });
+  function relit(){ ['lit1', 'lit2'].forEach(function(id){ var i = document.getElementById(id), p = i.style.getPropertyValue('--p'); i.style.transition = 'none'; i.style.setProperty('--p', '0%'); void i.offsetWidth; i.style.transition = ''; i.style.setProperty('--p', p); }); }
+  document.querySelector('#d-lit .btn').addEventListener('click', relit);
+  var pulse = document.getElementById('pulse'); function fire(){ pulse.classList.remove('go'); void pulse.offsetWidth; pulse.classList.add('go'); }
+  document.getElementById('fire').addEventListener('click', fire);
+  var chk = document.getElementById('chk'), chkt = document.getElementById('chkt');
+  function toggle(){ var on = chk.classList.toggle('on'); chk.setAttribute('aria-checked', String(on)); chkt.textContent = on ? 'Concluído' : ''; }
+  chk.addEventListener('click', toggle); chk.addEventListener('keydown', function(e){ if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+  var seg = document.getElementById('seg'), segn = document.getElementById('segn');
+  document.getElementById('step').addEventListener('click', function(){
+    var now = seg.querySelector('.now');
+    if (!now) { seg.querySelectorAll('i').forEach(function(i){ i.className = ''; i.style.removeProperty('--p'); i.classList.remove('pulse', 'go'); }); seg.children[0].className = 'now'; seg.children[0].style.setProperty('--p', '30%'); segn.textContent = '1 de 5'; return; }
+    now.classList.add('pulse', 'go'); now.style.setProperty('--c', 'var(--orange)');
+    setTimeout(function(){ now.className = 'done'; now.style.removeProperty('--p'); var nx = now.nextElementSibling, k = [].indexOf.call(seg.children, now) + 1; if (nx) { nx.className = 'now'; nx.style.setProperty('--p', '35%'); segn.textContent = (k + 1) + ' de 5'; } else { segn.textContent = 'Atividade concluída'; } }, 220);
+  });
+  var nowc = document.getElementById('now'), nowt = document.getElementById('nowt'), pb = document.getElementById('pause');
+  pb.addEventListener('click', function(){ var paused = nowc.classList.toggle('paused'); nowc.classList.toggle('breathe', !paused); pb.textContent = paused ? 'Retomar' : 'Pausar'; nowt.textContent = paused ? 'pausado · faltam 40 min' : 'faltam 40 min'; });
+  var press = document.getElementById('press'), meter = document.getElementById('meter');
+  function release(){ meter.classList.remove('go'); void meter.offsetWidth; meter.querySelector('.ball').style.transform = 'translateX(' + (meter.clientWidth - 20) + 'px)'; setTimeout(function(){ meter.querySelector('.ball').style.transform = ''; }, msv(TOK['dur-base']) + 400); }
+  press.addEventListener('pointerup', release); press.addEventListener('keyup', function(e){ if (e.key === ' ' || e.key === 'Enter') release(); });
+  var sh = document.getElementById('sh'), tgs = document.getElementById('tgs');
+  tgs.addEventListener('click', function(){ var o = sh.classList.toggle('open'); tgs.textContent = o ? 'Fechar' : 'Abrir'; });
+  var ts = document.getElementById('ts'), tt;
+  function arm(){ clearTimeout(tt); tt = setTimeout(function(){ ts.classList.remove('show'); }, 4000); }
+  document.getElementById('tgt').addEventListener('click', function(){ ts.classList.remove('show'); void ts.offsetWidth; ts.classList.add('show'); arm(); });
+  ts.querySelector('.btn').addEventListener('click', function(){ clearTimeout(tt); ts.classList.remove('show'); });
+  ts.addEventListener('mouseenter', function(){ clearTimeout(tt); }); ts.addEventListener('mouseleave', function(){ if (ts.classList.contains('show')) arm(); });
+  ts.addEventListener('focusin', function(){ clearTimeout(tt); }); ts.addEventListener('focusout', function(){ if (ts.classList.contains('show')) arm(); });
+
+  // tudo e reduzir movimento
+  function runAll(){ tb.querySelectorAll('tr').forEach(rep); playCurves(); rst('d-rise'); relit(); fire(); }
+  document.getElementById('all').addEventListener('click', runAll);
+  var sw = document.getElementById('rm');
+  function isRm(){ return R.classList.contains('rm'); }
+  function setRm(v){ R.classList.toggle('rm', v); sw.setAttribute('aria-checked', String(v)); runAll(); }
+  sw.addEventListener('click', function(){ setRm(!isRm()); });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setRm(true); else playCurves();
+</script>
+</body>
+</html>

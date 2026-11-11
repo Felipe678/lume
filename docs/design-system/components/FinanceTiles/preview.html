@@ -1,0 +1,172 @@
+<!-- @dsCard group="Finanças" height=1320 subtitle="Tile de categoria em bloco com barra que acende, chip de gasto recorrente e card de tendência com mini-gráfico de cabeça luminosa" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-32); }
+  .sec h2 { margin-bottom: var(--space-4); }
+  .sec .lead { color: var(--text-secondary); max-width: 64ch; margin-bottom: var(--space-16); }
+  .cap { color: var(--text-muted); }
+  .cols { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: var(--space-24); align-items: start; }
+  @media (max-width: 820px) { .cols { grid-template-columns: 1fr; } }
+
+  /* tile de categoria: bloco dentro do card */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-12); }
+  .tile { min-height: 136px; padding: var(--space-16); display: grid; gap: var(--space-2); align-content: start; min-width: 0; transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .tile:hover { box-shadow: var(--elev-2); transform: translateY(-2px); } }
+  .tile .ico-tile { margin-bottom: var(--space-12); }
+  .tile .name { color: var(--text-secondary); }
+  .tile .amt { color: var(--text-primary); }
+  .tile .share { color: var(--text-muted); }
+  .tile .bar { margin-top: var(--space-8); }
+  .tile .ico-tile.neutral { color: var(--text-secondary); }
+
+  /* chip recorrente */
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-8); list-style: none; margin: 0; padding: 0; }
+  .chip .dot { width: 8px; height: 8px; border-radius: var(--radius-full); flex: 0 0 auto; }
+  .chip .a { font-weight: 700; }
+  .chip .lbl { max-width: 24ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* card de tendência */
+  .trend { padding: var(--space-20); display: grid; gap: var(--space-16); min-width: 0; }
+  .trend.wide { padding: var(--space-24); }
+  .plot { display: grid; gap: var(--space-4); }
+  .axis { display: flex; justify-content: space-between; color: var(--text-muted); }
+  .chart { position: relative; height: 112px; display: flex; align-items: flex-end; gap: var(--space-4); border-bottom: 1px solid var(--divider); }
+  .chart .grid { position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--divider); pointer-events: none; }
+  .col { --i: 0; --h: 10%; position: relative; flex: 1; min-width: 0; height: 100%; border-radius: var(--radius-xs); }
+  /* a barra é absoluta: botões centralizam o conteúdo no Chromium e ignorariam o alinhamento na base */
+  .col .b { position: absolute; left: 50%; bottom: 0; width: 100%; max-width: 20px; height: var(--h); border-radius: var(--radius-xs) var(--radius-xs) 0 0; background: var(--violet); transform: translateX(-50%); transform-origin: bottom; animation: rise-b var(--dur-slow) var(--ease-settle) both; animation-delay: calc(var(--i) * 30ms); }
+  .col.muted .b { background: var(--bar-muted); }
+  /* hoje: cabeça luminosa (glow-head) e luz ciano */
+  .col.hi .b { background: linear-gradient(180deg, color-mix(in srgb, var(--cyan) 60%, white) 0, var(--cyan) var(--glow-head)); box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 60%, transparent); animation: none; }
+  @media (hover: hover) and (pointer: fine) { .col:hover .b { filter: brightness(1.15); } }
+  .col[aria-pressed="true"] .b { outline: 2px solid var(--text-primary); outline-offset: -2px; }
+  .days { display: flex; gap: var(--space-4); }
+  .days span { flex: 1; text-align: center; color: var(--text-muted); }
+  .days span.hi { color: var(--cyan-ink); }
+  .readout { min-height: 19px; color: var(--text-primary); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-16); color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: var(--space-8); }
+  .legend i { width: 10px; height: 10px; border-radius: var(--radius-xs); display: inline-block; }
+  .sumtxt { color: var(--text-secondary); }
+  .sumtxt b { color: var(--text-primary); font-weight: 600; }
+  @keyframes rise-b { from { transform: translateX(-50%) scaleY(0); } to { transform: translateX(-50%) scaleY(1); } }
+  @media (prefers-reduced-motion: reduce) { .col .b { animation: none; } .tile { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="sec">
+    <h2 class="title">Tile de categoria</h2>
+    <p class="body lead">Bloco (<code>surface-raised</code> + hairline) dentro do card, ícone em tile na cor da categoria e barra que acende com cabeça luminosa. O percentual em texto diz o mesmo que a barra.</p>
+    <div class="card" style="padding:var(--space-16);max-width:560px">
+      <div class="tiles">
+        <div class="block tile" role="group" aria-label="Alimentação: R$ 640, 38% dos gastos do mês">
+          <span class="ico-tile orange"><span class="ms" aria-hidden="true">restaurant</span></span>
+          <span class="body-sm name">Alimentação</span>
+          <span class="title amt num">R$ 640</span>
+          <span class="caption share num">38% do mês</span>
+          <span class="bar lit" style="--g:var(--orange)" aria-hidden="true"><i style="--p:38%"></i></span>
+        </div>
+        <div class="block tile" role="group" aria-label="Assinaturas: R$ 310, 18% dos gastos do mês">
+          <span class="ico-tile violet"><span class="ms" aria-hidden="true">subscriptions</span></span>
+          <span class="body-sm name">Assinaturas</span>
+          <span class="title amt num">R$ 310</span>
+          <span class="caption share num">18% do mês</span>
+          <span class="bar lit" style="--g:var(--violet)" aria-hidden="true"><i style="--p:18%"></i></span>
+        </div>
+        <div class="block tile" role="group" aria-label="Saúde: R$ 185, 11% dos gastos do mês">
+          <span class="ico-tile cyan"><span class="ms" aria-hidden="true">medical_services</span></span>
+          <span class="body-sm name">Saúde</span>
+          <span class="title amt num">R$ 185</span>
+          <span class="caption share num">11% do mês</span>
+          <span class="bar lit" style="--g:var(--cyan)" aria-hidden="true"><i style="--p:11%"></i></span>
+        </div>
+      </div>
+    </div>
+    <p class="caption cap" style="margin-top:var(--space-8)">Hover (desktop): o bloco sobe 2px e ganha elev-2.</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Chip de gasto recorrente</h2>
+    <p class="body lead">Chip do kit com ponto de cor, nome e valor em números tabulares. O ponto é só apoio; nome e valor dizem tudo.</p>
+    <ul class="chips" aria-label="Gastos recorrentes">
+      <li class="chip"><span class="dot" style="background:var(--goal-sky)" aria-hidden="true"></span><span class="label lbl">Aluguel</span><span class="body-sm a num">R$ 1.800</span></li>
+      <li class="chip"><span class="dot" style="background:var(--data-yellow)" aria-hidden="true"></span><span class="label lbl">Internet</span><span class="body-sm a num">R$ 99</span></li>
+      <li class="chip"><span class="dot" style="background:var(--green)" aria-hidden="true"></span><span class="label lbl">Academia</span><span class="body-sm a num">R$ 120</span></li>
+      <li class="chip"><span class="dot" style="background:var(--orange)" aria-hidden="true"></span><span class="label lbl">Streaming</span><span class="body-sm a num">R$ 45</span></li>
+      <li class="chip"><span class="dot" style="background:var(--data-purple)" aria-hidden="true"></span><span class="label lbl">Plano de saúde familiar com nome bem longo</span><span class="body-sm a num">R$ 420</span></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Card de tendência de gastos</h2>
+    <p class="body lead">Barras em violeta, dias sem gasto relevante em <code>bar-muted</code>, e hoje aceso em ciano com cabeça luminosa: a única luz do card. Toque numa barra para ler o valor.</p>
+    <div class="cols">
+      <div>
+        <span class="caption cap" style="display:block;margin-bottom:var(--space-8)">Celular, 390px</span>
+        <div class="card trend" data-trend>
+          <h3 class="title">Tendência de gastos</h3>
+          <div class="plot">
+            <div class="axis micro" aria-hidden="true"><span>R$ 220</span></div>
+            <div class="chart" role="group" aria-label="Gasto por dia, de 1 a 12 de novembro"><div class="grid"></div></div>
+            <div class="days micro" aria-hidden="true"></div>
+          </div>
+          <p class="readout body-sm num" role="status"></p>
+          <div class="legend caption"><span><i style="background:var(--violet)"></i>Dias do mês</span><span><i style="background:var(--cyan)"></i>Hoje</span><span><i style="background:var(--bar-muted)"></i>Sem gasto relevante</span></div>
+          <p class="sumtxt body-sm">Neste mês seus gastos foram <b>12% menores</b> que no mês passado. O dia de maior gasto foi 8, com R$ 210,00.</p>
+          <div class="title-sm">Principais categorias do mês</div>
+          <div class="tiles">
+            <div class="block tile"><span class="ico-tile orange"><span class="ms" aria-hidden="true">restaurant</span></span><span class="body-sm name">Alimentação</span><span class="title amt num">R$ 640</span><span class="bar lit" style="--g:var(--orange)" aria-hidden="true"><i style="--p:38%"></i></span></div>
+            <div class="block tile"><span class="ico-tile violet"><span class="ms" aria-hidden="true">subscriptions</span></span><span class="body-sm name">Assinaturas</span><span class="title amt num">R$ 310</span><span class="bar lit" style="--g:var(--violet)" aria-hidden="true"><i style="--p:18%"></i></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <span class="caption cap" style="display:block;margin-bottom:var(--space-8)">Desktop, até 560px</span>
+        <div class="card trend wide" data-trend style="max-width:560px">
+          <h3 class="title">Tendência de gastos</h3>
+          <div class="plot">
+            <div class="axis micro" aria-hidden="true"><span>R$ 220</span></div>
+            <div class="chart" role="group" aria-label="Gasto por dia, de 1 a 12 de novembro"><div class="grid"></div></div>
+            <div class="days micro" aria-hidden="true"></div>
+          </div>
+          <p class="readout body-sm num" role="status"></p>
+          <p class="sumtxt body-sm">Neste mês seus gastos foram <b>12% menores</b> que no mês passado. O dia de maior gasto foi 8, com R$ 210,00.</p>
+          <div class="title-sm">Principais categorias do mês</div>
+          <div class="tiles">
+            <div class="block tile"><span class="ico-tile orange"><span class="ms" aria-hidden="true">restaurant</span></span><span class="body-sm name">Alimentação</span><span class="title amt num">R$ 640</span><span class="bar lit" style="--g:var(--orange)" aria-hidden="true"><i style="--p:38%"></i></span></div>
+            <div class="block tile"><span class="ico-tile violet"><span class="ms" aria-hidden="true">subscriptions</span></span><span class="body-sm name">Assinaturas</span><span class="title amt num">R$ 310</span><span class="bar lit" style="--g:var(--violet)" aria-hidden="true"><i style="--p:18%"></i></span></div>
+            <div class="block tile"><span class="ico-tile neutral"><span class="ms" aria-hidden="true">local_cafe</span></span><span class="body-sm name">Cafés</span><span class="title amt num">R$ 185</span><span class="bar lit" style="--g:var(--text-secondary)" aria-hidden="true"><i style="--p:11%"></i></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  var data = [40, 95, 60, 130, 20, 75, 0, 210, 90, 55, 110, 150], MAX = 220, HI = data.length - 1;
+  function money(v){ return 'R$ ' + v.toFixed(2).replace('.', ','); }
+  document.querySelectorAll('[data-trend]').forEach(function(card){
+    var chart = card.querySelector('.chart'), days = card.querySelector('.days'), out = card.querySelector('.readout');
+    data.forEach(function(v, i){
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+      b.className = 'col' + (i === HI ? ' hi' : (v < 30 ? ' muted' : '')); b.style.setProperty('--i', i);
+      b.setAttribute('aria-label', 'Dia ' + (i + 1) + ': ' + money(v) + (i === HI ? ' (hoje)' : ''));
+      b.style.setProperty('--h', Math.max(v / MAX * 100, 3) + '%'); b.innerHTML = '<span class="b"></span>';
+      b.addEventListener('click', function(){ chart.querySelectorAll('.col').forEach(function(c){ c.setAttribute('aria-pressed', 'false'); }); b.setAttribute('aria-pressed', 'true'); out.textContent = 'Dia ' + (i + 1) + ': ' + money(v); });
+      chart.appendChild(b);
+      var s = document.createElement('span'); s.textContent = i + 1; if (i === HI) s.className = 'hi'; days.appendChild(s);
+    });
+    out.textContent = 'Toque numa barra para ver o valor do dia.';
+  });
+</script>
+</body>
+</html>

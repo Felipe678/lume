@@ -1,0 +1,303 @@
+<!-- @dsCard group="Telas" page width=1200 height=1980 subtitle="Proposta (E1): grade semanal sobre aurora, blocos na cor do objetivo com o atual aceso, diálogo em vidro e lista por dia no celular" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  :root[data-theme="dark"] { color-scheme: dark; } :root[data-theme="light"] { color-scheme: light; }
+  body { min-height: 100vh; }
+  .cap { color: var(--text-muted); }
+  .g-sky { --g: var(--goal-sky); } .g-emerald { --g: var(--goal-emerald); } .g-violet { --g: var(--goal-violet); } .g-amber { --g: var(--goal-amber); } .g-obl { --g: var(--goal-obligatory); }
+  .dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--g, var(--text-secondary)); flex: 0 0 auto; }
+  small { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-secondary); }
+
+  /* ---- barra superior (desktop) ---- */
+  .topbar { background: var(--topbar); min-height: 64px; display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-24); box-shadow: inset 0 -1px 0 var(--hairline); }
+  .logo { display: flex; align-items: center; gap: var(--space-12); margin-right: var(--space-24); }
+  .logo-mark { width: 28px; height: 28px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--brand-from), var(--brand-to)); display: grid; place-items: center; color: var(--on-violet); }
+  .logo-word { font-size: 20px; line-height: 24px; font-weight: 500; letter-spacing: .5px; }
+  .nav { display: flex; gap: var(--space-4); }
+  .nav a { min-height: 36px; padding: 0 var(--space-12); border-radius: var(--radius-sm); display: flex; align-items: center; color: var(--text-secondary); text-decoration: none; transition: background-color var(--dur-instant) var(--ease-out), color var(--dur-instant) var(--ease-out); }
+  .nav a[aria-current="page"] { color: var(--text-primary); background: var(--chip); box-shadow: inset 0 1px 0 var(--hairline); }
+  @media (hover: hover) and (pointer: fine) { .nav a:hover { color: var(--text-primary); background: color-mix(in srgb, var(--text-primary) 8%, transparent); } }
+  .search { margin-left: auto; display: flex; align-items: center; gap: var(--space-8); width: 240px; min-height: 36px; padding: 0 var(--space-12); color: var(--text-secondary); }
+  .tb-btn { color: var(--text-secondary); }
+
+  /* ---- página ---- */
+  .page { padding-top: var(--space-32); padding-bottom: var(--space-40); }
+  .ph { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-16); margin-bottom: var(--space-24); }
+  .ph p { margin-top: var(--space-4); color: var(--text-secondary); }
+  .badge { display: inline-flex; align-items: center; gap: var(--space-4); min-height: 24px; padding: 0 var(--space-8); border-radius: var(--radius-xs); background: var(--chip); color: var(--text-secondary); box-shadow: inset 0 1px 0 var(--hairline); margin-bottom: var(--space-8); }
+
+  /* ---- grade ---- */
+  .gridcard { padding: var(--space-16); }
+  .ghead { display: grid; grid-template-columns: 56px repeat(7, 1fr); gap: 0 var(--space-4); margin-bottom: var(--space-8); }
+  .dh { text-align: center; display: grid; justify-items: center; gap: var(--space-4); padding-bottom: var(--space-4); }
+  .dh .overline { color: var(--text-secondary); }
+  .dh .n { min-width: 28px; min-height: 28px; display: grid; place-items: center; border-radius: var(--radius-full); color: var(--text-primary); }
+  .dh.today .overline { color: var(--text-primary); }
+  .dh.today .n { background: var(--violet); color: var(--on-violet); box-shadow: 0 4px 12px color-mix(in srgb, var(--violet) 35%, transparent); }
+  .gbody { display: grid; grid-template-columns: 56px repeat(7, 1fr); gap: 0 var(--space-4); }
+  .hours { position: relative; height: 720px; }
+  .hours span { position: absolute; right: var(--space-8); transform: translateY(-50%); color: var(--text-muted); }
+  .dcol { position: relative; height: 720px; border-radius: var(--radius-md);
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 47px, var(--divider) 47px, var(--divider) 48px); }
+  .dcol.today { background-color: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline); }
+  .blk { position: absolute; left: 4px; right: 4px; border-radius: var(--radius-sm); padding: var(--space-2) var(--space-8) var(--space-2) var(--space-12); text-align: left; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: var(--space-2);
+    background: color-mix(in srgb, var(--g) 18%, var(--surface)); box-shadow: inset 3px 0 0 var(--g), inset 0 1px 0 var(--hairline);
+    transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-spring); }
+  .blk .label { color: var(--text-primary); }
+  .blk .caption { color: var(--text-secondary); }
+  .blk:active { transform: scale(0.98); transition-timing-function: var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .blk:hover { box-shadow: inset 3px 0 0 var(--g), inset 0 1px 0 var(--hairline), var(--elev-2); z-index: 1; } }
+  .blk.obl { outline: 1px dashed color-mix(in srgb, var(--text-secondary) 60%, transparent); outline-offset: -1px; }
+  /* bloco atual: aceso em brasa, discreto */
+  .blk.now { z-index: 2; background: color-mix(in srgb, var(--g) 26%, var(--surface));
+    box-shadow: inset 3px 0 0 var(--orange), 0 0 0 1px color-mix(in srgb, var(--orange) 40%, transparent), 0 6px 20px color-mix(in srgb, var(--orange) 25%, transparent); }
+  .blk.now .label { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
+  .blk.now .label > .truncate { flex: 1; }
+  .blk.now .label .ms { color: var(--orange-ink); flex: 0 0 auto; }
+  /* bloco de 15 min: faixa de 20px com o título em caption */
+  .blk.tiny { padding-top: 0; padding-bottom: 0; }
+  .blk.tiny .ttl { color: var(--text-primary); }
+  .blk .seg.mini { margin-top: var(--space-2); }
+  .nowline { position: absolute; left: 0; right: 0; height: 1px; background: var(--cyan); box-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 60%, transparent); z-index: 3; pointer-events: none; }
+  .nowline::before { content: ""; position: absolute; left: -3px; top: -3px; width: 7px; height: 7px; border-radius: var(--radius-full); background: var(--cyan); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-top: var(--space-16); }
+  .legend .chip { min-height: 32px; }
+  .legend .chip.dashed { box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px color-mix(in srgb, var(--text-secondary) 60%, transparent); }
+
+  /* ---- formulário (TextField v2 + Button) ---- */
+  .dlg { padding: var(--space-24); border-radius: var(--radius-xl); width: 440px; max-width: 100%; display: grid; gap: var(--space-16); }
+  .dlg .headline + p { margin-top: var(--space-4); color: var(--text-secondary); }
+  .field { display: grid; gap: var(--space-8); min-width: 0; }
+  .field > .lbl { color: var(--text-primary); }
+  .box { position: relative; display: flex; align-items: center; gap: var(--space-8); min-height: 48px; padding: 0 var(--space-16); box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px var(--border-control); transition: box-shadow var(--dur-instant) var(--ease-out); }
+  .box input, .box select { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--text-primary); font: inherit; font-size: 15px; line-height: 22px; font-weight: 400; padding: 12px 0; appearance: none; }
+  .box .ms { color: var(--text-secondary); }
+  .box:focus-within { box-shadow: inset 0 1px 0 var(--hairline), 0 0 0 2px var(--violet-ink), 0 0 0 6px color-mix(in srgb, var(--violet) 10%, transparent); }
+  .days7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-4); }
+  .day { min-height: 44px; border-radius: var(--radius-sm); background: var(--chip); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--border-control), inset 0 1px 0 var(--hairline); transition: background-color var(--dur-instant) var(--ease-out), box-shadow var(--dur-instant) var(--ease-out), transform var(--dur-fast) var(--ease-spring); }
+  .day:active { transform: scale(0.96); transition-timing-function: var(--ease-out); }
+  .day[aria-pressed="true"] { background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 100%, white 10%), var(--violet)); color: var(--on-violet); box-shadow: inset 0 1px 0 color-mix(in srgb, white 22%, transparent); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12); }
+  .msg { display: flex; gap: var(--space-8); align-items: flex-start; padding: var(--space-12); color: var(--text-primary); }
+  .msg .ms { color: var(--orange-ink); flex: 0 0 auto; }
+  .acts { display: flex; align-items: center; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; }
+  .acts .r { display: flex; gap: var(--space-8); margin-left: auto; }
+  .btn.danger { background: var(--chip); color: var(--danger); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 45%, transparent), inset 0 1px 0 var(--hairline); }
+
+  /* overlay do diálogo */
+  .overlay { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: var(--space-16); pointer-events: none; }
+  .overlay .scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); }
+  .overlay .dlg { position: relative; opacity: 0; transform: scale(0.96); transition: opacity var(--dur-exit) var(--ease-in), transform var(--dur-exit) var(--ease-in); }
+  .overlay.open { pointer-events: auto; }
+  .overlay.open .scrim { opacity: 1; transition: opacity var(--dur-base) var(--ease-out-quint); }
+  .overlay.open .dlg { opacity: 1; transform: none; transition: opacity var(--dur-base) var(--ease-out-quint), transform var(--dur-base) var(--ease-out-quint); }
+
+  /* ---- seção formulário e celular ---- */
+  .sec2 { padding-bottom: var(--space-40); }
+  .sec2 h2 { margin-bottom: var(--space-12); }
+  .rowx { display: flex; gap: var(--space-24); align-items: flex-start; flex-wrap: wrap; }
+  .capx { display: block; margin-bottom: var(--space-8); }
+
+  /* ---- celular (390) ---- */
+  .device { position: relative; width: 390px; height: 844px; border-radius: var(--radius-xl); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--elev-2), 0 0 0 1px var(--hairline-strong); }
+  .ctop { min-height: 56px; display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-8) 0 var(--space-16); background: var(--topbar); box-shadow: inset 0 -1px 0 var(--hairline); flex: 0 0 auto; }
+  .ctop .logo { margin-right: 0; }
+  .ctop .btn.icon { width: 48px; min-height: 48px; color: var(--text-secondary); }
+  .cbody { flex: 1; min-height: 0; overflow: hidden; padding: var(--space-16) var(--space-16) 160px; display: grid; gap: var(--space-16); align-content: start; }
+  .cbody h1 + p { margin-top: var(--space-2); color: var(--text-secondary); }
+  .dstrip { display: flex; gap: var(--space-8); }
+  .dchip { flex: 1; min-width: 44px; min-height: 56px; display: grid; place-items: center; gap: 0; padding: 0; border-radius: var(--radius-md); background: var(--chip); color: var(--text-secondary); box-shadow: inset 0 1px 0 var(--hairline); transition: transform var(--dur-fast) var(--ease-spring); }
+  .dchip:active { transform: scale(0.96); transition-timing-function: var(--ease-out); }
+  .dchip .label { color: var(--text-primary); }
+  .dchip[aria-selected="true"] { background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 100%, white 10%), var(--violet)); color: var(--on-violet); box-shadow: inset 0 1px 0 color-mix(in srgb, white 22%, transparent), 0 4px 12px color-mix(in srgb, var(--violet) 30%, transparent); }
+  .dchip[aria-selected="true"] .label { color: var(--on-violet); }
+  .clist { padding: var(--space-8); display: grid; gap: var(--space-2); }
+  .trow { display: flex; align-items: center; gap: var(--space-12); min-height: 56px; padding: var(--space-8) var(--space-12); border-radius: var(--radius-md); text-align: left; color: inherit; width: 100%; transition: background-color var(--dur-instant) var(--ease-out), transform var(--dur-fast) var(--ease-spring); }
+  .trow:active { transform: scale(0.98); transition-timing-function: var(--ease-out); }
+  .trow .time { width: 44px; flex: 0 0 auto; color: var(--text-primary); }
+  .trow .mid { flex: 1; min-width: 0; display: grid; gap: var(--space-2); }
+  .trow .mid .row { gap: var(--space-8); color: var(--text-secondary); min-width: 0; }
+  .trow .dur { flex: 0 0 auto; color: var(--text-primary); text-align: right; }
+  .trow.now { background: color-mix(in srgb, var(--orange) 8%, var(--surface-raised)); box-shadow: inset 3px 0 0 var(--orange), 0 0 0 1px color-mix(in srgb, var(--orange) 35%, transparent), 0 6px 20px color-mix(in srgb, var(--orange) 20%, transparent); }
+  .trow.now .title-sm { display: flex; align-items: center; gap: var(--space-4); }
+  .trow.now .title-sm .ms { color: var(--orange-ink); }
+  .cta { position: absolute; left: var(--space-16); right: var(--space-16); bottom: calc(76px + var(--space-12)); min-height: 48px; z-index: 6; }
+  .bnav { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, 1fr); padding: var(--space-8) var(--space-8) var(--space-12); z-index: 5; border-radius: 0; }
+  .bn { min-height: 56px; display: grid; justify-items: center; align-content: center; gap: var(--space-2); color: var(--text-secondary); border-radius: var(--radius-md); }
+  .bn .pill { width: 56px; height: 28px; border-radius: var(--radius-full); display: grid; place-items: center; }
+  .bn[aria-current="page"] { color: var(--text-primary); }
+  .bn[aria-current="page"] .pill { background: color-mix(in srgb, var(--violet-ink) 22%, transparent); color: var(--violet-ink); }
+
+  /* viewport estreita: só o celular, em tela cheia */
+  @media (max-width: 599px) {
+    .desk-only { display: none; }
+    .sec2 { padding: 0; }
+    .sec2.content { padding-inline: 0; }
+    .rowx { gap: 0; }
+    .device { width: 100%; min-height: 100vh; height: auto; border-radius: 0; box-shadow: none; }
+    .cbody { min-height: calc(100vh - 56px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blk, .day, .dchip, .trow, .nav a, .box { transition: none; }
+    .blk:active, .day:active, .dchip:active, .trow:active { transform: none; }
+    .overlay .scrim, .overlay .dlg { transition: opacity var(--dur-instant) linear; transform: none; }
+  }
+</style>
+</head>
+<body class="aurora">
+
+<div class="desk-only">
+  <header class="topbar">
+    <div class="logo"><span class="logo-mark"><span class="ms s16">auto_awesome</span></span><span class="logo-word">LUME</span></div>
+    <nav class="nav label" aria-label="Destinos"><a href="#">Visão geral</a><a href="#" aria-current="page">Tempo e objetivos</a><a href="#" aria-disabled="true" title="Em breve" style="color:var(--text-muted)">Saúde</a><a href="#" aria-disabled="true" title="Em breve" style="color:var(--text-muted)">Finanças</a></nav>
+    <div class="search block body-sm"><span class="ms s20">search</span><span>Buscar</span></div>
+    <button class="btn ghost icon tb-btn" aria-label="Módulos" aria-haspopup="dialog"><span class="ms">grid_view</span></button>
+    <button class="btn ghost icon tb-btn" aria-label="Notificações"><span class="ms">notifications</span></button>
+    <button class="btn ghost icon" aria-label="Perfil"><span class="ico-tile sm" style="border-radius:var(--radius-full)"><span class="ms s20">person</span></span></button>
+  </header>
+
+  <main class="content page">
+    <div class="ph rise hero">
+      <div>
+        <span class="badge caption"><span class="ms s16">science</span>Proposta (E1)</span>
+        <h1 class="display">Grade semanal</h1>
+        <p class="body">Defina uma vez, siga todo dia, como o horário da escola. Segunda, 9 de novembro, 14:20.</p>
+      </div>
+      <button class="btn primary" id="open"><span class="ms s20">add</span>Novo bloco</button>
+    </div>
+
+    <section class="card gridcard rise" style="--w:0" aria-label="Grade da semana de 9 a 15 de novembro">
+      <div class="ghead" id="ghead"><div></div></div>
+      <div class="gbody" id="gbody"><div class="hours" id="hours"></div></div>
+    </section>
+
+    <div class="legend rise" style="--w:1" aria-label="Legenda">
+      <span class="chip caption g-sky"><i class="dot"></i>Inglês fluente</span>
+      <span class="chip caption g-emerald"><i class="dot"></i>Condicionamento</span>
+      <span class="chip caption g-violet"><i class="dot"></i>Projeto Lume</span>
+      <span class="chip caption g-amber"><i class="dot"></i>Ler 12 livros</span>
+      <span class="chip caption g-obl dashed"><i class="dot"></i>Obrigatória (hairline tracejada)</span>
+      <span class="chip caption"><i class="dot" style="background:var(--orange);box-shadow:0 0 8px color-mix(in srgb, var(--orange) 60%, transparent)"></i>Agora (aceso)</span>
+      <span class="chip caption"><i class="dot" style="background:var(--cyan);width:12px;height:2px;border-radius:0"></i>Hora atual</span>
+    </div>
+  </main>
+</div>
+
+<section class="content sec2 rise" style="--w:1">
+  <h2 class="title desk-only">Formulário e celular</h2>
+  <div class="rowx">
+    <div class="desk-only">
+      <span class="caption cap capx">Desktop: diálogo em vidro (radius-xl, elev-3). Abre com "Novo bloco".</span>
+      <div class="dlg glass" id="form" role="group" aria-label="Editar bloco">
+        <div><h2 class="headline">Editar bloco</h2><p class="body-sm">Defina uma vez e siga todo dia, como o horário da escola.</p></div>
+        <label class="field"><span class="label lbl">Título</span><span class="box block"><input value="Revisão de contas" maxlength="60" aria-label="Título"></span></label>
+        <label class="field"><span class="label lbl">Vínculo</span><span class="box block"><select aria-label="Vínculo"><option>Rotina (dia a dia, sem objetivo)</option><option>Inglês fluente</option><option>Projeto Lume</option></select><span class="ms s20">expand_more</span></span></label>
+        <div class="field"><span class="label lbl">Dias da semana</span><div class="days7" role="group" aria-label="Dias da semana"><button type="button" class="day label" aria-pressed="true">Seg</button><button type="button" class="day label" aria-pressed="false">Ter</button><button type="button" class="day label" aria-pressed="true">Qua</button><button type="button" class="day label" aria-pressed="false">Qui</button><button type="button" class="day label" aria-pressed="false">Sex</button><button type="button" class="day label" aria-pressed="false">Sáb</button><button type="button" class="day label" aria-pressed="false">Dom</button></div></div>
+        <div class="two"><label class="field"><span class="label lbl">Início</span><span class="box block"><input type="time" value="12:45" aria-label="Início"></span></label><label class="field"><span class="label lbl">Fim</span><span class="box block"><input type="time" value="13:15" aria-label="Fim"></span></label></div>
+        <div class="msg block body-sm" role="status"><span class="ms s20">info</span><span>Sobrepõe “Almoço” (12:30 às 13:30). O Hoje mostra uma atividade por vez; você pode salvar mesmo assim.</span></div>
+        <div class="acts"><button class="btn danger sm"><span class="ms s20">delete</span>Excluir bloco</button><div class="r"><button class="btn secondary">Cancelar</button><button class="btn primary">Salvar bloco</button></div></div>
+      </div>
+    </div>
+
+    <div>
+      <span class="caption cap capx desk-only">Celular, 390px: lista por dia, CTA ao alcance do polegar, BottomNav em vidro</span>
+      <div class="device aurora">
+        <header class="ctop">
+          <div class="logo"><span class="logo-mark"><span class="ms s16">auto_awesome</span></span><span class="logo-word">LUME</span></div>
+          <span class="sp"></span>
+          <button class="btn ghost icon" aria-label="Buscar"><span class="ms">search</span></button>
+          <button class="btn ghost icon" aria-label="Notificações"><span class="ms">notifications</span></button>
+        </header>
+        <div class="cbody">
+          <div class="rise hero"><h1 class="display">Grade semanal</h1><p class="body-sm">Segunda, 9 de novembro</p></div>
+          <div class="dstrip rise" style="--w:0" role="tablist" aria-label="Dia da semana">
+            <button role="tab" aria-selected="true" class="dchip"><span class="caption">Seg</span><span class="label num">9</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Ter</span><span class="label num">10</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Qua</span><span class="label num">11</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Qui</span><span class="label num">12</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Sex</span><span class="label num">13</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Sáb</span><span class="label num">14</span></button>
+            <button role="tab" aria-selected="false" class="dchip"><span class="caption">Dom</span><span class="label num">15</span></button>
+          </div>
+          <section class="card clist rise" style="--w:1" aria-label="Blocos de segunda-feira">
+            <button class="trow g-sky"><span class="label num time">07:30</span><span class="mid"><span class="title-sm truncate">Vocabulário</span><span class="row caption"><i class="dot"></i>Inglês fluente</span></span><span class="label num dur">30 <small>min</small></span></button>
+            <button class="trow g-obl"><span class="label num time">12:30</span><span class="mid"><span class="title-sm truncate">Almoço</span><span class="row caption"><i class="dot"></i>Obrigatória</span></span><span class="label num dur">60 <small>min</small></span></button>
+            <button class="trow g-sky now" aria-current="true"><span class="label num time">14:00</span><span class="mid"><span class="title-sm truncate"><span class="ms s16">play_arrow</span>Estudo de inglês</span><span class="row caption"><i class="dot"></i>Inglês fluente · passo 3 de 5</span><span class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></span></span><span class="label num dur">40 <small>min</small></span></button>
+            <button class="trow g-violet"><span class="label num time">15:30</span><span class="mid"><span class="title-sm truncate">Revisão de código</span><span class="row caption"><i class="dot"></i>Projeto Lume</span></span><span class="label num dur">60 <small>min</small></span></button>
+            <button class="trow g-emerald"><span class="label num time">18:30</span><span class="mid"><span class="title-sm truncate">Treino</span><span class="row caption"><i class="dot"></i>Condicionamento</span></span><span class="label num dur">45 <small>min</small></span></button>
+            <button class="trow g-amber"><span class="label num time">20:00</span><span class="mid"><span class="title-sm truncate">Leitura</span><span class="row caption"><i class="dot"></i>Ler 12 livros</span></span><span class="label num dur">30 <small>min</small></span></button>
+            <button class="trow g-obl"><span class="label num time">21:30</span><span class="mid"><span class="title-sm truncate">Planejar amanhã</span><span class="row caption"><i class="dot"></i>Obrigatória</span></span><span class="label num dur">15 <small>min</small></span></button>
+          </section>
+        </div>
+        <button class="btn primary cta"><span class="ms s20">add</span>Novo bloco</button>
+        <nav class="bnav glass" aria-label="Navegação">
+          <button class="bn caption"><span class="pill"><span class="ms">space_dashboard</span></span>Visão geral</button>
+          <button class="bn caption" aria-current="page"><span class="pill"><span class="ms">schedule</span></span>Tempo</button>
+          <button class="bn caption" aria-disabled="true" style="color:var(--text-muted)"><span class="pill"><span class="ms">favorite</span></span>Saúde</button>
+          <button class="bn caption" aria-disabled="true" style="color:var(--text-muted)"><span class="pill"><span class="ms">account_balance_wallet</span></span>Finanças</button>
+          <button class="bn caption" aria-haspopup="dialog"><span class="pill"><span class="ms">grid_view</span></span>Módulos</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="overlay" id="overlay" aria-hidden="true"><div class="scrim" id="scrim"></div></div>
+
+<script>
+  // dias e blocos (exemplo: semana de 9 a 15 de novembro; agora = segunda, 14:20)
+  var DAYS = [['Seg', 9], ['Ter', 10], ['Qua', 11], ['Qui', 12], ['Sex', 13], ['Sáb', 14], ['Dom', 15]], TODAY = 0, NOW = 14 * 60 + 20;
+  var GOALS = { sky: 'Inglês fluente', emerald: 'Condicionamento', violet: 'Projeto Lume', amber: 'Ler 12 livros', obl: 'Obrigatória' };
+  var B = {
+    voc: ['Vocabulário', 'sky', '07:30', '08:00'], alm: ['Almoço', 'obl', '12:30', '13:30'], ing: ['Estudo de inglês', 'sky', '14:00', '15:00'],
+    rev: ['Revisão de código', 'violet', '15:30', '16:30'], tre: ['Treino', 'emerald', '18:30', '19:15'], lei: ['Leitura', 'amber', '20:00', '20:30'],
+    pla: ['Planejar amanhã', 'obl', '21:30', '21:45'], tlo: ['Treino longo', 'emerald', '08:00', '09:00'], mer: ['Mercado', 'obl', '10:30', '11:30'], pse: ['Planejar a semana', 'obl', '18:00', '18:45']
+  };
+  var WEEK = [['voc', 'alm', 'ing', 'rev', 'tre', 'lei', 'pla'], ['voc', 'alm', 'rev', 'lei', 'pla'], ['voc', 'alm', 'ing', 'rev', 'tre', 'pla'], ['voc', 'alm', 'rev', 'lei', 'pla'], ['voc', 'alm', 'ing', 'tre'], ['tlo', 'mer'], ['pse', 'lei', 'pla']];
+  function mins(t){ var p = t.split(':'); return +p[0] * 60 + +p[1]; }
+  function y(m){ return (m - 7 * 60) / 60 * 48; }
+  var ghead = document.getElementById('ghead'), gbody = document.getElementById('gbody'), hours = document.getElementById('hours');
+  for (var h = 7; h <= 22; h++) { var s = document.createElement('span'); s.className = 'caption num'; s.style.top = y(h * 60) + 'px'; s.textContent = (h < 10 ? '0' + h : h) + ':00'; hours.appendChild(s); }
+  DAYS.forEach(function(d, di){
+    var dh = document.createElement('div'); dh.className = 'dh' + (di === TODAY ? ' today' : ''); dh.innerHTML = '<span class="overline">' + d[0] + '</span><span class="label num n">' + d[1] + '</span>'; ghead.appendChild(dh);
+    var col = document.createElement('div'); col.className = 'dcol' + (di === TODAY ? ' today' : ''); col.setAttribute('role', 'group'); col.setAttribute('aria-label', d[0] + ' ' + d[1]);
+    WEEK[di].forEach(function(k){
+      var b = B[k], s = mins(b[2]), e = mins(b[3]), now = di === TODAY && s <= NOW && NOW < e, hgt = y(e) - y(s) - 2;
+      var tiny = hgt < 24;
+      var el = document.createElement('button'); el.className = 'blk g-' + b[1] + (b[1] === 'obl' ? ' obl' : '') + (now ? ' now' : '') + (tiny ? ' tiny' : '');
+      el.style.top = (y(s) + 1) + 'px'; el.style.height = (tiny ? 20 : hgt) + 'px';
+      el.title = b[0] + ' · ' + GOALS[b[1]] + ' · ' + b[2] + ' às ' + b[3];
+      el.setAttribute('aria-label', b[0] + ', ' + GOALS[b[1]] + ', ' + d[0] + ' ' + b[2] + ' às ' + b[3] + (now ? ', agora' : ''));
+      if (now) el.setAttribute('aria-current', 'true');
+      var html = tiny ? '<span class="caption ttl truncate">' + b[0] + '</span>'
+        : now ? '<span class="label"><span class="ms s16">play_arrow</span><span class="truncate">' + b[0] + '</span></span>'
+        : '<span class="label truncate">' + b[0] + '</span>';
+      if (hgt >= (now ? 56 : 40)) html += '<span class="caption num truncate">' + b[2] + '–' + b[3] + '</span>';
+      if (now) html += '<span class="seg mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now" style="--p:40%"></i><i></i><i></i></span>';
+      el.innerHTML = html; el.addEventListener('click', openDlg); col.appendChild(el);
+    });
+    if (di === TODAY) { var nl = document.createElement('div'); nl.className = 'nowline'; nl.style.top = y(NOW) + 'px'; nl.setAttribute('aria-hidden', 'true'); col.appendChild(nl); }
+    gbody.appendChild(col);
+  });
+  // diálogo em vidro: clona o formulário estático
+  var ov = document.getElementById('overlay'), form = document.getElementById('form'), live = null;
+  function openDlg(){
+    if (!live) { live = form.cloneNode(true); live.id = ''; live.setAttribute('role', 'dialog'); live.setAttribute('aria-modal', 'true'); live.setAttribute('aria-label', 'Novo bloco'); live.querySelector('.headline').textContent = 'Novo bloco'; var del = live.querySelector('.btn.danger'); if (del) del.remove(); live.querySelectorAll('.btn.secondary').forEach(function(b){ b.addEventListener('click', closeDlg); }); live.querySelector('.btn.primary').addEventListener('click', closeDlg); ov.appendChild(live); wireDays(live); }
+    ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false'); setTimeout(function(){ live.querySelector('input').focus(); }, 230);
+  }
+  function closeDlg(){ ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true'); document.getElementById('open').focus(); }
+  document.getElementById('open').addEventListener('click', openDlg);
+  document.getElementById('scrim').addEventListener('click', closeDlg);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDlg(); });
+  function wireDays(root){ root.querySelectorAll('.day').forEach(function(d){ d.addEventListener('click', function(){ d.setAttribute('aria-pressed', String(d.getAttribute('aria-pressed') !== 'true')); }); }); }
+  wireDays(document);
+  document.querySelectorAll('.dchip').forEach(function(c){ c.addEventListener('click', function(){ document.querySelectorAll('.dchip').forEach(function(x){ x.setAttribute('aria-selected', 'false'); }); c.setAttribute('aria-selected', 'true'); }); });
+</script>
+</body>
+</html>

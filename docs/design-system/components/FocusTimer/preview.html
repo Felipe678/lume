@@ -1,0 +1,142 @@
+<!-- @dsCard group="Foco" height=820 subtitle="Anel fino do passo com cabeça luminosa e o tempo do passo em 72px tabular; o tempo da atividade é só rodapé" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { background: var(--bg); padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-24); }
+  .lead { color: var(--text-secondary); max-width: 68ch; }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-16); align-items: start; }
+  .card { padding: var(--space-20); display: grid; gap: var(--space-16); justify-items: center; }
+  .card .hd { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-8); }
+  .cap { color: var(--text-muted); }
+  .mobile-row { display: grid; grid-template-columns: 320px 1fr; gap: var(--space-16); align-items: start; }
+  .footnote { color: var(--text-secondary); text-align: center; }
+
+  /* ---------- FocusTimer (sugestão para o kit) ---------- */
+  .ftimer { --size: 220px; --stroke: 7; --p: 0; --h: 3.6; display: grid; justify-items: center; gap: var(--space-16); }
+  .ftimer .ring { position: relative; width: var(--size); height: var(--size); border-radius: var(--radius-full); transition: transform var(--dur-base) var(--ease-spring); }
+  .ftimer svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .ftimer .trk { fill: none; stroke: var(--ring-track); stroke-width: var(--stroke); }
+  .ftimer .arc { fill: none; stroke: var(--orange); stroke-width: var(--stroke); stroke-linecap: round; stroke-dasharray: var(--p) 100; transition: stroke-dasharray var(--dur-base) var(--ease-in-out); }
+  .ftimer .head { fill: none; stroke: var(--ember); stroke-width: var(--stroke); stroke-linecap: round; stroke-dasharray: var(--h) 100; stroke-dashoffset: calc(-1 * (var(--p) - var(--h))); filter: url(#glow-head); transition: stroke-dashoffset var(--dur-base) var(--ease-in-out), opacity var(--dur-fast) var(--ease-out); }
+  .ftimer .ctr { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--space-4); text-align: center; padding: var(--space-24); }
+  .ftimer .time { display: grid; font-size: 72px; line-height: 76px; font-weight: 800; letter-spacing: -2px; font-variant-numeric: tabular-nums; color: var(--text-primary); transition: color var(--dur-base) var(--ease-out); }
+  .ftimer .time > span { grid-area: 1 / 1; transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .ftimer .time > span.out { opacity: 0; transform: translateY(-8px); transition-timing-function: var(--ease-in); }
+  .ftimer .time > span.in { opacity: 0; transform: translateY(8px); }
+  .ftimer .sub { color: var(--text-secondary); display: inline-flex; align-items: center; gap: var(--space-4); }
+  .ftimer .sub .ms { display: none; }
+  .ftimer .foot { color: var(--text-secondary); font-variant-numeric: tabular-nums; text-align: center; }
+  /* estados */
+  .ftimer.paused .ring, .ftimer.over .ring { animation: none; }
+  .ftimer.paused .head { filter: none; stroke: var(--orange); }
+  .ftimer.paused .time { color: var(--text-secondary); }
+  .ftimer.paused .sub .ms { display: inline-block; }
+  .ftimer.over .arc { stroke-dasharray: 100 100; }
+  .ftimer.over .head { opacity: 0; }
+  .ftimer.over .time { color: var(--text-secondary); font-size: 56px; line-height: 60px; letter-spacing: -1.5px; }
+  .ftimer.compact.over .time { font-size: 44px; line-height: 48px; letter-spacing: -1px; }
+  /* celular */
+  .ftimer.compact { --size: 176px; }
+  .ftimer.compact .time { font-size: 56px; line-height: 60px; letter-spacing: -1.5px; }
+  @media (prefers-reduced-motion: reduce) {
+    .ftimer .ring, .ftimer .arc, .ftimer .head, .ftimer .time > span { transition: none; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="glow-head" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs></svg>
+<div class="wrap">
+  <div>
+    <h2 class="title">Dois tempos, um visível</h2>
+    <p class="body lead">O tempo do passo é o protagonista: anel fino em laranja com a ponta acesa em ember e o número em 72px tabular. O tempo da atividade existe, mas é só rodapé em text-secondary.</p>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <div class="hd"><span class="label t2">Em andamento</span><span class="caption cap">respira</span></div>
+      <div class="ftimer" style="--p:33.3" data-ft>
+        <div class="ring breathe"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="106.5"/><circle class="arc" cx="110" cy="110" r="106.5" pathLength="100"/><circle class="head" cx="110" cy="110" r="106.5" pathLength="100"/></svg>
+          <div class="ctr" role="timer" aria-live="off" aria-label="Tempo restante do passo"><div class="time"><span>06:40</span></div><div class="body-sm sub"><span class="ms s16">pause</span>restantes neste passo</div></div>
+        </div>
+        <p class="caption foot">32 min restantes na atividade · termina 15:00</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><span class="label t2">Pausado</span><span class="caption cap">glow para</span></div>
+      <div class="ftimer paused" style="--p:33.3">
+        <div class="ring"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="106.5"/><circle class="arc" cx="110" cy="110" r="106.5" pathLength="100"/><circle class="head" cx="110" cy="110" r="106.5" pathLength="100"/></svg>
+          <div class="ctr" role="timer" aria-label="Pausado, 6 minutos e 40 segundos restantes"><div class="time"><span>06:40</span></div><div class="body-sm sub"><span class="ms s16">pause</span>Pausado</div></div>
+        </div>
+        <p class="caption foot">32 min restantes na atividade · termina 15:00</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><span class="label t2">Passou do tempo</span><span class="caption cap">sem vermelho</span></div>
+      <div class="ftimer over" style="--p:100">
+        <div class="ring"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="106.5"/><circle class="arc" cx="110" cy="110" r="106.5" pathLength="100"/><circle class="head" cx="110" cy="110" r="106.5" pathLength="100"/></svg>
+          <div class="ctr" role="timer" aria-label="2 minutos e 10 segundos além do estimado"><div class="time"><span>+02:10</span></div><div class="body-sm sub">além dos 10 min estimados</div></div>
+        </div>
+        <p class="caption foot">30 min restantes na atividade · termina 15:00</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><span class="label t2">Reiniciando</span><button class="btn ghost sm" id="replay" style="margin:-10px -12px -10px 0">Repetir</button></div>
+      <div class="ftimer" id="rt" style="--p:33.3">
+        <div class="ring breathe"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="106.5"/><circle class="arc" cx="110" cy="110" r="106.5" pathLength="100"/><circle class="head" cx="110" cy="110" r="106.5" pathLength="100"/></svg>
+          <div class="ctr" role="timer" aria-label="Tempo restante do passo"><div class="time" id="rt-time"><span>06:40</span></div><div class="body-sm sub" id="rt-sub">restantes neste passo</div></div>
+        </div>
+        <p class="caption foot" id="rt-foot">32 min restantes na atividade · termina 15:00</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="mobile-row">
+    <section class="card">
+      <div class="hd"><span class="label t2">Celular</span><span class="caption cap">176px · número 56px</span></div>
+      <div class="ftimer compact" style="--p:33.3">
+        <div class="ring breathe"><svg viewBox="0 0 220 220"><circle class="trk" cx="110" cy="110" r="106.5"/><circle class="arc" cx="110" cy="110" r="106.5" pathLength="100"/><circle class="head" cx="110" cy="110" r="106.5" pathLength="100"/></svg>
+          <div class="ctr" role="timer" aria-label="Tempo restante do passo"><div class="time"><span>06:40</span></div><div class="caption sub">restantes neste passo</div></div>
+        </div>
+        <p class="caption foot">32 min restantes na atividade · termina 15:00</p>
+      </div>
+    </section>
+    <section class="card" style="justify-items:start">
+      <div class="hd"><span class="label t2">Como o anel é construído</span></div>
+      <p class="body-sm t2">Três círculos SVG com <span class="t1">pathLength=100</span>: trilho em ring-track, arco em orange com <span class="t1">stroke-dasharray: p 100</span>, e a cabeça (os últimos 24px, token glow-head) em ember com um filtro de desfoque leve. O arco preenche com ease-settle na primeira exibição e atualiza a cada segundo sem salto.</p>
+      <p class="body-sm t2">Ao concluir um passo, o arco volta a 0 em dur-base com ease-in-out e o anel dá um leve impulso de escala em ease-spring; o número troca por cross-fade (dur-fast). Pausar tira a respiração e o desfoque da cabeça e passa o número para text-secondary. Passar do tempo fecha o arco em laranja estável e mostra o excedente em text-secondary; nunca vermelho, nunca piscando.</p>
+    </section>
+  </div>
+</div>
+<script>
+  var rt = document.getElementById('rt'), timeEl = document.getElementById('rt-time'), sub = document.getElementById('rt-sub'), foot = document.getElementById('rt-foot');
+  function swap(el, text) {
+    var old = el.firstElementChild, nw = document.createElement('span'); nw.className = 'in'; nw.textContent = text; el.appendChild(nw);
+    old.classList.add('out'); void nw.offsetWidth; nw.classList.remove('in');
+    setTimeout(function () { if (old.parentNode) old.remove(); }, 200);
+  }
+  function restart() {
+    var ring = rt.querySelector('.ring');
+    rt.style.setProperty('--p', '0'); ring.style.transform = 'scale(0.96)';
+    setTimeout(function () { ring.style.transform = ''; swap(timeEl, '10:00'); sub.textContent = 'restantes neste passo'; foot.textContent = '26 min restantes na atividade · termina 15:00'; }, 160);
+    setTimeout(function () { rt.querySelector('.arc').style.transitionTimingFunction = 'var(--ease-settle)'; rt.style.setProperty('--p', '6'); }, 420);
+    setTimeout(function () { rt.querySelector('.arc').style.transitionTimingFunction = ''; }, 900);
+  }
+  document.getElementById('replay').addEventListener('click', function () {
+    rt.style.setProperty('--p', '33.3'); swap(timeEl, '06:40'); foot.textContent = '32 min restantes na atividade · termina 15:00';
+    setTimeout(restart, 600);
+  });
+  setTimeout(restart, 900);
+</script>
+</body>
+</html>

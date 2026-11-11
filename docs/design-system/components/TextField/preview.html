@@ -1,0 +1,148 @@
+<!-- @dsCard group="Controles" height=1260 subtitle="Campo em bloco com hairline: texto, senha, valor em reais, duração em minutos (passo de 5) e data e hora, com foco em anel e erro gentil" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  :root[data-theme="dark"] { color-scheme: dark; } :root[data-theme="light"] { color-scheme: light; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-32); }
+  .sec h2 { margin-bottom: var(--space-4); }
+  .sec .lead { color: var(--text-secondary); max-width: 64ch; margin-bottom: var(--space-16); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-20); padding: var(--space-20); }
+  .cap { color: var(--text-muted); }
+
+  /* campo */
+  .field { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+  .field > .lbl { color: var(--text-primary); }
+  .box { position: relative; display: flex; align-items: center; gap: var(--space-8); min-height: 48px; padding: 0 var(--space-16);
+    box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px var(--border-control);
+    transition: box-shadow var(--dur-instant) var(--ease-out), background-color var(--dur-instant) var(--ease-out); }
+  .box input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--text-primary); font: inherit; font-size: 15px; line-height: 22px; font-weight: 400; padding: 12px 0; font-variant-numeric: tabular-nums; }
+  .box input::placeholder { color: var(--text-muted); opacity: 1; }
+  .box .ms { color: var(--text-secondary); }
+  .pre, .suf { color: var(--text-secondary); font-size: 15px; line-height: 22px; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+  .box.right input { text-align: right; }
+  @media (hover: hover) and (pointer: fine) { .box:hover:not(.is-disabled):not(:focus-within):not(.is-focus):not(.is-error) { box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px var(--text-secondary); } }
+  .box.is-hover { box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px var(--text-secondary); }
+  .box:focus-within, .box.is-focus { box-shadow: inset 0 1px 0 var(--hairline), 0 0 0 2px var(--violet-ink), 0 0 0 6px color-mix(in srgb, var(--violet) 10%, transparent); }
+  .box.is-error { box-shadow: inset 0 1px 0 var(--hairline), inset 0 0 0 1px var(--danger); }
+  .box.is-error:focus-within { box-shadow: inset 0 1px 0 var(--hairline), 0 0 0 2px var(--violet-ink), 0 0 0 6px color-mix(in srgb, var(--violet) 10%, transparent); }
+  .box.is-disabled { opacity: .4; }
+  .box.is-disabled input { cursor: not-allowed; }
+  .meta { display: flex; justify-content: space-between; gap: var(--space-12); min-height: 16px; }
+  .help { color: var(--text-secondary); }
+  .err { display: flex; gap: var(--space-4); align-items: flex-start; color: var(--danger); }
+  .count { color: var(--text-muted); white-space: nowrap; }
+
+  /* botões dentro do campo: 32px visíveis, 48px de toque */
+  .inb { position: relative; width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--radius-sm); color: var(--text-secondary); flex: 0 0 auto; transition: background-color var(--dur-instant) var(--ease-out), color var(--dur-instant) var(--ease-out), transform var(--dur-fast) var(--ease-spring); }
+  .inb::after { content: ""; position: absolute; inset: -8px; }
+  .inb:active { transform: scale(0.94); transition-timing-function: var(--ease-out); }
+  .inb[disabled] { opacity: .4; pointer-events: none; }
+  @media (hover: hover) and (pointer: fine) { .inb:hover { background: var(--chip); color: var(--text-primary); } }
+  .eye { margin-right: -8px; }
+  .box.step { padding-right: var(--space-8); gap: var(--space-4); }
+  .box.step input { text-align: right; }
+  .box.step .suf { margin-right: var(--space-8); }
+
+  .phone { width: 390px; max-width: 100%; padding: var(--space-16); display: grid; gap: var(--space-16); }
+  .phone .box { min-height: 48px; }
+  @media (prefers-reduced-motion: reduce) { .box, .inb { transition: none; } .inb:active { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="sec">
+    <h2 class="title">Variantes</h2>
+    <p class="body lead">O campo é um bloco (<code>surface-raised</code> + hairline) com um traço interno de 1px em repouso. No foco, o traço some e entra o anel de 2px com um leve halo violeta. Nada de borda sólida pesada.</p>
+    <div class="card grid">
+      <div class="field">
+        <label class="label lbl" for="t1">Nome do objetivo</label>
+        <div class="box block"><input id="t1" type="text" maxlength="40" placeholder="Ex.: Inglês fluente" aria-describedby="h1 c1"></div>
+        <div class="meta"><span class="caption help" id="h1">Curto, que você reconheça de relance.</span><span class="caption count" id="c1">0/40</span></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="t2">Senha</label>
+        <div class="box block"><input id="t2" type="password" value="lume1234" autocomplete="current-password" aria-describedby="h2"><button type="button" class="inb eye" id="eye" aria-label="Mostrar senha" aria-pressed="false"><span class="ms s20">visibility</span></button></div>
+        <div class="meta"><span class="caption help" id="h2">Pelo menos 8 caracteres.</span></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="t3">Valor</label>
+        <div class="box block"><span class="pre">R$</span><input id="t3" type="text" inputmode="decimal" value="1.234,50" aria-describedby="h3"></div>
+        <div class="meta"><span class="caption help" id="h3">Vírgula para os centavos.</span></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="t4">Estimativa do passo</label>
+        <div class="box block step"><button type="button" class="inb" id="dec" aria-label="Menos 5 minutos"><span class="ms s20">remove</span></button><input id="t4" type="text" inputmode="numeric" value="25" aria-describedby="h4" style="max-width:48px"><span class="suf">min</span><button type="button" class="inb" id="inc" aria-label="Mais 5 minutos"><span class="ms s20">add</span></button></div>
+        <div class="meta"><span class="caption help" id="h4">Passos de 5 em 5. Setas para cima e para baixo também servem.</span></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="t5">Data e hora</label>
+        <div class="box block"><span class="ms s20" aria-hidden="true">event</span><input id="t5" type="datetime-local" value="2026-11-12T08:00" aria-describedby="h5"></div>
+        <div class="meta"><span class="caption help" id="h5">Horário de Brasília, 24 horas.</span></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="t6">Duração da atividade</label>
+        <div class="box block step"><button type="button" class="inb" data-step="-5" aria-label="Menos 5 minutos"><span class="ms s20">remove</span></button><input id="t6" type="text" inputmode="numeric" value="60" aria-describedby="h6" style="max-width:48px"><span class="suf">min</span><button type="button" class="inb" data-step="5" aria-label="Mais 5 minutos"><span class="ms s20">add</span></button></div>
+        <div class="meta"><span class="caption help" id="h6">Soma das estimativas: 55 min em 4 passos.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Estados</h2>
+    <p class="body lead">Erro sem vermelho gritante: traço de 1px em <code>danger</code>, ícone e a frase que diz o que ajustar. A cor nunca está sozinha.</p>
+    <div class="card grid">
+      <div class="field"><span class="label lbl">Descrição</span><div class="box block"><input type="text" placeholder="Opcional" aria-label="Descrição, normal"></div><span class="caption cap">Normal, vazio</span></div>
+      <div class="field"><span class="label lbl">Descrição</span><div class="box block is-hover"><input type="text" placeholder="Opcional" aria-label="Descrição, hover"></div><span class="caption cap">Hover (só desktop): traço em text-secondary</span></div>
+      <div class="field"><span class="label lbl">Descrição</span><div class="box block is-focus"><input type="text" value="Mercado do mês" aria-label="Descrição, foco"></div><span class="caption cap">Foco: anel 2px violet-ink + halo 10%</span></div>
+      <div class="field"><span class="label lbl">Descrição</span><div class="box block"><input type="text" value="Mercado do mês" aria-label="Descrição, preenchido"></div><span class="caption cap">Preenchido</span></div>
+      <div class="field"><span class="label lbl">Descrição</span><div class="box block is-disabled"><input type="text" value="Mercado do mês" disabled aria-label="Descrição, desabilitado"></div><span class="caption cap">Desabilitado, 40%</span></div>
+      <div class="field">
+        <span class="label lbl">Valor</span>
+        <div class="box block is-error"><span class="pre">R$</span><input type="text" value="-12,00" aria-label="Valor, com erro" aria-invalid="true" aria-describedby="e1"></div>
+        <div class="meta"><span class="caption err" id="e1" role="alert"><span class="ms s16" aria-hidden="true">error</span>Informe um valor maior que zero.</span></div>
+        <span class="caption cap">Erro: traço 1px, ícone e texto</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Celular, 390px</h2>
+    <p class="body lead">Altura de 48px, igual ao alvo de toque. Os botões do passo têm 32px visíveis e 48px de toque. Em campos de duração o cursor vai para o número e o "min" fica fora da edição.</p>
+    <div class="card phone">
+      <div class="field">
+        <label class="label lbl" for="m1">Quanto custou?</label>
+        <div class="box block"><span class="pre">R$</span><input id="m1" type="text" inputmode="decimal" value="142,90"></div>
+      </div>
+      <div class="field">
+        <label class="label lbl" for="m2">Estimativa do passo</label>
+        <div class="box block step"><button type="button" class="inb" data-step="-5" aria-label="Menos 5 minutos"><span class="ms s20">remove</span></button><input id="m2" type="text" inputmode="numeric" value="10" style="max-width:48px"><span class="suf">min</span><button type="button" class="inb" data-step="5" aria-label="Mais 5 minutos"><span class="ms s20">add</span></button></div>
+        <div class="meta"><span class="caption help">Anotar 3 frases novas</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  var i = document.getElementById('t1'), c = document.getElementById('c1');
+  i.addEventListener('input', function(){ c.textContent = i.value.length + '/40'; });
+  var e = document.getElementById('eye'), p = document.getElementById('t2');
+  e.addEventListener('click', function(){ var show = p.type === 'password'; p.type = show ? 'text' : 'password'; e.setAttribute('aria-pressed', String(show)); e.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); e.firstChild.textContent = show ? 'visibility_off' : 'visibility'; });
+  function stepper(box){
+    var inp = box.querySelector('input'), bts = box.querySelectorAll('.inb');
+    function set(v){ v = Math.max(5, Math.min(480, Math.round(v / 5) * 5)); inp.value = v; bts[0].disabled = v <= 5; bts[1].disabled = v >= 480; }
+    bts[0].addEventListener('click', function(){ set((parseInt(inp.value, 10) || 0) - 5); });
+    bts[1].addEventListener('click', function(){ set((parseInt(inp.value, 10) || 0) + 5); });
+    inp.addEventListener('keydown', function(ev){ if (ev.key === 'ArrowUp') { ev.preventDefault(); set((parseInt(inp.value, 10) || 0) + 5); } if (ev.key === 'ArrowDown') { ev.preventDefault(); set((parseInt(inp.value, 10) || 0) - 5); } });
+    inp.addEventListener('blur', function(){ set(parseInt(inp.value, 10) || 5); });
+    set(parseInt(inp.value, 10) || 5);
+  }
+  document.querySelectorAll('.box.step').forEach(stepper);
+</script>
+</body>
+</html>

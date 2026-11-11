@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 # Fidelidade ao Design System v2 "brasa"
 
-Escopo: $ARGUMENTS (se vazio, as mudanças em `app/` desde o último commit: `git diff --stat` e `git status --short`). Fonte da verdade: D12 em `DECISOES_E_ROADMAP.md` e o artefato do DS v2 (https://claude.ai/artifact/9TAdTj4LkKjQRPiaVbH9XK, versão 4: brand book, movimento, responsividade, tradução para widgets Flutter e tokens). Leia o artefato com `Artifact action: read` antes de auditar se ainda não estiver no contexto dos agentes.
+Escopo: $ARGUMENTS (se vazio, as mudanças em `app/` desde o último commit: `git diff --stat` e `git status --short`). Fonte da verdade: D12 em `DECISOES_E_ROADMAP.md` e o DS v2 em `docs/design-system/` (cópia do artefato https://claude.ai/artifact/9TAdTj4LkKjQRPiaVbH9XK: `README.md` brand book, `tokens.json`, `flutter.md`, `motion.md`, `responsive.md`, `tasks-and-focus.md` e `components/<Nome>/`). Passe aos agentes os caminhos dos arquivos relevantes ao escopo; em conflito, vale o artefato.
 
 1. Defina o escopo concreto (arquivos `.dart` de `app/lib/` e goldens em `app/test/`). Sem mudança em `app/`: diga e pare.
 2. Em paralelo, com o escopo e a fonte da verdade:

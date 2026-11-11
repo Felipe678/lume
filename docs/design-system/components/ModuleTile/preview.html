@@ -1,0 +1,90 @@
+<!-- @dsCard group="Dashboard" height=930 subtitle="Tile de Frentes da vida: ícone em ico-tile com gradiente, disponível como card com elevação, atual em tint, Em breve sem elevação" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .stack{display:flex;flex-direction:column;gap:var(--space-32)}
+  h3.lbl{margin-bottom:var(--space-12);color:var(--text-secondary)}
+  figcaption,.cap{color:var(--text-muted)}
+  .states{display:flex;flex-wrap:wrap;gap:var(--space-16)}
+  .state{display:flex;flex-direction:column;gap:var(--space-8);flex:1 1 160px;max-width:210px}
+
+  /* ModuleTile: .card do kit (elev-1); disponível com .lift; atual com .tint; Em breve sem elev */
+  .tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;min-height:112px;padding:var(--space-16);gap:var(--space-12);color:var(--text-primary)}
+  .tile .text{display:flex;flex-direction:column;gap:var(--space-2);min-width:0;max-width:100%}
+  .tile .name{color:var(--text-primary);overflow-wrap:anywhere}
+  .tile .summary{color:var(--text-muted)}
+  .tile .dotc{position:absolute;top:var(--space-16);right:var(--space-16);width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan)}
+  .tile.soon{cursor:default;box-shadow:inset 0 1px 0 var(--hairline)}
+  .tile.soon .name{color:var(--text-secondary)}
+  .tile.soon.row{flex-direction:row;align-items:center;min-height:64px;padding:var(--space-12)}
+  .tile.soon.row .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile.is-hover{box-shadow:var(--elev-2);transform:translateY(-2px)}
+  .tile.is-pressed{transform:scale(.98)}
+  .tile.is-focus{outline:2px solid var(--violet-ink);outline-offset:2px}
+  .tile.lift:active{transform:scale(.98)}
+
+  .grid{display:grid;gap:var(--space-12)}
+  .grid.wide{grid-template-columns:repeat(3,minmax(0,1fr));max-width:640px}
+  .grid.wide .span2{grid-column:span 2}
+  .grid.compact,.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid .span2{grid-column:span 2}
+  .boards{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  .board{display:flex;flex-direction:column;gap:var(--space-8);min-width:0}
+  .phone{width:min(360px,100%);padding:var(--space-16)}
+  .desk{padding:var(--space-24)}
+  @media (prefers-reduced-motion:reduce){ .tile.is-hover,.tile.is-pressed,.tile.lift:active{transform:none} }
+</style>
+</head>
+<body class="aurora">
+<div class="stack">
+  <section>
+    <h3 class="title-sm lbl">Estados</h3>
+    <div class="states">
+      <div class="state"><button class="card lift tile" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button><span class="caption cap">Disponível: card com elev-1, ícone em ico-tile violet</span></div>
+      <div class="state"><button class="card lift tile is-hover" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button><span class="caption cap">Hover (ponteiro fino): sobe 2 e elev-2</span></div>
+      <div class="state"><button class="card lift tile is-pressed" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button><span class="caption cap">Pressionado, escala 0,98</span></div>
+      <div class="state"><button class="card lift tile is-focus" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button><span class="caption cap">Foco, anel de 2 violet-ink</span></div>
+      <div class="state"><button class="card tint tile" type="button" aria-current="page"><span class="dotc" aria-hidden="true"></span><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">Aberto agora</span></span></button><span class="caption cap">Atual: surface-tint, ponto cyan e o texto "Aberto agora"</span></div>
+      <div class="state"><div class="card tile soon" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile"><span class="ms">favorite</span></span><span class="text"><span class="title-sm name">Saúde</span><span class="caption summary">Em breve · E2</span></span></div><span class="caption cap">Em breve: card sem elevação, texto em text-secondary, sem hover</span></div>
+      <div class="state"><div class="card tile soon row" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile sm"><span class="ms s20">favorite</span></span><span class="text"><span class="title-sm name">Saúde</span><span class="caption summary">Em breve · E2</span></span></div><span class="caption cap">Em breve compacto (linha): para colunas estreitas no desktop</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="title-sm lbl">Grade Frentes da vida</h3>
+    <div class="boards">
+      <div class="board" style="flex:2 1 460px">
+        <span class="caption cap">Desktop, coluna larga: 3 colunas, o módulo disponível ocupa 2</span>
+        <div class="desk card">
+          <div class="grid wide">
+            <button class="card lift tile span2" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button>
+            <div class="card tile soon" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile"><span class="ms">favorite</span></span><span class="text"><span class="title-sm name">Saúde</span><span class="caption summary">Em breve · E2</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Finanças, Em breve · E5"><span class="ico-tile"><span class="ms">account_balance_wallet</span></span><span class="text"><span class="title-sm name">Finanças</span><span class="caption summary">Em breve · E5</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Patrimônio, Em breve · E6"><span class="ico-tile"><span class="ms">home_work</span></span><span class="text"><span class="title-sm name">Patrimônio</span><span class="caption summary">Em breve · E6</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Documentos, Em breve · E7"><span class="ico-tile"><span class="ms">description</span></span><span class="text"><span class="title-sm name">Documentos</span><span class="caption summary">Em breve · E7</span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="board" style="flex:1 1 320px">
+        <span class="caption cap">Celular, 360 px: 2 colunas</span>
+        <div class="phone card">
+          <div class="grid compact">
+            <button class="card lift tile span2" type="button"><span class="ico-tile violet"><span class="ms">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption summary">4 blocos hoje</span></span></button>
+            <div class="card tile soon" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile"><span class="ms">favorite</span></span><span class="text"><span class="title-sm name">Saúde</span><span class="caption summary">Em breve · E2</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Finanças, Em breve · E5"><span class="ico-tile"><span class="ms">account_balance_wallet</span></span><span class="text"><span class="title-sm name">Finanças</span><span class="caption summary">Em breve · E5</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Patrimônio, Em breve · E6"><span class="ico-tile"><span class="ms">home_work</span></span><span class="text"><span class="title-sm name">Patrimônio</span><span class="caption summary">Em breve · E6</span></span></div>
+            <div class="card tile soon" role="group" aria-label="Documentos, Em breve · E7"><span class="ico-tile"><span class="ms">description</span></span><span class="text"><span class="title-sm name">Documentos</span><span class="caption summary">Em breve · E7</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!-- @dsCard group="Navegação" height=700 subtitle="Painel de módulos em glass ancorado no botão Módulos: abre em ease-out-quint, fecha em ease-in; Esc e clique fora fecham" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .cap{color:var(--text-muted)}
+  .scroll{overflow-x:auto}
+  .intro{display:flex;flex-direction:column;gap:var(--space-8);margin-bottom:var(--space-12)}
+  .stage{position:relative;min-width:720px;height:560px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--elev-1)}
+  .topbar{position:relative;display:flex;align-items:center;gap:var(--space-4);min-height:64px;padding:var(--space-8) var(--space-24);background:var(--topbar);box-shadow:0 1px 0 var(--hairline);z-index:1}
+  .logo{display:inline-flex;align-items:center;gap:10px;flex:1}
+  .logo .mark{width:28px;height:28px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--brand-from),var(--brand-to));display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 var(--hairline-strong)}
+  .logo .mark svg{width:16px;height:16px;fill:var(--on-violet)}
+  .logo .word{font-size:20px;line-height:1;font-weight:500;letter-spacing:.025em;color:var(--text-primary)}
+  .ib{width:40px;height:40px;border-radius:var(--radius-full);display:grid;place-items:center;color:var(--text-primary);flex:none;transition:background-color var(--dur-instant) var(--ease-out),color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+  .ib .ms{font-size:22px;width:22px;height:22px}
+  @media (hover:hover) and (pointer:fine){.ib:hover{background:var(--chip)}}
+  .ib:active{background:var(--chip);transform:scale(.94);transition-timing-function:var(--ease-out)}
+  .ib[aria-expanded="true"]{background:var(--chip);color:var(--violet-ink);box-shadow:inset 0 1px 0 var(--hairline)}
+  .avatar{width:32px;height:32px;margin-left:var(--space-8);border-radius:var(--radius-full);background:linear-gradient(180deg,var(--ember),var(--orange));color:var(--on-orange);display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 var(--hairline-strong)}
+  .avatar .ms{font-size:20px;width:20px;height:20px}
+  .page-body{padding:var(--space-24);display:flex;flex-direction:column;gap:var(--space-12)}
+  .page-body .demo{padding:var(--space-20);display:flex;flex-direction:column;gap:var(--space-4);max-width:420px}
+  .page-body .sub{color:var(--text-secondary)}
+
+  /* Véu e painel */
+  .scrim{position:absolute;inset:0;background:var(--scrim);opacity:0;visibility:hidden;
+    transition:opacity var(--dur-exit) var(--ease-in),visibility 0s linear var(--dur-exit)}
+  .scrim.open{opacity:1;visibility:visible;transition:opacity var(--dur-base) var(--ease-out-quint),visibility 0s}
+  .panel{position:absolute;top:calc(64px + var(--space-8));right:var(--space-24);width:min(380px,calc(100% - var(--space-24)*2));max-height:calc(100% - 64px - var(--space-8) - var(--space-16));overflow:auto;
+    border-radius:var(--radius-xl);padding:var(--space-20);
+    transform-origin:top right;opacity:0;transform:scale(.96);visibility:hidden;
+    transition:opacity var(--dur-exit) var(--ease-in),transform var(--dur-exit) var(--ease-in),visibility 0s linear var(--dur-exit)}
+  .panel.open{opacity:1;transform:scale(1);visibility:visible;
+    transition:opacity var(--dur-base) var(--ease-out-quint),transform var(--dur-base) var(--ease-out-quint),visibility 0s}
+  .panel h2{color:var(--text-primary)}
+  .panel .lead{margin:var(--space-2) 0 var(--space-16);color:var(--text-secondary)}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-12)}
+
+  /* tile do menu: .block do kit (raio 24 → 12 → 8) */
+  .tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;min-height:96px;padding:var(--space-12);gap:var(--space-12);color:var(--text-primary);
+    transition:transform var(--dur-fast) var(--ease-spring),background-color var(--dur-instant) var(--ease-out)}
+  .tile .text{display:flex;flex-direction:column;gap:var(--space-2);min-width:0;max-width:100%}
+  .tile .name{color:var(--text-primary);overflow-wrap:anywhere}
+  .tile .status{color:var(--text-muted)}
+  .tile.current{background:var(--surface-tint)}
+  .tile .dotc{position:absolute;top:var(--space-12);right:var(--space-12);width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan);display:none}
+  .tile.current .dotc{display:block}
+  .tile.soon{cursor:default}
+  .tile.soon .name{color:var(--text-secondary)}
+  @media (hover:hover) and (pointer:fine){.tile:not(.soon):not(.current):hover{background:var(--chip)}}
+  .tile:not(.soon):active{transform:scale(.97);transition-timing-function:var(--ease-out)}
+
+  @media (prefers-reduced-motion:reduce){
+    .scrim,.scrim.open{transition:opacity var(--dur-instant) linear,visibility 0s}
+    .panel,.panel.open{transform:none;transition:opacity var(--dur-instant) linear,visibility 0s}
+    .tile,.ib{transition:none}
+    .tile:not(.soon):active,.ib:active{transform:none}
+  }
+</style>
+</head>
+<body class="aurora">
+<div class="intro">
+  <p class="body-sm t2">Interativo: use o botão Módulos, Esc ou um clique fora do painel. O painel é glass (surface-glass, blur, elev-3) com raio radius-xl; os tiles são blocos com ícone em ico-tile. No celular este mesmo conteúdo abre como Sheet.</p>
+  <p class="caption cap" id="log" role="status" aria-live="polite">Aberto agora: Visão geral.</p>
+</div>
+<div class="scroll">
+  <div class="stage aurora" id="stage">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="spark" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></symbol></svg>
+    <header class="topbar">
+      <span class="logo"><span class="mark"><svg aria-hidden="true"><use href="#spark"/></svg></span><span class="word">LUME</span></span>
+      <button class="ib" type="button" aria-label="Buscar"><span class="ms">search</span></button>
+      <button class="ib" type="button" id="btn" aria-label="Módulos" aria-haspopup="dialog" aria-expanded="true" aria-controls="panel"><span class="ms">grid_view</span></button>
+      <button class="ib" type="button" aria-label="Relatórios"><span class="ms">bar_chart</span></button>
+      <button class="ib" type="button" aria-label="Notificações"><span class="ms">notifications</span></button>
+      <span class="avatar" aria-hidden="true"><span class="ms">person</span></span>
+    </header>
+    <div class="page-body">
+      <div class="card demo"><p class="title-sm">Estudo de inglês</p><p class="body-sm sub">Agora, 08:00 às 09:00</p></div>
+      <div class="card demo"><p class="title-sm">Treino</p><p class="body-sm sub">Hoje, 18:30</p></div>
+      <div class="card demo"><p class="title-sm">Leitura</p><p class="body-sm sub">Hoje, 20:00</p></div>
+    </div>
+    <div class="scrim open" id="scrim"></div>
+    <div class="panel glass open" id="panel" role="dialog" aria-modal="true" aria-label="Módulos">
+      <h2 class="title-sm">Módulos</h2>
+      <p class="body-sm lead">Cada área da sua vida</p>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    var entries = [
+      {id:'overview',title:'Visão geral',icon:'space_dashboard',ok:true},
+      {id:'time',title:'Tempo e objetivos',icon:'schedule',ok:true},
+      {id:'health',title:'Saúde',icon:'favorite',ok:false,stage:'E2'},
+      {id:'finance',title:'Finanças',icon:'account_balance_wallet',ok:false,stage:'E5'},
+      {id:'assets',title:'Patrimônio',icon:'home_work',ok:false,stage:'E6'},
+      {id:'docs',title:'Documentos',icon:'description',ok:false,stage:'E7'}
+    ];
+    var current = 'overview';
+    var btn = document.getElementById('btn'), panel = document.getElementById('panel'), scrim = document.getElementById('scrim');
+    var grid = document.getElementById('grid'), log = document.getElementById('log');
+    function status(e){ return e.id===current ? 'Aberto agora' : (e.ok ? 'Disponível' : 'Em breve · '+e.stage); }
+    function render(){
+      grid.innerHTML = '';
+      entries.forEach(function(e){
+        var el = document.createElement(e.ok ? 'button' : 'div');
+        el.className = 'tile block' + (e.id===current ? ' current' : '') + (e.ok ? '' : ' soon');
+        if (e.ok){ el.type='button'; if (e.id===current) el.setAttribute('aria-current','page'); }
+        else { el.setAttribute('role','group'); el.setAttribute('aria-label', e.title+', '+status(e)); }
+        el.innerHTML = '<span class="dotc" aria-hidden="true"></span><span class="ico-tile sm'+(e.ok?' violet':'')+'"><span class="ms s20"></span></span><span class="text"><span class="title-sm name"></span><span class="caption status"></span></span>';
+        el.querySelector('.ms').textContent = e.icon;
+        el.querySelector('.name').textContent = e.title;
+        el.querySelector('.status').textContent = status(e);
+        if (e.ok) el.addEventListener('click', function(){ current = e.id; log.textContent = 'Aberto agora: '+e.title+'.'; render(); setOpen(false); });
+        grid.appendChild(el);
+      });
+    }
+    function setOpen(open, focusFirst){
+      panel.classList.toggle('open', open); scrim.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open){ var f = grid.querySelector('button.tile'); if (f && focusFirst) f.focus(); }
+      else if (document.activeElement && panel.contains(document.activeElement)) btn.focus();
+    }
+    btn.addEventListener('click', function(){ setOpen(!panel.classList.contains('open'), true); });
+    scrim.addEventListener('click', function(){ setOpen(false); });
+    document.addEventListener('keydown', function(ev){ if (ev.key==='Escape' && panel.classList.contains('open')){ setOpen(false); btn.focus(); } });
+    render();
+  })();
+</script>
+</body>
+</html>

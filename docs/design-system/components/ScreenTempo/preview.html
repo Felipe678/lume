@@ -1,0 +1,389 @@
+<!-- @dsCard group="Telas" page width=1200 height=1560 subtitle="Tempo e objetivos no desktop: carrossel de objetivos, Hoje com Cotidianas e De objetivos no mesmo painel e o detalhe da atividade com passos, anotações e a única brasa da tela" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { min-height: 100vh; }
+  /* ---- barra superior ---- */
+  .topbar { background: var(--topbar); box-shadow: inset 0 -1px 0 var(--hairline); min-height: var(--space-56); display: flex; align-items: center; }
+  .topbar .content { width: 100%; display: flex; align-items: center; gap: var(--space-24); }
+  .logo { display: inline-flex; align-items: center; gap: var(--space-8); font-weight: 800; letter-spacing: -0.3px; }
+  .logo i { width: 24px; height: 24px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--brand-from), var(--brand-to)); display: block; }
+  .nav { display: flex; gap: var(--space-4); }
+  .nav a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 var(--space-12); border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; position: relative; }
+  .nav a[aria-current="page"] { color: var(--text-primary); }
+  .nav a[aria-current="page"]::after { content: ""; position: absolute; left: var(--space-12); right: var(--space-12); bottom: -10px; height: 2px; border-radius: var(--radius-full); background: var(--violet-ink); }
+  @media (hover: hover) and (pointer: fine) { .nav a:hover { background: var(--surface-raised); color: var(--text-primary); } }
+  .avatar { width: 32px; height: 32px; border-radius: var(--radius-full); background: var(--chip); box-shadow: inset 0 0 0 1px var(--hairline-strong); display: grid; place-items: center; color: var(--text-secondary); }
+  main.content { padding-top: var(--space-32); padding-bottom: var(--space-40); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-32); }
+  main.content > section { min-width: 0; }
+  .hoje { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-16); }
+  .sechead { display: flex; align-items: center; gap: var(--space-12); min-height: 40px; }
+  .sechead .sub { color: var(--text-secondary); }
+  .sechead .sp { margin-left: auto; display: inline-flex; gap: var(--space-8); align-items: center; }
+  .btn.icon.sm { width: 36px; padding: 0; }
+
+  /* ---- carrossel de objetivos ---- */
+  .carousel { display: flex; gap: var(--space-16); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: var(--space-8) var(--space-4) var(--space-12); margin: calc(-1 * var(--space-8)) calc(-1 * var(--space-4)) 0; scrollbar-width: none; }
+  .carousel::-webkit-scrollbar { display: none; }
+  .carousel > * { scroll-snap-align: start; flex: 0 0 auto; }
+  @media (prefers-reduced-motion: reduce) { .carousel { scroll-behavior: auto; } }
+
+  /* ---- GoalCard compacto ---- */
+  .goal { --gc: var(--goal-sky); width: 280px; padding: var(--space-20); display: flex; flex-direction: column; gap: var(--space-16); text-align: left; color: var(--text-primary); }
+  .goal:focus-visible { outline: 2px solid var(--violet-ink); outline-offset: 2px; border-radius: var(--radius-lg); }
+  .goal .head { display: flex; gap: var(--space-12); align-items: flex-start; min-width: 0; }
+  .goal .ico-tile.g { font-size: 20px; line-height: 1; font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gc) 28%, var(--icon-tile)), color-mix(in srgb, var(--gc) 14%, var(--icon-tile)));
+    box-shadow: inset 0 1px 0 var(--hairline-strong), inset 0 0 0 1px color-mix(in srgb, var(--gc) 30%, transparent); }
+  .goal .ttl { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: var(--space-2); }
+  .goal .ttl .title-sm { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .goal .why { color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .goal .prio { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); white-space: nowrap; }
+  .goal .prio .ms { color: var(--text-muted); }
+  .goal .steps { display: grid; gap: var(--space-8); }
+  .goal .lbl { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-8); }
+  .goal .bar { --g: var(--orange); }
+  .goal .next { display: flex; align-items: center; gap: var(--space-4); color: var(--text-secondary); min-width: 0; }
+  .goal .next .ms { color: var(--orange-ink); flex: 0 0 auto; }
+  .goal .next span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .goal .next b { font-weight: 600; color: var(--text-primary); }
+  .goal .status { display: inline-flex; align-items: center; gap: var(--space-4); color: var(--text-secondary); }
+  .goal .status .ms { color: var(--text-muted); }
+  .goal .foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-12); color: var(--text-secondary); }
+  .goal .foot > span { display: inline-flex; align-items: center; gap: var(--space-8); white-space: nowrap; }
+  .goal small { color: var(--text-secondary); font-size: inherit; font-weight: 500; }
+  .dots { display: inline-flex; gap: 3px; } .dots i { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--ring-track); display: block; } .dots i.on { background: var(--cyan); }
+  .goal.queued .ico-tile.g { filter: saturate(.35); }
+  .goal.queued .bar.lit > i { background: var(--bar-muted); box-shadow: none; }
+  .goal[aria-pressed="true"] { background: var(--surface-tint); box-shadow: var(--elev-2), inset 0 0 0 2px var(--violet-ink); }
+
+  /* ---- painel do dia ---- */
+  .list { padding: var(--space-8); align-self: start; }
+  .tgh { display: flex; align-items: center; gap: var(--space-12); min-height: 44px; padding: var(--space-4) var(--space-4) var(--space-4) var(--space-8); }
+  .tgh-body + .tgh { margin-top: var(--space-8); }
+  .tgh .tog { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 36px; padding: 0 var(--space-8) 0 var(--space-4); border-radius: var(--radius-sm); color: var(--text-primary); white-space: nowrap; }
+  .tgh .tog .chev { color: var(--text-secondary); transition: transform var(--dur-base) var(--ease-in-out); }
+  .tgh .tog[aria-expanded="false"] .chev { transform: rotate(-90deg); }
+  .tgh .cnt { color: var(--text-secondary); white-space: nowrap; display: inline-flex; align-items: center; gap: var(--space-4); }
+  .tgh .cnt .ms { color: var(--violet-ink); }
+  .tgh .bar { height: 4px; flex: 0 1 96px; min-width: 40px; }
+  .tgh .nova { min-height: 36px; padding: 0 var(--space-12); color: var(--text-secondary); gap: var(--space-4); margin-left: auto; }
+  .tgh .nova .ms { color: var(--violet-ink); }
+  @media (hover: hover) and (pointer: fine) { .tgh .tog:hover { background: var(--surface-raised); } .tgh .nova:hover { color: var(--violet-ink); background: color-mix(in srgb, var(--violet-ink) 10%, transparent); } }
+  .tgh-body { display: grid; gap: var(--space-2); }
+  .tgh-body.opening { animation: rise var(--dur-base) var(--ease-out-quint) both; }
+  .tgh-body.closing { opacity: 0; transition: opacity var(--dur-exit) var(--ease-in); }
+  .tgh-body[hidden] { display: none; }
+
+  .trow { display: grid; grid-template-columns: 48px minmax(0, 1fr) 56px 56px 88px 36px; grid-template-areas: "time main seg dur state act"; align-items: center; gap: var(--space-12);
+    min-height: 56px; padding: var(--space-8) var(--space-12); border-radius: var(--radius-md); color: var(--text-primary); position: relative; cursor: pointer;
+    transition: background-color var(--dur-instant) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+  .trow:focus-visible { outline: 2px solid var(--violet-ink); outline-offset: -2px; }
+  .trow .time { grid-area: time; color: var(--text-secondary); }
+  .trow .main { grid-area: main; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .trow .ttl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trow .meta { display: flex; align-items: center; gap: var(--space-8); color: var(--text-secondary); min-width: 0; }
+  .trow .meta .ms { color: var(--text-muted); flex: 0 0 auto; }
+  .trow .meta > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trow .seg.mini { grid-area: seg; }
+  .trow .dur { grid-area: dur; white-space: nowrap; }
+  .trow .dur small, .detail small { color: var(--text-secondary); font-size: inherit; font-weight: 500; }
+  .trow .state { grid-area: state; display: inline-flex; align-items: center; gap: var(--space-4); color: var(--text-secondary); white-space: nowrap; }
+  .trow .act { grid-area: act; opacity: 0; transform: translateX(4px); transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), background-color var(--dur-instant) var(--ease-out); }
+  .trow .act .ms { color: var(--text-secondary); }
+  .trow.now .act, .trow:focus-within .act { opacity: 1; transform: none; }
+  .trow.now .act .ms { color: var(--orange-ink); }
+  @media (hover: hover) and (pointer: fine) { .trow:hover { background: var(--surface-raised); } .trow:hover .act { opacity: 1; transform: none; } }
+  .chip.xs { min-height: 22px; padding: 0 var(--space-8); gap: var(--space-4); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-primary); flex: 0 0 auto; max-width: 100%; }
+  .chip.xs > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gdot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--gc, var(--goal-sky)); flex: 0 0 auto; }
+  .trow.now { background: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline-strong), 0 0 0 1px color-mix(in srgb, var(--orange) 30%, transparent), 0 4px 18px color-mix(in srgb, var(--orange) 16%, transparent); }
+  .trow.now .time { color: var(--text-primary); font-weight: 700; }
+  .trow.now .state { color: var(--orange-ink); }
+  .trow.now .state i { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--orange); box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 70%, transparent); display: inline-block; margin-right: var(--space-2); }
+  .trow.done .ttl, .trow.done .dur { color: var(--text-secondary); }
+  .trow.done .state .ms { color: var(--violet-ink); }
+  .trow.skipped .ttl, .trow.skipped .dur { color: var(--text-secondary); }
+  .trow.skipped .state { color: var(--text-muted); }
+  .trow[aria-selected="true"] { background: var(--surface-tint); box-shadow: inset 0 0 0 1px var(--hairline-strong); }
+  .trow.now[aria-selected="true"] { box-shadow: inset 0 0 0 1px var(--hairline-strong), 0 0 0 1px color-mix(in srgb, var(--orange) 30%, transparent), 0 4px 18px color-mix(in srgb, var(--orange) 16%, transparent); }
+
+  /* ---- detalhe ---- */
+  .detail { padding: var(--space-20); box-shadow: var(--elev-2); display: grid; gap: var(--space-20); align-self: start; position: sticky; top: var(--space-24); }
+  .detail .dhead { display: grid; gap: var(--space-8); }
+  .detail .dhead .row { gap: var(--space-8); }
+  .detail .when { color: var(--text-secondary); display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
+  .detail .when .ms { color: var(--text-muted); }
+  .steplist { display: grid; gap: var(--space-12); }
+  .steplist .lbl { display: flex; justify-content: space-between; align-items: baseline; }
+  .steplist ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .step { display: grid; grid-template-columns: 20px 24px minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-8); min-height: 44px; padding: var(--space-4) var(--space-8); margin-inline: calc(-1 * var(--space-8)); border-radius: var(--radius-sm); position: relative; transition: background-color var(--dur-instant) var(--ease-out); }
+  .step .n { color: var(--text-muted); text-align: center; }
+  .step .check { cursor: pointer; }
+  .step .t { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .step .notes { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-secondary); min-height: 32px; padding: 0 var(--space-4); }
+  .step .notes .ms { color: var(--text-muted); }
+  .step .est { display: inline-flex; align-items: center; justify-content: flex-end; gap: var(--space-2); min-width: 56px; min-height: 32px; padding: 0 var(--space-4); border-radius: var(--radius-sm); color: var(--text-primary); white-space: nowrap; }
+  @media (hover: hover) and (pointer: fine) { .step:hover { background: color-mix(in srgb, var(--surface-raised) 60%, var(--surface-tint)); } .step .est:hover { background: var(--chip); } }
+  .step.done .t { color: var(--text-secondary); } .step.done .n { color: var(--violet-ink); }
+  .step.now { background: var(--surface-raised); box-shadow: inset 0 1px 0 var(--hairline-strong); }
+  .step.now .t { font-weight: 600; } .step.now .n { color: var(--orange-ink); font-weight: 700; }
+  .step.now .check { box-shadow: inset 0 0 0 1.5px var(--orange); }
+  .step.now::before { content: ""; position: absolute; left: 0; top: 50%; width: 3px; height: 16px; margin-top: -8px; border-radius: var(--radius-full); background: var(--orange); box-shadow: 0 0 8px color-mix(in srgb, var(--orange) 70%, transparent); }
+  .addstep { display: grid; grid-template-columns: 20px 24px minmax(0, 1fr) auto; gap: var(--space-8); align-items: center; min-height: 40px; margin-inline: calc(-1 * var(--space-8)); padding: 0 var(--space-8); border-radius: var(--radius-sm); }
+  .addstep .ms { grid-column: 2; color: var(--violet-ink); }
+  .addstep input { grid-column: 3; min-height: 36px; font: inherit; color: var(--text-primary); background: transparent; border: 0; padding: 0; min-width: 0; }
+  .addstep input::placeholder { color: var(--text-muted); } .addstep input:focus { outline: none; }
+  .addstep:focus-within { background: var(--surface-raised); box-shadow: inset 0 0 0 1px var(--border-control); }
+  .addstep .hint { grid-column: 4; color: var(--text-muted); white-space: nowrap; }
+  .notesblk { display: grid; gap: var(--space-8); }
+  .notesblk .lbl { display: flex; justify-content: space-between; align-items: center; }
+  .note { padding: var(--space-12); display: grid; gap: var(--space-2); }
+  .note .meta { color: var(--text-muted); display: flex; gap: var(--space-8); }
+  .cta { width: 100%; min-height: 48px; }
+  .sum { color: var(--text-muted); }
+
+  /* ---- estados menores ---- */
+  .states { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24); }
+  .states > .card { padding: var(--space-20); }
+  .empty { display: flex; gap: var(--space-16); align-items: flex-start; }
+  .empty .txt { display: grid; gap: var(--space-8); min-width: 0; }
+  .empty .acts { display: flex; gap: var(--space-8); flex-wrap: wrap; margin-top: var(--space-4); }
+  .empty .nextstep { display: inline-flex; align-items: center; gap: var(--space-8); color: var(--text-secondary); margin-top: var(--space-4); }
+  .empty .nextstep .ms { color: var(--orange-ink); }
+  .skrow { display: grid; grid-template-columns: 48px minmax(0, 1fr) 56px 48px; gap: var(--space-12); align-items: center; min-height: 52px; padding: 0 var(--space-12); }
+  @media (prefers-reduced-motion: reduce) { .trow, .trow .act, .step, .tgh .tog .chev { transition: none; } .trow .act { opacity: 1; transform: none; } .tgh-body.opening { animation: none; } }
+</style>
+</head>
+<body class="aurora">
+<header class="topbar">
+  <div class="content">
+    <span class="logo title-sm" style="font-weight:500;letter-spacing:.5px"><i aria-hidden="true"></i>LUME</span>
+    <nav class="nav label" aria-label="Principal">
+      <a href="#">Visão geral</a>
+      <a href="#" aria-current="page">Tempo e objetivos</a>
+      <a href="#">Módulos</a>
+    </nav>
+    <span class="sp"></span>
+    <span class="caption t2">segunda, 9 de novembro · 14:20</span>
+    <span class="avatar label" aria-label="Felipe">F</span>
+  </div>
+</header>
+
+<main class="content">
+  <section class="rise hero" aria-labelledby="h-obj">
+    <div class="sechead">
+      <h1 class="title" id="h-obj">Objetivos</h1>
+      <span class="body-sm sub">4 ativos · 1 na fila</span>
+      <span class="sp">
+        <button class="btn secondary icon sm" type="button" id="prev" aria-label="Objetivos anteriores"><span class="ms s20">chevron_left</span></button>
+        <button class="btn secondary icon sm" type="button" id="next" aria-label="Próximos objetivos"><span class="ms s20">chevron_right</span></button>
+        <button class="btn primary sm" type="button"><span class="ms s20">add</span>Novo objetivo</button>
+      </span>
+    </div>
+    <div class="carousel" id="carousel" role="listbox" aria-label="Objetivos">
+      <button class="card lift goal" role="option" style="--gc:var(--goal-sky)" aria-pressed="false" aria-label="Inglês fluente, prioridade alta, 3 de 8 etapas">
+        <div class="head"><span class="ico-tile g" aria-hidden="true">📘</span><div class="ttl"><div class="title-sm">Inglês fluente</div><div class="caption why">Trabalhar fora em 2027</div></div></div>
+        <div class="steps"><div class="lbl caption"><span class="prio"><span class="ms s16">keyboard_double_arrow_up</span>Alta</span><span class="num">3 <span class="t2">de 8 etapas</span></span></div><div class="bar lit"><i style="--p:37.5%"></i></div></div>
+        <div class="caption next"><span class="ms s16">arrow_forward</span><span>Próxima: <b>Terminar módulo B2</b></span></div>
+        <div class="caption foot"><span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>5 de 7 dias</span><span><span class="num">12 <small>h</small> de 40 <small>h</small></span></span></div>
+      </button>
+      <button class="card lift goal" role="option" style="--gc:var(--goal-violet)" aria-pressed="false" aria-label="Projeto Lume, prioridade alta, 5 de 12 etapas">
+        <div class="head"><span class="ico-tile g" aria-hidden="true">🔥</span><div class="ttl"><div class="title-sm">Projeto Lume</div><div class="caption why">Um ERP para a minha vida</div></div></div>
+        <div class="steps"><div class="lbl caption"><span class="prio"><span class="ms s16">keyboard_double_arrow_up</span>Alta</span><span class="num">5 <span class="t2">de 12 etapas</span></span></div><div class="bar lit"><i style="--p:42%"></i></div></div>
+        <div class="caption next"><span class="ms s16">arrow_forward</span><span>Próxima: <b>Tela de foco no celular</b></span></div>
+        <div class="caption foot"><span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>6 de 7 dias</span><span><span class="num">48 <small>h</small> de 120 <small>h</small></span></span></div>
+      </button>
+      <button class="card lift goal" role="option" style="--gc:var(--goal-emerald)" aria-pressed="false" aria-label="Condicionamento, prioridade média, 2 de 6 etapas">
+        <div class="head"><span class="ico-tile g" aria-hidden="true">🏃</span><div class="ttl"><div class="title-sm">Condicionamento</div><div class="caption why">Correr 10 km sem parar</div></div></div>
+        <div class="steps"><div class="lbl caption"><span class="prio"><span class="ms s16">remove</span>Média</span><span class="num">2 <span class="t2">de 6 etapas</span></span></div><div class="bar lit"><i style="--p:33%"></i></div></div>
+        <div class="caption next"><span class="ms s16">arrow_forward</span><span>Próxima: <b>Correr 5 km em 30 min</b></span></div>
+        <div class="caption foot"><span><span class="dots" aria-hidden="true"><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i></span>3 de 7 dias</span><span><span class="num">9 <small>h</small> de 30 <small>h</small></span></span></div>
+      </button>
+      <button class="card lift goal" role="option" style="--gc:var(--goal-amber)" aria-pressed="false" aria-label="Ler 12 livros, prioridade baixa, 9 de 12 etapas">
+        <div class="head"><span class="ico-tile g" aria-hidden="true">📚</span><div class="ttl"><div class="title-sm">Ler 12 livros</div><div class="caption why">Um livro por mês, sem pressa</div></div></div>
+        <div class="steps"><div class="lbl caption"><span class="prio"><span class="ms s16">keyboard_arrow_down</span>Baixa</span><span class="num">9 <span class="t2">de 12 etapas</span></span></div><div class="bar lit"><i style="--p:75%"></i></div></div>
+        <div class="caption next"><span class="ms s16">arrow_forward</span><span>Próxima: <b>Terminar “Sapiens”</b></span></div>
+        <div class="caption foot"><span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></span>4 de 7 dias</span><span><span class="num">31 <small>h</small> de 48 <small>h</small></span></span></div>
+      </button>
+      <button class="card lift goal queued" role="option" style="--gc:var(--goal-rose)" aria-pressed="false" aria-label="Reserva de emergência, na fila depois de Projeto Lume">
+        <div class="head"><span class="ico-tile g" aria-hidden="true">🪙</span><div class="ttl"><div class="title-sm">Reserva de emergência</div><div class="caption why">Seis meses de custo guardados</div></div></div>
+        <div class="steps"><div class="lbl caption"><span class="prio"><span class="ms s16">remove</span>Média</span><span class="num">0 <span class="t2">de 6 etapas</span></span></div><div class="bar lit"><i style="--p:0%"></i></div></div>
+        <div class="caption status"><span class="ms s16">hourglass_top</span>Na fila · depois de Projeto Lume</div>
+        <div class="caption foot"><span><span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>ainda não começou</span><span><span class="num">0 <small>h</small> de 10 <small>h</small></span></span></div>
+      </button>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-hoje" class="hoje">
+    <div class="sechead rise" style="--w:0">
+      <h2 class="title" id="h-hoje">Hoje</h2>
+      <span class="body-sm sub">segunda, 9 nov · 3 h 55 planejadas</span>
+      <span class="sp">
+        <button class="btn secondary icon sm" type="button" aria-label="Dia anterior"><span class="ms s20">chevron_left</span></button>
+        <button class="btn secondary icon sm" type="button" aria-label="Próximo dia"><span class="ms s20">chevron_right</span></button>
+        <button class="btn primary sm" type="button"><span class="ms s20">add</span>Nova atividade</button>
+      </span>
+    </div>
+    <div class="grid-12">
+      <div class="card list rise" id="list" style="grid-column: span 7; --w:0" role="listbox" aria-label="Atividades de hoje"></div>
+      <div class="card tint detail rise" id="detail" style="grid-column: span 5; --w:1" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="rise" style="--w:1" aria-labelledby="h-est">
+    <div class="sechead" style="margin-bottom:var(--space-12)"><h2 class="title-sm t2" id="h-est">Estados do painel: vazio e carregando</h2></div>
+    <div class="states">
+      <div class="card">
+        <div class="empty">
+          <span class="ico-tile"><span class="ms">schedule</span></span>
+          <div class="txt">
+            <div class="title-sm">Nenhuma atividade hoje</div>
+            <p class="body-sm t2">Monte sua grade: adicione uma cotidiana ou escolha a próxima etapa de um objetivo. O dia aparece aqui em dois grupos.</p>
+            <div class="acts"><button class="btn primary sm" type="button"><span class="ms s20">add</span>Nova atividade</button><button class="btn ghost sm" type="button">Ver objetivos</button></div>
+            <div class="caption nextstep"><span class="ms s16">arrow_forward</span><span>Sugestão: <b class="t1" style="font-weight:600">Terminar módulo B2</b> · Inglês fluente · 60 min</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" aria-hidden="true">
+        <div class="tgh" style="padding-left:0"><span class="skel" style="width:20px;height:20px"></span><span class="skel" style="width:96px;height:16px"></span><span class="skel" style="width:72px;height:12px"></span><span class="skel" style="width:96px;height:4px;border-radius:var(--radius-full)"></span></div>
+        <div class="skrow"><span class="skel" style="height:14px"></span><span class="skel" style="height:14px;width:60%"></span><span class="skel" style="height:4px;border-radius:var(--radius-full)"></span><span class="skel" style="height:12px"></span></div>
+        <div class="skrow"><span class="skel" style="height:14px"></span><span class="skel" style="height:14px;width:45%"></span><span class="skel" style="height:4px;border-radius:var(--radius-full)"></span><span class="skel" style="height:12px"></span></div>
+        <div class="tgh" style="padding-left:0"><span class="skel" style="width:20px;height:20px"></span><span class="skel" style="width:110px;height:16px"></span><span class="skel" style="width:72px;height:12px"></span><span class="skel" style="width:96px;height:4px;border-radius:var(--radius-full)"></span></div>
+        <div class="skrow"><span class="skel" style="height:14px"></span><span class="skel" style="height:14px;width:70%"></span><span class="skel" style="height:4px;border-radius:var(--radius-full)"></span><span class="skel" style="height:12px"></span></div>
+        <div class="skrow"><span class="skel" style="height:14px"></span><span class="skel" style="height:14px;width:50%"></span><span class="skel" style="height:4px;border-radius:var(--radius-full)"></span><span class="skel" style="height:12px"></span></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  /* ---------- dados de exemplo ---------- */
+  var GOALS = { sky: 'Inglês fluente', violet: 'Projeto Lume', emerald: 'Condicionamento', amber: 'Ler 12 livros' };
+  var TASKS = [
+    { id: 'cam', g: 'cot', time: '07:00', end: '07:30', dur: 30, title: 'Caminhada', repeat: 'todo dia', status: 'done', steps: [ { t: 'Alongar', est: 5, done: true }, { t: 'Caminhar 25 min', est: 25, done: true } ], notes: [] },
+    { id: 'alm', g: 'cot', time: '12:30', end: '13:15', dur: 45, title: 'Almoço', repeat: 'todo dia', status: 'skipped', steps: [], notes: [] },
+    { id: 'pla', g: 'cot', time: '21:30', end: '21:45', dur: 15, title: 'Planejar amanhã', repeat: 'seg, qua, sex', status: 'future', steps: [ { t: 'Rever o que ficou', est: 5 }, { t: 'Escolher 3 prioridades', est: 5 }, { t: 'Montar a grade', est: 5 } ], notes: [] },
+    { id: 'ing', g: 'obj', goal: 'sky', time: '14:00', end: '15:00', dur: 60, title: 'Estudo de inglês', status: 'now', steps: [ { t: 'Rever vocabulário', est: 10, done: true, notes: 1 }, { t: 'Assistir aula', est: 25, done: true }, { t: 'Anotar 3 frases novas', est: 10, notes: 2 }, { t: 'Exercício de escuta', est: 10 }, { t: 'Resumo do dia', est: 5 } ],
+      notes: [ { at: '14:12', step: 1, text: '“Make up for” = compensar. Confundi com “make up” de maquiagem de novo.' }, { at: '14:38', step: 3, text: 'A aula usou “I’d rather” três vezes; repetir amanhã em voz alta.' } ] },
+    { id: 'rev', g: 'obj', goal: 'violet', time: '15:30', end: '17:00', dur: 90, title: 'Revisão de código', status: 'next', steps: [ { t: 'Ler o diff da sincronização', est: 20 }, { t: 'Rodar os testes locais', est: 15 }, { t: 'Comentar o PR', est: 35 }, { t: 'Anotar dúvidas para amanhã', est: 20 } ], notes: [] },
+    { id: 'tre', g: 'obj', goal: 'emerald', time: '18:30', end: '19:20', dur: 50, title: 'Treino', status: 'future', steps: [ { t: 'Aquecer', est: 10 }, { t: 'Correr 4 km', est: 30 }, { t: 'Alongar', est: 10 } ], notes: [] },
+    { id: 'lei', g: 'obj', goal: 'amber', time: '20:00', end: '20:40', dur: 40, title: 'Leitura', status: 'future', steps: [ { t: 'Ler 20 páginas', est: 30, done: true }, { t: 'Anotar uma ideia', est: 10 } ], notes: [ { at: 'ontem', step: 1, text: 'Capítulo 6: a revolução agrícola como “a maior fraude da história”.' } ] }
+  ];
+  var selected = 'ing';
+  var list = document.getElementById('list'), detail = document.getElementById('detail');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function current(t){ for (var i = 0; i < t.steps.length; i++) if (!t.steps[i].done) return i; return -1; }
+  function segHtml(t, mini){
+    if (!t.steps.length) return '<div class="seg' + (mini ? ' mini' : '') + '" aria-hidden="true"></div>';
+    var cur = t.status === 'now' ? current(t) : -1, h = '';
+    t.steps.forEach(function(s, i){ h += '<i class="' + (s.done ? 'done' : (i === cur ? 'now' : '')) + '"' + (i === cur ? ' style="--p:40%"' : '') + '></i>'; });
+    return '<div class="seg' + (mini ? ' mini' : '') + '" aria-hidden="true">' + h + '</div>';
+  }
+  function stepsLabel(t){ var d = t.steps.filter(function(s){ return s.done; }).length; if (!t.steps.length) return ''; if (t.status === 'now') return 'passo ' + Math.min(current(t) < 0 ? t.steps.length : current(t) + 1, t.steps.length) + ' de ' + t.steps.length; if (d) return d + ' de ' + t.steps.length + ' passos'; return t.steps.length + ' passos'; }
+  function stateHtml(t){
+    if (t.status === 'now') return '<span class="overline state"><i aria-hidden="true"></i>AGORA</span>';
+    if (t.status === 'done') return '<span class="caption state"><span class="ms s16">check_circle</span>feita</span>';
+    if (t.status === 'skipped') return '<span class="caption state"><span class="ms s16">history</span>não feita</span>';
+    if (t.status === 'next') return '<span class="caption state">em 1 h 10</span>';
+    return '<span class="caption state"></span>';
+  }
+  function rowHtml(t){
+    var meta = t.g === 'cot' ? '<span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span>' + (t.status === 'skipped' ? 'fica para amanhã' : esc(t.repeat)) + '</span>'
+      : '<span class="chip xs" style="--gc:var(' + '--goal-' + t.goal + ')"><i class="gdot" aria-hidden="true"></i><span>' + esc(GOALS[t.goal]) + '</span></span><span>' + stepsLabel(t) + '</span>';
+    var act = t.status === 'done' ? 'replay' : (t.status === 'skipped' ? 'check' : 'play_arrow');
+    var actLabel = t.status === 'done' ? 'Rever ' : (t.status === 'skipped' ? 'Marcar como feita: ' : (t.status === 'now' ? 'Continuar ' : 'Entrar em foco em ')) ;
+    return '<div class="trow ' + t.status + '" role="option" tabindex="0" data-id="' + t.id + '" aria-selected="' + (t.id === selected) + '" aria-label="' + t.time + ', ' + esc(t.title) + (t.g === 'obj' ? ', objetivo ' + esc(GOALS[t.goal]) : ', rotina') + (t.steps.length ? ', ' + stepsLabel(t) : '') + ', ' + t.dur + ' minutos' + (t.status === 'now' ? ', agora' : t.status === 'done' ? ', feita' : t.status === 'skipped' ? ', não feita' : t.status === 'next' ? ', próxima' : '') + '">'
+      + '<span class="label num time">' + t.time + '</span>'
+      + '<div class="main"><span class="title-sm ttl">' + esc(t.title) + '</span><div class="caption meta">' + meta + '</div></div>'
+      + segHtml(t, true)
+      + '<span class="label num dur">' + t.dur + ' <small>min</small></span>'
+      + stateHtml(t)
+      + '<button class="btn secondary icon sm act" type="button" aria-label="' + actLabel + esc(t.title) + '"><span class="ms s20">' + act + '</span></button>'
+      + '</div>';
+  }
+  function groupHtml(name, id, tasks){
+    var done = tasks.filter(function(t){ return t.status === 'done'; }).length, now = tasks.filter(function(t){ return t.status === 'now'; }).length;
+    var p = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+    return '<div class="tgh"><button class="tog" type="button" aria-expanded="true" aria-controls="' + id + '"><span class="ms s20 chev">expand_more</span><span class="title-sm">' + name + '</span></button>'
+      + '<span class="caption cnt num">' + (done === tasks.length && tasks.length ? '<span class="ms s16">check_circle</span>' : '') + done + ' de ' + tasks.length + ' feitas' + (now ? ' · ' + now + ' agora' : '') + '</span>'
+      + '<div class="bar" role="progressbar" aria-label="' + name + ' feitas" aria-valuenow="' + done + '" aria-valuemin="0" aria-valuemax="' + tasks.length + '"><i style="--p:' + p + '%"></i></div>'
+      + '<button class="btn ghost sm nova" type="button" aria-label="Nova ' + (id === 'g-cot' ? 'cotidiana' : 'atividade de objetivo') + '"><span class="ms s20">add</span>Nova</button></div>'
+      + '<div class="tgh-body" id="' + id + '">' + tasks.map(rowHtml).join('') + '</div>';
+  }
+  function renderList(){
+    var open = {}; list.querySelectorAll('.tog').forEach(function(b){ open[b.getAttribute('aria-controls')] = b.getAttribute('aria-expanded'); });
+    list.innerHTML = groupHtml('Cotidianas', 'g-cot', TASKS.filter(function(t){ return t.g === 'cot'; })) + groupHtml('De objetivos', 'g-obj', TASKS.filter(function(t){ return t.g === 'obj'; }));
+    Object.keys(open).forEach(function(id){ if (open[id] === 'false') { var b = list.querySelector('[aria-controls="' + id + '"]'); b.setAttribute('aria-expanded', 'false'); document.getElementById(id).hidden = true; } });
+  }
+  function renderDetail(){
+    var t = TASKS.filter(function(x){ return x.id === selected; })[0]; if (!t) return;
+    var cur = t.status === 'now' ? current(t) : -1, done = t.steps.filter(function(s){ return s.done; }).length;
+    var sum = t.steps.reduce(function(a, s){ return a + s.est; }, 0);
+    var head = '<div class="dhead"><div class="row">' + (t.g === 'cot' ? '<span class="chip xs"><span class="ms s16">repeat</span><span>Rotina</span></span><span class="caption t2">' + esc(t.repeat) + '</span>' : '<span class="chip xs" style="--gc:var(' + '--goal-' + t.goal + ')"><i class="gdot" aria-hidden="true"></i><span>' + esc(GOALS[t.goal]) + '</span></span>')
+      + (t.status === 'now' ? '<span class="overline sp" style="color:var(--orange-ink)">AGORA</span>' : t.status === 'done' ? '<span class="caption sp t2"><span class="ms s16" style="color:var(--violet-ink);vertical-align:-3px">check_circle</span> feita</span>' : '') + '</div>'
+      + '<h2 class="headline">' + esc(t.title) + '</h2>'
+      + '<div class="caption when"><span class="ms s16">schedule</span><span class="num">' + t.time + ' – ' + t.end + '</span><span>·</span><span class="num">' + t.dur + ' <small>min</small></span>' + (t.status === 'now' ? '<span>·</span><span class="num">faltam 40 <small>min</small></span>' : '') + '</div></div>';
+    var steps = '<div class="steplist"><div class="lbl caption"><span class="t2">Passos da atividade</span><span class="num">' + (t.steps.length ? (cur >= 0 ? cur + 1 : done) + ' <span class="t2">de ' + t.steps.length + '</span>' : '<span class="t2">nenhum</span>') + '</span></div>' + segHtml(t, false);
+    if (t.steps.length) {
+      steps += '<ol aria-label="Passos de ' + esc(t.title) + '">' + t.steps.map(function(s, i){
+        return '<li class="step pulse' + (s.done ? ' done' : '') + (i === cur ? ' now' : '') + '" style="--c:var(--violet)"><span class="caption num n">' + (i + 1) + '</span>'
+          + '<span class="check' + (s.done ? ' on' : '') + '" role="checkbox" aria-checked="' + !!s.done + '" tabindex="0" data-i="' + i + '" aria-label="' + esc(s.t) + (s.done ? ', concluído' : i === cur ? ', atual' : '') + '"><span class="ms s16">check</span></span>'
+          + '<span class="body t">' + esc(s.t) + '</span>'
+          + (s.notes ? '<button class="caption notes" type="button" aria-label="' + s.notes + ' anotações em ' + esc(s.t) + '"><span class="ms s16">notes</span>' + s.notes + '</button>' : '<span></span>')
+          + '<button class="label num est" type="button" aria-label="Estimativa: ' + s.est + ' minutos. Editar">' + s.est + ' <small>min</small></button></li>';
+      }).join('') + '</ol>';
+    } else {
+      steps += '<div class="block" style="padding:var(--space-12) var(--space-16)"><p class="body-sm">Divida em passos de 5 a 25 minutos.</p><p class="caption t2">Passos curtos mantêm o foco e deixam a estimativa mais honesta.</p></div>';
+    }
+    steps += '<form class="addstep"><span class="ms s20">add</span><input class="body" type="text" placeholder="Adicionar passo" aria-label="Título do novo passo"><span class="caption hint">Enter salva · 10 min</span></form>'
+      + (t.steps.length ? '<span class="caption sum num">Soma das estimativas: ' + sum + ' min' + (sum > t.dur ? ' · ' + (sum - t.dur) + ' min a mais que a atividade, tudo bem' : sum === t.dur ? ' · igual à duração' : '') + '</span>' : '') + '</div>';
+    var notes = '<div class="notesblk"><div class="lbl"><span class="caption t2">Anotações <span class="num t1">' + t.notes.length + '</span></span><button class="btn ghost sm" type="button" style="min-height:32px;padding:0 var(--space-8)"><span class="ms s20">add</span>Anotar</button></div>'
+      + (t.notes.length ? t.notes.map(function(n){ return '<div class="block note"><span class="caption meta"><span class="num">' + n.at + '</span><span>passo ' + n.step + '</span></span><p class="body-sm">' + esc(n.text) + '</p></div>'; }).join('') : '<p class="caption t3">Pensamentos capturados durante o Foco aparecem aqui.</p>') + '</div>';
+    var cta = t.status === 'done' ? '<button class="btn secondary cta" type="button"><span class="ms s20">replay</span>Rever atividade</button>'
+      : t.status === 'skipped' ? '<div class="row" style="gap:var(--space-8)"><button class="btn secondary cta" type="button"><span class="ms s20">check</span>Marcar feita</button><button class="btn ghost" type="button" style="min-height:48px">Remarcar</button></div>'
+      : '<button class="btn ember cta breathe" type="button"><span class="ms s20">play_arrow</span>' + (t.status === 'now' ? 'Continuar em foco' : 'Entrar em foco') + '</button>';
+    detail.innerHTML = head + steps + notes + cta;
+  }
+  renderList(); renderDetail();
+
+  /* ---------- interação ---------- */
+  function select(id){ selected = id; list.querySelectorAll('.trow').forEach(function(r){ r.setAttribute('aria-selected', String(r.dataset.id === id)); }); renderDetail(); }
+  list.addEventListener('click', function(e){
+    var tog = e.target.closest('.tog'); if (tog) { var body = document.getElementById(tog.getAttribute('aria-controls')); var open = tog.getAttribute('aria-expanded') === 'true'; tog.setAttribute('aria-expanded', String(!open));
+      if (open) { if (reduce) { body.hidden = true; } else { body.classList.add('closing'); setTimeout(function(){ body.hidden = true; body.classList.remove('closing'); }, 160); } }
+      else { body.hidden = false; if (!reduce) { body.classList.add('opening'); setTimeout(function(){ body.classList.remove('opening'); }, 240); } } return; }
+    if (e.target.closest('.act') || e.target.closest('.nova')) return;
+    var row = e.target.closest('.trow'); if (row) select(row.dataset.id);
+  });
+  list.addEventListener('keydown', function(e){
+    var row = e.target.closest('.trow'); if (!row || e.target !== row) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(row.dataset.id); }
+    var rows = Array.prototype.slice.call(list.querySelectorAll('.trow')), i = rows.indexOf(row);
+    if (e.key === 'ArrowDown' && rows[i + 1]) { e.preventDefault(); rows[i + 1].focus(); }
+    if (e.key === 'ArrowUp' && rows[i - 1]) { e.preventDefault(); rows[i - 1].focus(); }
+  });
+  function toggleStep(chk){
+    var t = TASKS.filter(function(x){ return x.id === selected; })[0]; var s = t.steps[+chk.dataset.i]; s.done = !s.done;
+    var li = chk.closest('.step');
+    chk.classList.toggle('on', s.done); chk.setAttribute('aria-checked', String(s.done));
+    if (s.done && !reduce) { li.classList.remove('go'); void li.offsetWidth; li.classList.add('go'); }
+    setTimeout(function(){ renderDetail(); var row = list.querySelector('.trow[data-id="' + selected + '"]'); if (row) { var fresh = document.createElement('div'); fresh.innerHTML = rowHtml(t); row.replaceWith(fresh.firstChild); } }, s.done && !reduce ? 220 : 0);
+  }
+  detail.addEventListener('click', function(e){ var chk = e.target.closest('.check'); if (chk) toggleStep(chk); });
+  detail.addEventListener('keydown', function(e){ var chk = e.target.closest('.check'); if (chk && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); toggleStep(chk); } });
+  detail.addEventListener('submit', function(e){ e.preventDefault(); var inp = e.target.querySelector('input'); var v = inp.value.trim(); if (!v) return; var t = TASKS.filter(function(x){ return x.id === selected; })[0]; t.steps.push({ t: v, est: 10 }); renderDetail(); renderList(); detail.querySelector('.addstep input').focus(); });
+  /* carrossel */
+  var car = document.getElementById('carousel');
+  document.getElementById('prev').addEventListener('click', function(){ car.scrollBy({ left: -296, behavior: reduce ? 'auto' : 'smooth' }); });
+  document.getElementById('next').addEventListener('click', function(){ car.scrollBy({ left: 296, behavior: reduce ? 'auto' : 'smooth' }); });
+  car.addEventListener('click', function(e){ var g = e.target.closest('.goal'); if (!g) return; var on = g.getAttribute('aria-pressed') === 'true'; car.querySelectorAll('.goal').forEach(function(o){ o.setAttribute('aria-pressed', 'false'); }); g.setAttribute('aria-pressed', String(!on)); });
+</script>
+</body>
+</html>

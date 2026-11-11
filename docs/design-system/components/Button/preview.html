@@ -1,0 +1,153 @@
+<!-- @dsCard group="Controles" height=1180 subtitle="Primário com luz violeta, secundário com hairline, fantasma, brasa (entrar em foco), destrutivo discreto e ícone; mola ao soltar e estados completos" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body { padding: var(--space-24); min-height: 100vh; }
+  .wrap { max-width: 1100px; margin-inline: auto; display: grid; gap: var(--space-32); }
+  .sec h2 { margin-bottom: var(--space-4); }
+  .sec .lead { color: var(--text-secondary); max-width: 64ch; margin-bottom: var(--space-16); }
+  .btns { display: flex; gap: var(--space-12); flex-wrap: wrap; align-items: center; }
+  .cap { color: var(--text-muted); margin-top: var(--space-8); }
+  .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-16) var(--space-12); padding: var(--space-20); }
+  .cell { display: flex; flex-direction: column; gap: var(--space-8); align-items: flex-start; }
+  .cell .caption { color: var(--text-muted); }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-16); align-items: start; }
+  .phone { width: 390px; max-width: 100%; padding: var(--space-16); display: grid; gap: var(--space-12); }
+  .phone .btn { min-height: 48px; }
+  .desk { padding: var(--space-20); }
+  .block.pad { padding: var(--space-16); margin-top: var(--space-12); }
+
+  /* destrutivo discreto: sem bloco vermelho; texto em danger com hairline de 1px */
+  .btn.danger { background: var(--chip); color: var(--danger); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 45%, transparent), inset 0 1px 0 var(--hairline); }
+  @media (hover: hover) and (pointer: fine) { .btn.danger:hover { background: color-mix(in srgb, var(--danger) 10%, var(--chip)); } }
+  .btn.ghost.quiet { color: var(--text-secondary); }
+  .btn.block { width: 100%; }
+  .btn.icon.sm { width: 36px; padding: 0; } /* sugestão para o kit: .sm não deve sobrescrever o padding de .icon */
+
+  /* estados fixos para a vitrine (espelham :hover, :active e :focus-visible) */
+  .btn.is-hover.primary { box-shadow: inset 0 1px 0 color-mix(in srgb, white 30%, transparent), 0 1px 2px color-mix(in srgb, black 30%, transparent), 0 8px 28px color-mix(in srgb, var(--violet) 45%, transparent); }
+  .btn.is-hover.secondary { background: var(--surface-tint); }
+  .btn.is-hover.ghost { background: color-mix(in srgb, var(--violet-ink) 10%, transparent); }
+  .btn.is-hover.ember { box-shadow: inset 0 1px 0 color-mix(in srgb, white 40%, transparent), 0 8px 28px color-mix(in srgb, var(--orange) 45%, transparent); }
+  .btn.is-press { transform: scale(0.97); }
+  .btn.is-focus { outline: 2px solid var(--violet-ink); outline-offset: 2px; }
+
+  /* carregando: indicador discreto de 14px, texto mantido */
+  .btn[aria-busy="true"] { pointer-events: none; }
+  .spin { width: 14px; height: 14px; border-radius: var(--radius-full); flex: 0 0 auto;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 28%, transparent);
+    background: conic-gradient(from 0deg, currentColor 0 25%, transparent 25% 100%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px));
+    animation: spin 1.2s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* medidor da mola: mostra a curva de soltar */
+  .meter { display: flex; align-items: center; gap: var(--space-12); }
+  .meter .dotw { width: 160px; height: 24px; position: relative; }
+  .meter .dotw::before { content: ""; position: absolute; left: 12px; right: 12px; top: 11px; height: 2px; background: var(--ring-track); border-radius: var(--radius-full); }
+  .meter .dot { position: absolute; top: 0; left: 0; width: 24px; height: 24px; border-radius: var(--radius-full); background: var(--violet); transition: transform var(--dur-base) var(--ease-spring); }
+  .meter.go .dot { transform: translateX(136px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spin { animation: none; background: none; box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 50%, transparent); -webkit-mask: none; mask: none; }
+    .btn.is-press { transform: none; }
+    .meter .dot { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="sec">
+    <h2 class="title">Variantes</h2>
+    <p class="body lead">Um primário por área: luz violeta. O secundário se separa por hairline, não por borda pesada. Brasa só para entrar em foco. Destrutivo é raro e discreto: palavra, ícone e um traço de 1px.</p>
+    <div class="btns">
+      <button class="btn primary"><span class="ms s20">add</span>Nova atividade</button>
+      <button class="btn secondary">Trocar atividade</button>
+      <button class="btn ghost">Ver todas</button>
+      <button class="btn ember"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      <button class="btn danger"><span class="ms s20">delete</span>Excluir bloco</button>
+      <button class="btn secondary icon" aria-label="Mais opções"><span class="ms">more_horiz</span></button>
+      <button class="btn ghost icon" aria-label="Editar"><span class="ms">edit</span></button>
+    </div>
+    <p class="caption cap">Classes do kit: <code>.btn</code> + <code>.primary</code>, <code>.secondary</code>, <code>.ghost</code>, <code>.ember</code>, <code>.icon</code>, <code>.sm</code>. <code>.danger</code> é local deste preview.</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Estados</h2>
+    <p class="body lead">Hover só com ponteiro fino. Pressionar encolhe para 0,97 em <code>ease-out</code>; soltar volta em <code>ease-spring</code>. Foco é um anel sólido de 2px em <code>violet-ink</code>.</p>
+    <div class="card states">
+      <div class="cell"><button class="btn primary">Registrar</button><span class="caption">Normal</span></div>
+      <div class="cell"><button class="btn primary is-hover">Registrar</button><span class="caption">Hover: a luz violeta cresce</span></div>
+      <div class="cell"><button class="btn primary is-press">Registrar</button><span class="caption">Pressionado, 0,97</span></div>
+      <div class="cell"><button class="btn primary is-focus">Registrar</button><span class="caption">Foco, anel de 2px</span></div>
+      <div class="cell"><button class="btn primary" disabled>Registrar</button><span class="caption">Desabilitado, 40%, sem luz</span></div>
+      <div class="cell"><button class="btn primary" aria-busy="true"><span class="spin" aria-hidden="true"></span>Salvando</button><span class="caption">Carregando, texto mantido</span></div>
+      <div class="cell"><button class="btn secondary">Cancelar</button><span class="caption">Secundário</span></div>
+      <div class="cell"><button class="btn secondary is-hover">Cancelar</button><span class="caption">Secundário, hover (tinta)</span></div>
+      <div class="cell"><button class="btn secondary is-focus">Cancelar</button><span class="caption">Secundário, foco</span></div>
+      <div class="cell"><button class="btn secondary" disabled>Cancelar</button><span class="caption">Secundário, desabilitado</span></div>
+      <div class="cell"><button class="btn ghost">Ver tudo</button><span class="caption">Fantasma</span></div>
+      <div class="cell"><button class="btn ghost is-hover">Ver tudo</button><span class="caption">Fantasma, hover</span></div>
+      <div class="cell"><button class="btn ember is-hover"><span class="ms s20">play_arrow</span>Entrar em foco</button><span class="caption">Brasa, hover</span></div>
+      <div class="cell"><button class="btn ember" disabled><span class="ms s20">play_arrow</span>Entrar em foco</button><span class="caption">Brasa, desabilitado</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Celular e desktop</h2>
+    <p class="body lead">No celular a ação da tela ocupa a largura toda, com 48px de altura, ao alcance do polegar. No desktop, barras densas usam <code>.sm</code> (36px) com alvo de 32px ou mais.</p>
+    <div class="two">
+      <div class="card phone">
+        <span class="caption t3">Celular, 390px</span>
+        <button class="btn ember block"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+        <button class="btn secondary block">Agora não</button>
+        <div class="row"><button class="btn secondary icon" aria-label="Editar"><span class="ms">edit</span></button><button class="btn ghost">Ver histórico</button></div>
+      </div>
+      <div class="card desk">
+        <span class="caption t3">Desktop: tamanho sm, 36px</span>
+        <div class="block pad">
+          <div class="btns">
+            <button class="btn primary sm"><span class="ms s20">add</span>Novo bloco</button>
+            <button class="btn secondary sm">Cancelar</button>
+            <button class="btn ghost sm">Ver detalhes</button>
+            <button class="btn ghost sm quiet">Fechar</button>
+            <button class="btn secondary icon sm" aria-label="Editar"><span class="ms s20">edit</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2 class="title">Mola ao soltar e carregamento</h2>
+    <p class="body lead">Pressione e solte o botão para sentir a mola. O segundo botão mostra o carregamento: o rótulo fica, o indicador entra na frente.</p>
+    <div class="card desk">
+      <div class="btns">
+        <button class="btn primary" id="spring">Pressione e solte</button>
+        <div class="meter" id="meter" aria-hidden="true"><div class="dotw"><span class="dot"></span></div><span class="caption t3">ease-spring · dur-base</span></div>
+        <button class="btn ember sp" id="go"><span class="ms s20">play_arrow</span>Entrar em foco</button>
+      </div>
+      <p class="caption cap" id="msg" role="status">O medidor repete a curva de soltar; o botão de brasa simula um carregamento de 1,6s.</p>
+    </div>
+  </section>
+</div>
+<script>
+  var s = document.getElementById('spring'), m = document.getElementById('meter');
+  function release(){ m.classList.remove('go'); void m.offsetWidth; m.classList.add('go'); }
+  s.addEventListener('pointerup', release); s.addEventListener('keyup', function(e){ if (e.key === ' ' || e.key === 'Enter') release(); });
+  var b = document.getElementById('go'), msg = document.getElementById('msg');
+  b.addEventListener('click', function(){
+    if (b.getAttribute('aria-busy') === 'true') return;
+    b.setAttribute('aria-busy', 'true'); b.insertAdjacentHTML('afterbegin', '<span class="spin" aria-hidden="true"></span>'); b.querySelector('.ms').remove();
+    msg.textContent = 'Preparando o foco…';
+    setTimeout(function(){ b.removeAttribute('aria-busy'); b.querySelector('.spin').remove(); b.insertAdjacentHTML('afterbegin', '<span class="ms s20">play_arrow</span>'); msg.textContent = 'Pronto. Em uso real, a tela de Foco abre aqui.'; }, 1600);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!-- @dsCard group="Dashboard" height=1030 subtitle="Anéis do dia com cabeça luminosa: blocos (violet, aceso), dias na semana (cyan) e etapas (orange)" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<script>if(/[?&]still=1/.test(location.search))document.documentElement.classList.add('still')</script>
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .toolbar{display:flex;flex-wrap:wrap;gap:var(--space-12);align-items:center;margin-bottom:var(--space-24)}
+  .stack{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  figure{margin:0;display:flex;flex-direction:column;gap:var(--space-12)}
+  figcaption{color:var(--text-muted)}
+  .frame{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--elev-1);background:var(--bg)}
+  .band{background:var(--hero-band);padding:var(--space-24) var(--space-16);box-shadow:0 1px 0 var(--hairline)}
+  .band .date{color:var(--text-secondary)}
+  .band .greet{margin-top:var(--space-4)}
+  .band .daylbl{margin-top:var(--space-24);margin-bottom:var(--space-16);color:var(--text-secondary)}
+  .frame.compact{width:360px;max-width:100%}
+  .frame.wide{width:840px;max-width:100%}
+  .frame.wide .band{padding:var(--space-32) var(--space-24)}
+  .compact-rings{display:flex;gap:var(--space-8)}
+  .wide-rings{display:flex;flex-wrap:wrap;gap:var(--space-24) var(--space-40)}
+
+  /* MetricRing: arco + cabeça luminosa (glow-head) com gradiente via SVG */
+  .ring{position:relative;flex:none;border-radius:var(--radius-full);background:var(--hero-band);box-shadow:inset 0 1px 0 var(--hairline)}
+  .ring.lit-violet{box-shadow:var(--glow-violet)} .ring.lit-cyan{box-shadow:var(--glow-cyan)} .ring.lit-orange{box-shadow:var(--glow-orange)}
+  .ring svg{position:absolute;inset:0;transform:rotate(-90deg);overflow:visible}
+  .ring .trk{fill:none;stroke:var(--ring-track)}
+  .ring .arc{fill:none;stroke:var(--ac);stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:var(--off);animation:ringfill var(--dur-slow) var(--ease-settle) both}
+  .ring .head{fill:none;stroke-linecap:round;stroke-dasharray:var(--h) 100;stroke-dashoffset:var(--hoff);animation:headfill var(--dur-slow) var(--ease-settle) both}
+  .ring .s0{stop-color:var(--ac)}
+  .ring .s1{stop-color:color-mix(in srgb,var(--ac) 55%,white)}
+  .ring[class*="lit-"] .head{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--ac) 70%,transparent))}
+  .ring.zero .arc,.ring.zero .head,.ring.full .head{opacity:0}
+  .ring .center{position:absolute;inset:0;display:grid;place-items:center;color:var(--text-primary)}
+  @keyframes ringfill{from{stroke-dashoffset:100}}
+  @keyframes headfill{from{stroke-dashoffset:var(--h)}}
+  .rst .arc,.rst .head{animation:none}
+  .still *{animation-duration:0s!important;animation-delay:0s!important}
+
+  /* RingStatTile */
+  .tile{display:flex;min-width:0}
+  .tile .val{color:var(--text-primary)}
+  .tile .lbl{margin-top:var(--space-2);color:var(--text-secondary)}
+  .tile.col{flex:1;flex-direction:column;align-items:center;text-align:center;gap:var(--space-12)}
+  .tile.row{width:220px;align-items:center;gap:var(--space-12)}
+  .tile.row .txt{min-width:0}
+  .sizes{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-end;padding:var(--space-24)}
+  .sizes figure{align-items:center}
+  @media (prefers-reduced-motion:reduce){ .ring .arc,.ring .head{animation:none} }
+</style>
+</head>
+<body class="aurora">
+<div class="toolbar">
+  <button class="btn secondary sm" id="replay" type="button"><span class="ms s20" aria-hidden="true">replay</span>Repetir preenchimento</button>
+  <span class="caption t3">Os arcos preenchem em dur-slow com ease-settle na primeira exibição; a cabeça luminosa (glow-head, 24px) vai na ponta. Só o anel do dia, em andamento, tem glow.</span>
+</div>
+
+<div class="stack">
+  <figure>
+    <div class="frame compact">
+      <div class="band">
+        <p class="body-sm date">segunda-feira, 9 de novembro</p>
+        <h1 class="display greet">Boa tarde, Felipe</h1>
+        <p class="title-sm daylbl">Seu dia</p>
+        <div class="compact-rings" data-layout="col" data-size="88"></div>
+      </div>
+    </div>
+    <figcaption class="caption">Celular: DayHeader (saudação em display) e três anéis de 88px, rótulo embaixo</figcaption>
+  </figure>
+
+  <figure>
+    <div class="frame wide">
+      <div class="band">
+        <p class="body-sm date">segunda-feira, 9 de novembro</p>
+        <h1 class="display-lg greet">Boa tarde, Felipe</h1>
+        <p class="title-sm daylbl">Seu dia</p>
+        <div class="wide-rings" data-layout="row" data-size="104"></div>
+      </div>
+    </div>
+    <figcaption class="caption">Desktop: DayHeader (saudação em display-lg) e anéis de 104px, rótulo ao lado</figcaption>
+  </figure>
+
+  <figure>
+    <div class="sizes card" id="sizes"></div>
+    <figcaption class="caption">O anel isolado em 0%, 25%, 100% e na menor medida (64px, só em espaços apertados)</figcaption>
+  </figure>
+</div>
+
+<script>
+(function(){
+  var DATA=[
+    {pct:60,center:'60%',value:'3 de 5',label:'Blocos hoje',ac:'violet',lit:true},
+    {pct:71,center:'5/7',value:'5 de 7',label:'Dias na semana',ac:'cyan'},
+    {pct:67,center:'67%',value:'8 de 12',label:'Etapas feitas',ac:'orange'}
+  ];
+  var uid=0;
+  function ring(size,d){
+    var sw=size>=100?8:7, r=(size-sw)/2, c=size/2, C=2*Math.PI*r;
+    var h=+(24/C*100).toFixed(2), p=d.pct, off=+(100-p).toFixed(2), hoff=+(h-p).toFixed(2);
+    var a0=2*Math.PI*Math.max(0,p-h)/100, a1=2*Math.PI*p/100;
+    function P(a){return [(c+r*Math.cos(a)).toFixed(1),(c+r*Math.sin(a)).toFixed(1)];}
+    var p0=P(a0), p1=P(a1), id='g'+(++uid);
+    var el=document.createElement('div');
+    el.className='ring'+(d.lit?' lit-'+d.ac:'')+(p<=0?' zero':'')+(p>=100?' full':'');
+    el.setAttribute('style','--ac:var(--'+d.ac+');--h:'+h+';--off:'+off+';--hoff:'+hoff+';width:'+size+'px;height:'+size+'px');
+    el.innerHTML='<svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" aria-hidden="true">'
+      +'<defs><linearGradient id="'+id+'" gradientUnits="userSpaceOnUse" x1="'+p0[0]+'" y1="'+p0[1]+'" x2="'+p1[0]+'" y2="'+p1[1]+'"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient></defs>'
+      +'<circle class="trk" cx="'+c+'" cy="'+c+'" r="'+r+'" stroke-width="'+sw+'"/>'
+      +'<circle class="arc" cx="'+c+'" cy="'+c+'" r="'+r+'" stroke-width="'+sw+'" pathLength="100"/>'
+      +'<circle class="head" cx="'+c+'" cy="'+c+'" r="'+r+'" stroke-width="'+sw+'" pathLength="100" stroke="url(#'+id+')"/></svg>'
+      +'<span class="center metric">'+d.center+'</span>';
+    return el;
+  }
+  function tile(d,layout,size){
+    var t=document.createElement('div');
+    t.className='tile '+layout;
+    t.setAttribute('role','img');
+    t.setAttribute('aria-label',d.label+': '+d.value+', '+d.center);
+    var txt=document.createElement('div'); txt.className='txt';
+    txt.innerHTML='<p class="val title">'+d.value+'</p><p class="lbl body-sm">'+d.label+'</p>';
+    t.appendChild(ring(size,d)); t.appendChild(txt);
+    return t;
+  }
+  document.querySelectorAll('[data-layout]').forEach(function(host){
+    DATA.forEach(function(d){ host.appendChild(tile(d,host.dataset.layout,+host.dataset.size)); });
+  });
+  var sizes=document.getElementById('sizes');
+  [[0,'0%',104],[25,'25%',104],[100,'100%',104],[60,'60%',64]].forEach(function(s){
+    var f=document.createElement('figure');
+    f.appendChild(ring(s[2],{pct:s[0],center:s[1],ac:'violet'}));
+    var c=document.createElement('figcaption'); c.className='caption'; c.textContent=s[2]+'px · '+s[1];
+    f.appendChild(c); sizes.appendChild(f);
+  });
+  document.getElementById('replay').addEventListener('click',function(){
+    var b=document.body; b.classList.add('rst'); void b.offsetWidth; requestAnimationFrame(function(){ b.classList.remove('rst'); });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!-- @dsCard group="Telas" page width=390 height=2200 subtitle="Visão geral compact: coluna única, card Agora aceso, anéis de 88 px, CTA e BottomNav em glass" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<script>if(/[?&]still=1/.test(location.search))document.documentElement.classList.add('still')</script>
+<style>
+.pv-bar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-12);padding:var(--space-8) var(--space-24);box-shadow:0 1px 0 var(--hairline)}
+.pv-bar .caption{color:var(--text-muted)}
+.truncate{min-width:0}
+
+/* ---- barra superior (AppTopBar) ---- */
+.topbar{display:flex;align-items:center;gap:var(--space-4);min-height:64px;padding:0 var(--space-24);background:var(--topbar);box-shadow:0 1px 0 var(--hairline);position:relative;z-index:2}
+.logo{display:flex;align-items:center;gap:var(--space-12);color:var(--text-primary)}
+.logo .mark{width:28px;height:28px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--brand-from),var(--brand-to));display:grid;place-items:center;color:var(--on-violet);box-shadow:inset 0 1px 0 var(--hairline-strong)}
+.logo .word{font-size:20px;line-height:24px;font-weight:500;letter-spacing:.5px}
+.nav{display:flex;gap:var(--space-4);margin-left:var(--space-24)}
+.nav a{min-height:36px;padding:0 var(--space-12);border-radius:var(--radius-sm);display:flex;align-items:center;color:var(--text-secondary);text-decoration:none;font-size:13px;font-weight:600;transition:background-color var(--dur-instant) var(--ease-out),color var(--dur-instant) var(--ease-out)}
+.nav a[aria-disabled=true]{color:var(--text-muted);cursor:default}
+.bn[aria-disabled=true]{color:var(--text-muted)}
+.nav a[aria-current=page]{color:var(--text-primary);background:var(--chip);box-shadow:inset 0 1px 0 var(--hairline)}
+.search{margin-left:auto;display:flex;align-items:center;gap:var(--space-8);width:240px;min-height:36px;padding:0 var(--space-12);color:var(--text-secondary);font-size:13px;font-weight:500}
+.ib{width:40px;height:40px;border-radius:var(--radius-full);display:grid;place-items:center;color:var(--text-primary);flex:none;transition:background-color var(--dur-instant) var(--ease-out),color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+.ib:active{transform:scale(.94);transition-timing-function:var(--ease-out)}
+.ib.t{width:48px;height:48px}
+.ib[aria-expanded=true]{background:var(--chip);color:var(--violet-ink);box-shadow:inset 0 1px 0 var(--hairline)}
+.avatar{width:32px;height:32px;border-radius:var(--radius-full);background:linear-gradient(180deg,var(--ember),var(--orange));color:var(--on-orange);display:grid;place-items:center;box-shadow:inset 0 1px 0 var(--hairline-strong)}
+.profile{display:flex;align-items:center;margin-left:var(--space-8);color:var(--text-muted);min-height:40px;border-radius:var(--radius-full)}
+.ctop{display:flex;align-items:center;min-height:56px;padding:0 var(--space-8) 0 var(--space-16);background:var(--topbar);box-shadow:0 1px 0 var(--hairline);position:relative;z-index:2}
+.ctop .sp{display:flex;align-items:center;gap:var(--space-4)}
+@media (hover:hover) and (pointer:fine){
+  .nav a:hover{color:var(--text-primary);background:var(--surface-raised)}
+  .ib:hover{background:var(--chip)}
+}
+
+/* ---- hero ---- */
+.hero{background:var(--hero-band);box-shadow:0 1px 0 var(--hairline);position:relative;z-index:1}
+.hero .content{padding-top:var(--space-32);padding-bottom:var(--space-32)}
+.hero-grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:var(--space-40);align-items:stretch}
+.date{color:var(--text-secondary)}
+.greet{margin-top:var(--space-4)}
+.daylbl{margin-top:var(--space-24);margin-bottom:var(--space-16);color:var(--text-secondary)}
+.rings{display:flex;gap:var(--space-40);flex-wrap:wrap}
+.compact .hero .content{padding-top:var(--space-24);padding-bottom:var(--space-32)}
+.compact .greet{margin-bottom:var(--space-20)}
+.compact .rings{gap:var(--space-8)}
+
+/* ---- card Agora (NowCard): .navy .breathe do kit ---- */
+.now{display:flex;flex-direction:column;min-height:200px;padding:var(--space-24)}
+.now .overline{color:var(--card-fg);opacity:.8}
+.now .headline{margin-top:var(--space-8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now .sub{margin-top:var(--space-2);color:var(--card-fg-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now .bottom{margin-top:auto;padding-top:var(--space-16)}
+.now .meta{display:flex;justify-content:space-between;gap:var(--space-8);font-size:13px;line-height:16px;font-weight:600}
+.now .meta small,.dur small,.cta small{font-size:inherit;font-weight:500}
+.now .meta small{color:var(--card-fg-muted)}
+.now .bar{margin-top:var(--space-8);background:color-mix(in srgb,var(--card-fg) 15%,transparent)}
+.now .next{margin-top:var(--space-12);color:var(--card-fg-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact .now{padding:var(--space-20)}
+
+/* ---- anel (MetricRing) com cabeça luminosa ---- */
+.ring{position:relative;flex:none;border-radius:var(--radius-full);background:var(--hero-band);box-shadow:inset 0 1px 0 var(--hairline)}
+.ring.lit-violet{box-shadow:var(--glow-violet)}
+.ring.lit-cyan{box-shadow:var(--glow-cyan)}
+.ring.lit-orange{box-shadow:var(--glow-orange)}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg);overflow:visible}
+.ring .trk{fill:none;stroke:var(--ring-track)}
+.ring .arc{fill:none;stroke:var(--ac);stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:var(--off);animation:ringfill var(--dur-slow) var(--ease-settle) 240ms both}
+.ring .head{fill:none;stroke-linecap:round;stroke-dasharray:var(--h) 100;stroke-dashoffset:var(--hoff);animation:headfill var(--dur-slow) var(--ease-settle) 240ms both}
+.ring .s0{stop-color:var(--ac)}
+.ring .s1{stop-color:color-mix(in srgb,var(--ac) 55%,white)}
+.ring[class*="lit-"] .head{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--ac) 70%,transparent))}
+.ring .ctr{position:absolute;inset:0;display:grid;place-items:center}
+@keyframes ringfill{from{stroke-dashoffset:100}}
+@keyframes headfill{from{stroke-dashoffset:var(--h)}}
+.rstat{display:flex;gap:var(--space-12);align-items:center;min-width:140px}
+.rstat.col{flex-direction:column;text-align:center;flex:1;min-width:0}
+.rstat .v{font-size:16px;line-height:22px;font-weight:600}
+
+/* ---- seções em card ---- */
+.sec{padding:var(--space-24)}
+.sec>.title{margin-bottom:var(--space-16)}
+.compact .sec{padding:var(--space-20)}
+
+/* ---- linhas (ActivityRow) ---- */
+.list{display:flex;flex-direction:column;gap:var(--space-4);margin:0 calc(var(--space-12)*-1)}
+.arow{display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:var(--space-12);min-height:56px;padding:var(--space-8) var(--space-12);border-radius:var(--radius-md);width:100%;text-align:left;transition:background-color var(--dur-instant) var(--ease-out),box-shadow var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+.arow:active{transform:scale(.985);transition-timing-function:var(--ease-out)}
+.arow .time{font-size:16px;line-height:22px;font-weight:600}
+.arow .mid{min-width:0;display:flex;flex-direction:column;gap:var(--space-2)}
+.arow .goal{display:flex;align-items:center;gap:var(--space-8);color:var(--text-secondary);min-width:0}
+.arow .dur{font-size:16px;line-height:22px;font-weight:600;text-align:right;white-space:nowrap}
+.dur small{color:var(--text-secondary)}
+.dot{width:8px;height:8px;border-radius:var(--radius-full);background:var(--g);flex:none}
+@media (hover:hover) and (pointer:fine){.arow:hover{background:var(--surface-raised);box-shadow:inset 0 1px 0 var(--hairline)}}
+.compact .arow{grid-template-columns:48px minmax(0,1fr) auto}
+
+/* ---- chips de objetivo (GoalChip) ---- */
+.goals{display:flex;flex-wrap:wrap;gap:var(--space-12)}
+.gchip{padding-right:var(--space-16);max-width:100%;font-size:13px;line-height:16px;font-weight:500;transition:background-color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+.gchip:active{transform:scale(.97);transition-timing-function:var(--ease-out)}
+.gchip b{font-weight:700;margin-left:auto}
+@media (hover:hover) and (pointer:fine){.gchip:hover{background:var(--surface-tint)}}
+.compact .goals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-8)}
+/* compact: o chip vira bloco de duas linhas (nome inteiro; percentual embaixo) */
+.compact .gchip{width:100%;min-height:52px;text-align:left;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--space-8);row-gap:var(--space-2);align-items:start;padding:var(--space-8) var(--space-12);border-radius:var(--radius-md)}
+.compact .gchip .dot{margin-top:4px}
+.compact .gchip .truncate{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.compact .gchip b{grid-column:2;margin-left:0;font-size:12px;line-height:16px}
+
+/* ---- ritmo (RhythmCard) ---- */
+.rhythm{display:flex;flex-direction:column}
+.chart{position:relative;height:165px;display:flex;align-items:flex-end}
+.chart .gl{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.chart .gl i{display:block;height:1px;background:var(--divider)}
+.chart .slot{flex:1;display:flex;justify-content:center;align-items:flex-end;height:100%;position:relative}
+.chart .b{width:60%;max-width:18px;height:var(--hh);border-radius:var(--radius-xs) var(--radius-xs) 0 0;background:var(--bar-muted);transform-origin:bottom;animation:grow var(--dur-slow) var(--ease-settle) both;animation-delay:calc(300ms + var(--k)*30ms)}
+.chart .b.rec{background:var(--violet)}
+.chart .b.td{background:var(--cyan);box-shadow:var(--glow-cyan)}
+@keyframes grow{from{transform:scaleY(0)}}
+.axis{display:flex;margin-top:var(--space-8)}
+.axis span{flex:1;text-align:center;color:var(--text-muted)}
+.axis span.td{color:var(--cyan-ink);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:var(--space-8) var(--space-16);margin-top:var(--space-16);color:var(--text-secondary)}
+.legend span{display:inline-flex;align-items:center;gap:var(--space-8)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:var(--radius-xs)}
+.summary{margin-top:auto;padding-top:var(--space-12);color:var(--text-secondary)}
+
+/* ---- frentes da vida (ModuleTile) ---- */
+.mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-12)}
+.mtile{min-height:104px;padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-12);text-align:left;width:100%;position:relative}
+.mtile.span2{grid-column:span 2}
+.mtile.soon{box-shadow:inset 0 1px 0 var(--hairline);flex-direction:row;align-items:center;min-height:64px;padding:var(--space-12)}
+.mtile.soon>span:last-child{min-width:0}
+.mtile .nm{display:block}
+.mtile.soon .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact .mtile.soon{flex-direction:column;align-items:flex-start;min-height:96px;padding:var(--space-16)}
+.compact .mtile.soon .nm{white-space:normal}
+.mtile .dotc{position:absolute;top:var(--space-16);right:var(--space-16);width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan)}
+.lead{margin-top:var(--space-4);margin-bottom:var(--space-16);color:var(--text-secondary)}
+
+/* ---- dock do celular: CTA + BottomNav em glass ---- */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;flex-direction:column;gap:var(--space-12);pointer-events:none}
+.dock>*{pointer-events:auto}
+.cta{margin:0 var(--space-16);border-radius:var(--radius-lg);min-height:56px;display:flex;align-items:center;gap:var(--space-12);padding:var(--space-8) var(--space-8) var(--space-8) var(--space-16);color:var(--text-primary);text-align:left;width:calc(100% - var(--space-16)*2);transition:transform var(--dur-fast) var(--ease-spring)}
+.cta:active{transform:scale(.985);transition-timing-function:var(--ease-out)}
+.cta .lbl{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-2)}
+.cta .lbl .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cta small{color:var(--text-secondary)}
+.bnav{display:grid;grid-template-columns:repeat(5,1fr);padding:var(--space-8) var(--space-8) calc(var(--space-8) + var(--inset,20px))}
+.bn{min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);color:var(--text-secondary);font-size:12px;line-height:16px;font-weight:600;padding:0}
+.bn .pill{width:56px;height:28px;border-radius:var(--radius-full);display:grid;place-items:center;transition:background-color var(--dur-instant) var(--ease-out),color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+.bn:active .pill{transform:scale(.9);transition-timing-function:var(--ease-out)}
+.bn[aria-current=page]{color:var(--text-primary)}
+.bn[aria-current=page] .pill{background:var(--surface-tint);color:var(--violet-ink);box-shadow:inset 0 1px 0 var(--hairline)}
+.bn[aria-expanded=true] .pill{background:var(--surface-tint);color:var(--violet-ink)}
+
+/* ---- menu de módulos, scrim e sheet ---- */
+.stage{position:relative;overflow:hidden}
+.scrim{position:absolute;inset:0;background:var(--scrim);opacity:0;pointer-events:none;transition:opacity var(--dur-exit) var(--ease-in);z-index:20}
+.open>.scrim{opacity:1;pointer-events:auto;transition:opacity var(--dur-base) var(--ease-out-quint)}
+.mpanel{position:absolute;z-index:21;width:380px;padding:var(--space-20);border-radius:var(--radius-xl);opacity:0;transform:scale(.96);transform-origin:top right;pointer-events:none;transition:opacity var(--dur-exit) var(--ease-in),transform var(--dur-exit) var(--ease-in)}
+.open>.mpanel{opacity:1;transform:none;pointer-events:auto;transition:opacity var(--dur-base) var(--ease-out-quint),transform var(--dur-base) var(--ease-out-quint)}
+.mm-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12);margin-top:var(--space-16)}
+.mmt{min-height:96px;padding:var(--space-12);display:flex;flex-direction:column;gap:var(--space-12);text-align:left;position:relative;width:100%;transition:transform var(--dur-fast) var(--ease-spring),background-color var(--dur-instant) var(--ease-out)}
+.mmt.cur{background:var(--surface-tint)}
+.mmt:active:not([disabled]){transform:scale(.97);transition-timing-function:var(--ease-out)}
+.mmt[disabled]{cursor:default}
+.mmt .dotc{position:absolute;top:var(--space-12);right:var(--space-12);width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan)}
+@media (hover:hover) and (pointer:fine){.mmt:not([disabled]):not(.cur):hover{background:var(--chip)}}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;border-radius:var(--radius-xl) var(--radius-xl) 0 0;padding:0 var(--space-16) calc(var(--space-24) + var(--inset,20px));transform:translateY(100%);transition:transform var(--dur-exit) var(--ease-in)}
+.open>.sheet{transform:none;transition:transform var(--dur-base) var(--ease-out-quint)}
+.grab{width:36px;height:4px;border-radius:var(--radius-full);background:var(--border-control);margin:var(--space-8) auto var(--space-12)}
+.device{position:relative;width:390px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.scale-wrap{position:relative;flex:none}
+.scale-wrap>.inner{position:absolute;left:0;top:0;transform-origin:0 0}
+
+.still .rise{animation:none;opacity:1;transform:none}
+.still .arc,.still .head,.still .b{animation:none}
+/* ?still=1: pula para o estado final (só para captura de tela) */
+.still *,.still *::before,.still *::after{animation-duration:0s!important;animation-delay:0s!important}
+.goalsfoot{margin-top:auto;padding-top:var(--space-16);color:var(--text-muted)}
+.sec.fill{display:flex;flex-direction:column}
+.rst .arc,.rst .head,.rst .b{animation:none}
+footer.foot{box-shadow:0 -1px 0 var(--hairline);min-height:40px;display:flex;align-items:center;color:var(--text-muted)}
+
+@media (prefers-reduced-motion:reduce){
+  .ring .arc,.ring .head,.chart .b{animation:none}
+  .ib,.arow,.gchip,.cta,.bn .pill,.mmt,.nav a{transition:none}
+  .ib:active,.arow:active,.gchip:active,.cta:active,.bn:active .pill,.mmt:active:not([disabled]){transform:none}
+  .scrim,.mpanel,.sheet,.open>.scrim,.open>.mpanel,.open>.sheet{transition:opacity var(--dur-instant) linear}
+  .mpanel,.open>.mpanel{transform:none}
+  .sheet{transform:none;opacity:0}.open>.sheet{opacity:1}
+}
+
+:root{--inset:20px}
+body{min-height:100vh}
+.pv-bar{padding:var(--space-8) var(--space-16)}
+</style>
+</head>
+<body class="aurora">
+<div class="pv-bar"><span class="caption">Exemplo: segunda, 14:20.</span><button class="btn ghost sm" onclick="replay()"><span class="ms s20" aria-hidden="true">replay</span>Repetir</button></div>
+<div class="app compact"><header class="ctop"><div class="logo"><span class="mark"><span class="ms s16" aria-hidden="true">auto_awesome</span></span><span class="word">LUME</span></div><div class="sp sp-r"><button class="ib t" aria-label="Buscar"><span class="ms " aria-hidden="true">search</span></button><button class="ib t" aria-label="Notificações"><span class="ms " aria-hidden="true">notifications</span></button><button class="profile" aria-label="Perfil" style="margin-left:var(--space-4);padding:0 var(--space-4)"><span class="avatar"><span class="ms s20" aria-hidden="true">person</span></span></button></div></header><div class="hero"><div class="content compact rise hero"><div class="body-sm date">segunda-feira, 9 de novembro</div><h1 class="display t1 greet">Boa tarde, Felipe</h1><section class="navy breathe now" aria-label="Agora: Estudo de inglês"><div class="overline">AGORA</div>
+<h2 class="headline">Estudo de inglês</h2><div class="body-sm sub">Inglês fluente</div>
+<div class="bottom"><div class="meta"><span>14:00 – 15:00</span><span>faltam 40 <small>min</small></span></div>
+<div class="bar lit" role="progressbar" aria-label="Progresso da atividade atual" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="--g:var(--card-fg)"><i style="--p:33%"></i></div>
+<div class="body-sm next">Depois: Revisão de código · 15:30</div></div></section><div class="title-sm daylbl">Seu dia</div><div class="rings"><div class="rstat col" role="img" aria-label="Blocos hoje: 2 de 7, 29%"><div class="ring lit-violet" style="--ac:var(--violet);--h:9.43;--off:71;--hoff:-19.57;width:88px;height:88px"><svg viewBox="0 0 88 88" width="88" height="88" aria-hidden="true"><defs><linearGradient id="g-violet-88-29" gradientUnits="userSpaceOnUse" x1="57.6" y1="82.2" x2="33.9" y2="83.2"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient></defs><circle class="trk" cx="44" cy="44" r="40.5" stroke-width="7"/><circle class="arc" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100"/><circle class="head" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100" stroke="url(#g-violet-88-29)"/></svg><span class="ctr metric t1">29%</span></div><div><div class="v t1">2 de 7</div><div class="body-sm t2">Blocos hoje</div></div></div><div class="rstat col" role="img" aria-label="Dias na semana: 5 de 7, 5/7"><div class="ring" style="--ac:var(--cyan);--h:9.43;--off:29;--hoff:-61.57;width:88px;height:88px"><svg viewBox="0 0 88 88" width="88" height="88" aria-hidden="true"><defs><linearGradient id="g-cyan-88-71" gradientUnits="userSpaceOnUse" x1="13.7" y1="17.1" x2="33.9" y2="4.8"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient></defs><circle class="trk" cx="44" cy="44" r="40.5" stroke-width="7"/><circle class="arc" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100"/><circle class="head" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100" stroke="url(#g-cyan-88-71)"/></svg><span class="ctr metric t1">5/7</span></div><div><div class="v t1">5 de 7</div><div class="body-sm t2">Dias na semana</div></div></div><div class="rstat col" role="img" aria-label="Etapas feitas: 14 de 26, 54%"><div class="ring" style="--ac:var(--orange);--h:9.43;--off:46;--hoff:-44.57;width:88px;height:88px"><svg viewBox="0 0 88 88" width="88" height="88" aria-hidden="true"><defs><linearGradient id="g-orange-88-54" gradientUnits="userSpaceOnUse" x1="5.8" y1="57.6" x2="4.8" y2="33.9"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient></defs><circle class="trk" cx="44" cy="44" r="40.5" stroke-width="7"/><circle class="arc" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100"/><circle class="head" cx="44" cy="44" r="40.5" stroke-width="7" pathLength="100" stroke="url(#g-orange-88-54)"/></svg><span class="ctr metric t1">54%</span></div><div><div class="v t1">14 de 26</div><div class="body-sm t2">Etapas feitas</div></div></div></div></div></div>
+<main class="content compact" style="padding-top:var(--space-24);padding-bottom:196px;display:flex;flex-direction:column;gap:var(--space-24)">
+<div class="rise" style="--w:0"><section class="card sec "><h2 class="title t1">Próximas atividades</h2><div class="list" role="list"><button class="arow" aria-label="15:30, Revisão de código, Projeto Lume, duração 1 h"><span class="time t1">15:30</span><span class="mid"><span class="title-sm t1 truncate">Revisão de código</span><span class="caption goal"><i class="dot" style="--g:var(--goal-violet)"></i><span class="truncate">Projeto Lume</span></span></span><span class="dur t1">1 <small>h</small></span></button><button class="arow" aria-label="18:30, Treino, Condicionamento, duração 45 min"><span class="time t1">18:30</span><span class="mid"><span class="title-sm t1 truncate">Treino</span><span class="caption goal"><i class="dot" style="--g:var(--goal-emerald)"></i><span class="truncate">Condicionamento</span></span></span><span class="dur t1">45 <small>min</small></span></button><button class="arow" aria-label="20:00, Leitura, Ler 12 livros, duração 30 min"><span class="time t1">20:00</span><span class="mid"><span class="title-sm t1 truncate">Leitura</span><span class="caption goal"><i class="dot" style="--g:var(--goal-amber)"></i><span class="truncate">Ler 12 livros</span></span></span><span class="dur t1">30 <small>min</small></span></button><button class="arow" aria-label="21:30, Planejar amanhã, Obrigatória, duração 15 min"><span class="time t1">21:30</span><span class="mid"><span class="title-sm t1 truncate">Planejar amanhã</span><span class="caption goal"><i class="dot" style="--g:var(--goal-obligatory)"></i><span class="truncate">Obrigatória</span></span></span><span class="dur t1">15 <small>min</small></span></button></div></section></div>
+<div class="rise" style="--w:0"><section class="card sec fill "><h2 class="title t1">Objetivos ativos</h2><div class="goals" role="list"><button class="chip gchip" aria-label="Inglês fluente: 57% concluído"><i class="dot" style="--g:var(--goal-sky)"></i><span class="truncate t1">Inglês fluente</span><b class="t1">57%</b></button><button class="chip gchip" aria-label="Projeto Lume: 75% concluído"><i class="dot" style="--g:var(--goal-violet)"></i><span class="truncate t1">Projeto Lume</span><b class="t1">75%</b></button><button class="chip gchip" aria-label="Condicionamento: 40% concluído"><i class="dot" style="--g:var(--goal-emerald)"></i><span class="truncate t1">Condicionamento</span><b class="t1">40%</b></button><button class="chip gchip" aria-label="Ler 12 livros: 33% concluído"><i class="dot" style="--g:var(--goal-amber)"></i><span class="truncate t1">Ler 12 livros</span><b class="t1">33%</b></button></div></section></div>
+<div class="rise" style="--w:1"><section class="card sec rhythm "><h2 class="title t1">Ritmo da semana</h2><div class="chart" role="img" aria-label="Horas por dia nos últimos 14 dias. Hoje: 1 h 30. Últimos 7 dias: 11 h 30."><div class="gl" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="slot"><div class="b " style="--k:0;--hh:37.5%" title="27: 1.5 h"></div></div><div class="slot"><div class="b " style="--k:1;--hh:50.0%" title="28: 2 h"></div></div><div class="slot"><div class="b " style="--k:2;--hh:25.0%" title="29: 1 h"></div></div><div class="slot"><div class="b " style="--k:3;--hh:62.5%" title="30: 2.5 h"></div></div><div class="slot"><div class="b " style="--k:4;--hh:12.5%" title="31: 0.5 h"></div></div><div class="slot"><div class="b " style="--k:5;--hh:0.0%" title="1: 0 h"></div></div><div class="slot"><div class="b " style="--k:6;--hh:25.0%" title="2: 1 h"></div></div><div class="slot"><div class="b rec" style="--k:7;--hh:50.0%" title="3: 2 h"></div></div><div class="slot"><div class="b rec" style="--k:8;--hh:37.5%" title="4: 1.5 h"></div></div><div class="slot"><div class="b rec" style="--k:9;--hh:62.5%" title="5: 2.5 h"></div></div><div class="slot"><div class="b rec" style="--k:10;--hh:50.0%" title="6: 2 h"></div></div><div class="slot"><div class="b rec" style="--k:11;--hh:37.5%" title="7: 1.5 h"></div></div><div class="slot"><div class="b rec" style="--k:12;--hh:12.5%" title="8: 0.5 h"></div></div><div class="slot"><div class="b td" style="--k:13;--hh:37.5%" title="9: 1.5 h"></div></div></div>
+<div class="axis micro" aria-hidden="true"><span class="">27</span><span class="">28</span><span class="">29</span><span class="">30</span><span class="">31</span><span class="">1</span><span class="">2</span><span class="">3</span><span class="">4</span><span class="">5</span><span class="">6</span><span class="">7</span><span class="">8</span><span class="td">9</span></div>
+<div class="legend caption"><span><i style="background:var(--cyan)"></i>Hoje</span><span><i style="background:var(--violet)"></i>Últimos 7 dias</span><span><i style="background:var(--bar-muted)"></i>7 dias anteriores</span></div><p class="body-sm summary">11 h 30 nos últimos 7 dias, 3 h a mais que nos 7 anteriores.</p></section></div>
+<div class="rise" style="--w:1"><section class="card sec "><h2 class="title t1" style="margin-bottom:0">Frentes da vida</h2><p class="body-sm lead">Cada área da sua vida em um só lugar.</p><div class="mgrid"><button class="card lift mtile span2" aria-label="Tempo e objetivos, 2 de 7 blocos hoje"><span class="ico-tile violet"><span class="ms " aria-hidden="true">schedule</span></span><span><span class="title-sm t1 nm">Tempo e objetivos</span><span class="caption t3 nm">2 de 7 blocos hoje</span></span></button><div class="card mtile soon" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile sm"><span class="ms s20" aria-hidden="true">favorite</span></span><span><span class="title-sm t2 nm">Saúde</span><span class="caption t3 nm">Em breve · E2</span></span></div><div class="card mtile soon" role="group" aria-label="Finanças, Em breve · E5"><span class="ico-tile sm"><span class="ms s20" aria-hidden="true">account_balance_wallet</span></span><span><span class="title-sm t2 nm">Finanças</span><span class="caption t3 nm">Em breve · E5</span></span></div><div class="card mtile soon" role="group" aria-label="Patrimônio, Em breve · E6"><span class="ico-tile sm"><span class="ms s20" aria-hidden="true">home_work</span></span><span><span class="title-sm t2 nm">Patrimônio</span><span class="caption t3 nm">Em breve · E6</span></span></div><div class="card mtile soon" role="group" aria-label="Documentos, Em breve · E7"><span class="ico-tile sm"><span class="ms s20" aria-hidden="true">description</span></span><span><span class="title-sm t2 nm">Documentos</span><span class="caption t3 nm">Em breve · E7</span></span></div></div></section></div>
+</main><div class="dock"><button class="cta glass" aria-label="Continuar Estudo de inglês, faltam 40 minutos"><span class="ico-tile orange sm"><span class="ms s20" aria-hidden="true">play_arrow</span></span><span class="lbl"><span class="label t">Continuar · Estudo de inglês</span><span class="caption"><small>faltam</small> 40 <small>min</small></span></span><span class="ib" aria-hidden="true"><span class="ms " aria-hidden="true">chevron_right</span></span></button><nav class="bnav glass" aria-label="Navegação principal"><button class="bn" aria-current="page" ><span class="pill"><span class="ms " aria-hidden="true">space_dashboard</span></span>Visão geral</button><button class="bn"  ><span class="pill"><span class="ms " aria-hidden="true">schedule</span></span>Tempo</button><button class="bn"  aria-disabled="true"><span class="pill"><span class="ms " aria-hidden="true">favorite</span></span>Saúde</button><button class="bn"  aria-disabled="true"><span class="pill"><span class="ms " aria-hidden="true">account_balance_wallet</span></span>Finanças</button><button class="bn"  aria-haspopup="dialog"><span class="pill"><span class="ms " aria-hidden="true">grid_view</span></span>Módulos</button></nav></div></div>
+<script>function replay(){var b=document.body;b.classList.add('rst');void b.offsetWidth;requestAnimationFrame(function(){b.classList.remove('rst')})}</script>
+</body>
+</html>

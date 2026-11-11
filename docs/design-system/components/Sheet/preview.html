@@ -1,0 +1,200 @@
+<!-- @dsCard group="Navegação" height=760 subtitle="Sheet em glass que sobe da borda inferior (ease-out-quint) e fecha arrastando, e o Diálogo centralizado, em quadros de 360 px" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .wrap{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  .item{display:flex;flex-direction:column;gap:var(--space-8);width:360px;max-width:100%}
+  .cap{color:var(--text-muted)}
+  h3.lbl{color:var(--text-secondary)}
+
+  .phone{position:relative;width:360px;max-width:100%;height:640px;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--elev-1)}
+  .page{padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-12)}
+  .page .demo{padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-4)}
+  .sub{color:var(--text-secondary)}
+  .page .btn{align-self:flex-start}
+
+  .scrim{position:absolute;inset:0;background:var(--scrim);opacity:0;visibility:hidden;
+    transition:opacity var(--dur-exit) var(--ease-in),visibility 0s linear var(--dur-exit)}
+  .scrim.open{opacity:1;visibility:visible;transition:opacity var(--dur-base) var(--ease-out-quint),visibility 0s}
+
+  /* Sheet: .glass do kit, cantos superiores radius-xl */
+  .sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;display:flex;flex-direction:column;
+    border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+    transform:translateY(100%);visibility:hidden;
+    transition:transform var(--dur-exit) var(--ease-in),visibility 0s linear var(--dur-exit)}
+  .sheet.open{transform:translateY(0);visibility:visible;transition:transform var(--dur-base) var(--ease-out-quint),visibility 0s}
+  .sheet.dragging{transition:none}
+  .sheet-head{flex:none;display:flex;align-items:center;justify-content:center;min-height:48px;position:relative;touch-action:none;cursor:grab;user-select:none}
+  .handle{width:36px;height:4px;border-radius:var(--radius-full);background:var(--border-control)}
+  .close{position:absolute;right:var(--space-4);top:0;width:48px;height:48px;border-radius:var(--radius-full);color:var(--text-secondary);display:inline-flex;align-items:center;justify-content:center;transition:background-color var(--dur-instant) var(--ease-out),transform var(--dur-fast) var(--ease-spring)}
+  .close:active{transform:scale(.94);transition-timing-function:var(--ease-out)}
+  .close:focus-visible{outline:2px solid var(--violet-ink);outline-offset:-2px}
+  @media (hover:hover) and (pointer:fine){.close:hover{background:var(--chip);color:var(--text-primary)}}
+  .sheet-body{overflow:auto;padding:0 var(--space-16) calc(var(--space-24) + 16px)}
+  .sheet-body h2{color:var(--text-primary)}
+  .sheet-body .lead{margin:var(--space-2) 0 var(--space-16);color:var(--text-secondary)}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-12)}
+  .tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;min-height:96px;padding:var(--space-12);gap:var(--space-12);color:var(--text-primary);
+    transition:transform var(--dur-fast) var(--ease-spring),background-color var(--dur-instant) var(--ease-out)}
+  .tile .text{display:flex;flex-direction:column;gap:var(--space-2);min-width:0;max-width:100%}
+  .tile .name{color:var(--text-primary);overflow-wrap:anywhere}
+  .tile .status{color:var(--text-muted)}
+  .tile.current{background:var(--surface-tint)}
+  .tile .dotc{position:absolute;top:var(--space-12);right:var(--space-12);width:8px;height:8px;border-radius:var(--radius-full);background:var(--cyan)}
+  .tile.soon{cursor:default}
+  .tile.soon .name{color:var(--text-secondary)}
+  .tile:not(.soon):active{transform:scale(.97);transition-timing-function:var(--ease-out)}
+
+  /* Diálogo: .glass, radius-xl */
+  .dialog-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:var(--space-16);pointer-events:none;visibility:hidden;
+    transition:visibility 0s linear var(--dur-exit)}
+  .dialog-wrap.open{visibility:visible;pointer-events:auto;transition:visibility 0s}
+  .dialog{width:100%;max-width:320px;border-radius:var(--radius-xl);padding:var(--space-24);display:flex;flex-direction:column;gap:var(--space-12);
+    opacity:0;transform:scale(.96);transition:opacity var(--dur-exit) var(--ease-in),transform var(--dur-exit) var(--ease-in)}
+  .dialog-wrap.open .dialog{opacity:1;transform:scale(1);transition:opacity var(--dur-base) var(--ease-out-quint),transform var(--dur-base) var(--ease-out-quint)}
+  .dialog h2{color:var(--text-primary)}
+  .dialog p{color:var(--text-secondary)}
+  .dialog .actions{display:flex;gap:var(--space-8);margin-top:var(--space-8)}
+  .dialog .actions .btn{flex:1 1 0;padding:0 var(--space-12);min-height:48px}
+
+  @media (prefers-reduced-motion:reduce){
+    .scrim,.scrim.open{transition:opacity var(--dur-instant) linear,visibility 0s}
+    .sheet,.sheet.open{transform:none;opacity:0;transition:opacity var(--dur-instant) linear,visibility 0s}
+    .sheet.open{opacity:1}
+    .dialog,.dialog-wrap.open .dialog{transform:none;transition:opacity var(--dur-instant) linear}
+    .tile,.close{transition:none}
+    .tile:not(.soon):active,.close:active{transform:none}
+  }
+</style>
+</head>
+<body class="aurora">
+<div class="wrap">
+  <div class="item">
+    <h3 class="title-sm lbl">Sheet</h3>
+    <span class="caption cap">Arraste a alça para baixo, toque no véu, use Esc ou o botão Fechar. O sheet é glass: o conteúdo atrás aparece desfocado.</span>
+    <div class="phone aurora" id="phoneS">
+      <div class="page">
+        <h2 class="headline">Visão geral</h2>
+        <div class="card demo"><p class="title-sm">Estudo de inglês</p><p class="body-sm sub">Agora, 08:00 às 09:00</p></div>
+        <div class="card demo"><p class="title-sm">Treino</p><p class="body-sm sub">Hoje, 18:30</p></div>
+        <div class="card demo"><p class="title-sm">Leitura</p><p class="body-sm sub">Hoje, 20:00</p></div>
+        <button class="btn primary" type="button" id="openSheet" aria-haspopup="dialog">Abrir módulos</button>
+      </div>
+      <div class="scrim open" id="scrimS"></div>
+      <div class="sheet glass open" id="sheet" role="dialog" aria-modal="true" aria-label="Módulos">
+        <div class="sheet-head" id="sheetHead"><span class="handle" aria-hidden="true"></span><button class="close" type="button" id="closeSheet" aria-label="Fechar"><span class="ms">close</span></button></div>
+        <div class="sheet-body">
+          <h2 class="title-sm">Módulos</h2>
+          <p class="body-sm lead">Cada área da sua vida</p>
+          <div class="grid">
+            <button class="tile block current" type="button" aria-current="page"><span class="dotc" aria-hidden="true"></span><span class="ico-tile sm violet"><span class="ms s20">space_dashboard</span></span><span class="text"><span class="title-sm name">Visão geral</span><span class="caption status">Aberto agora</span></span></button>
+            <button class="tile block" type="button" data-close><span class="ico-tile sm violet"><span class="ms s20">schedule</span></span><span class="text"><span class="title-sm name">Tempo e objetivos</span><span class="caption status">Disponível</span></span></button>
+            <div class="tile block soon" role="group" aria-label="Saúde, Em breve · E2"><span class="ico-tile sm"><span class="ms s20">favorite</span></span><span class="text"><span class="title-sm name">Saúde</span><span class="caption status">Em breve · E2</span></span></div>
+            <div class="tile block soon" role="group" aria-label="Finanças, Em breve · E5"><span class="ico-tile sm"><span class="ms s20">account_balance_wallet</span></span><span class="text"><span class="title-sm name">Finanças</span><span class="caption status">Em breve · E5</span></span></div>
+            <div class="tile block soon" role="group" aria-label="Patrimônio, Em breve · E6"><span class="ico-tile sm"><span class="ms s20">home_work</span></span><span class="text"><span class="title-sm name">Patrimônio</span><span class="caption status">Em breve · E6</span></span></div>
+            <div class="tile block soon" role="group" aria-label="Documentos, Em breve · E7"><span class="ico-tile sm"><span class="ms s20">description</span></span><span class="text"><span class="title-sm name">Documentos</span><span class="caption status">Em breve · E7</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item">
+    <h3 class="title-sm lbl">Diálogo</h3>
+    <span class="caption cap">Variante centralizada em glass, para confirmações curtas. Esc, véu ou um dos botões fecham.</span>
+    <div class="phone aurora" id="phoneD">
+      <div class="page">
+        <h2 class="headline">Objetivos</h2>
+        <div class="card demo"><p class="title-sm">Estudo de inglês</p><p class="body-sm sub">3 de 7 dias nesta semana</p></div>
+        <div class="card demo"><p class="title-sm">Reserva de emergência</p><p class="body-sm sub">Etapa 2 de 5</p></div>
+        <button class="btn secondary" type="button" id="openDialog" aria-haspopup="dialog">Arquivar objetivo</button>
+      </div>
+      <div class="scrim open" id="scrimD"></div>
+      <div class="dialog-wrap open" id="dialogWrap">
+        <div class="dialog glass" id="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dTitle" aria-describedby="dDesc">
+          <h2 class="title-sm" id="dTitle">Arquivar "Estudo de inglês"?</h2>
+          <p class="body-sm" id="dDesc">O objetivo sai da lista de ativos e o histórico fica guardado. Você pode restaurá-lo quando quiser.</p>
+          <div class="actions">
+            <button class="btn secondary" type="button" data-dclose>Manter</button>
+            <button class="btn primary" type="button" data-dclose>Arquivar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    function trap(root, ev){
+      if (ev.key !== 'Tab') return;
+      var f = Array.prototype.filter.call(root.querySelectorAll('button:not([disabled])'), function(b){return b.offsetParent !== null;});
+      if (!f.length) return;
+      var first = f[0], last = f[f.length-1];
+      if (ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+    }
+
+    /* Sheet */
+    var sheet = document.getElementById('sheet'), scrimS = document.getElementById('scrimS');
+    var openS = document.getElementById('openSheet'), head = document.getElementById('sheetHead');
+    function setSheet(open){
+      sheet.classList.remove('dragging'); sheet.style.transform = '';
+      sheet.classList.toggle('open', open); scrimS.classList.toggle('open', open);
+      if (open){ var c = document.getElementById('closeSheet'); setTimeout(function(){ c.focus(); }, 0); }
+      else if (sheet.contains(document.activeElement)) openS.focus();
+    }
+    openS.addEventListener('click', function(){ setSheet(true); });
+    scrimS.addEventListener('click', function(){ setSheet(false); });
+    document.getElementById('closeSheet').addEventListener('click', function(e){ e.stopPropagation(); setSheet(false); });
+    sheet.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click', function(){ setSheet(false); }); });
+    sheet.addEventListener('keydown', function(ev){ trap(sheet, ev); });
+
+    var startY = null, dy = 0, t0 = 0;
+    head.addEventListener('pointerdown', function(ev){
+      if (ev.target.closest('.close')) return;
+      startY = ev.clientY; dy = 0; t0 = ev.timeStamp; sheet.classList.add('dragging'); head.setPointerCapture(ev.pointerId);
+    });
+    head.addEventListener('pointermove', function(ev){
+      if (startY === null) return;
+      dy = Math.max(0, ev.clientY - startY);
+      sheet.style.transform = 'translateY(' + dy + 'px)';
+    });
+    function endDrag(ev){
+      if (startY === null) return;
+      var h = sheet.getBoundingClientRect().height, v = dy / Math.max(1, ev.timeStamp - t0);
+      startY = null; sheet.classList.remove('dragging');
+      if (dy > h * 0.3 || v > 0.6) setSheet(false);
+      else { sheet.style.transform = ''; }
+    }
+    head.addEventListener('pointerup', endDrag);
+    head.addEventListener('pointercancel', endDrag);
+
+    /* Diálogo */
+    var wrap = document.getElementById('dialogWrap'), dlg = document.getElementById('dialog'), scrimD = document.getElementById('scrimD');
+    var openD = document.getElementById('openDialog');
+    function setDialog(open){
+      wrap.classList.toggle('open', open); scrimD.classList.toggle('open', open);
+      if (open) setTimeout(function(){ dlg.querySelector('.btn').focus(); }, 0);
+      else if (dlg.contains(document.activeElement)) openD.focus();
+    }
+    openD.addEventListener('click', function(){ setDialog(true); });
+    scrimD.addEventListener('click', function(){ setDialog(false); });
+    wrap.addEventListener('click', function(ev){ if (ev.target === wrap) setDialog(false); });
+    dlg.querySelectorAll('[data-dclose]').forEach(function(b){ b.addEventListener('click', function(){ setDialog(false); }); });
+    dlg.addEventListener('keydown', function(ev){ trap(dlg, ev); });
+
+    document.addEventListener('keydown', function(ev){
+      if (ev.key !== 'Escape') return;
+      if (sheet.classList.contains('open')) setSheet(false);
+      if (wrap.classList.contains('open')) setDialog(false);
+    });
+  })();
+</script>
+</body>
+</html>

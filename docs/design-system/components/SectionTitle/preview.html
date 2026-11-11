@@ -1,0 +1,48 @@
+<!-- @dsCard group="Dashboard" height=440 subtitle="Título de seção do dashboard, no celular e no desktop, com e sem ação ao lado" -->
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=block">
+<link rel="stylesheet" href="../../kit/lume.css">
+<style>
+  body{padding:var(--space-24);min-height:100vh}
+  .wrap{display:flex;flex-wrap:wrap;gap:var(--space-32);align-items:flex-start}
+  .item{display:flex;flex-direction:column;gap:var(--space-8)}
+  .cap{color:var(--text-muted)}
+  .frame{padding:var(--space-16);display:flex;flex-direction:column;gap:var(--space-16)}
+  .frame.compact{width:min(360px,100%)}
+  .frame.wide{width:min(560px,100%);padding:var(--space-24)}
+  .section-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-12)}
+  .section-title{color:var(--text-primary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+  .demo{padding:var(--space-20);min-height:56px}
+  .demo p{color:var(--text-secondary)}
+  .clamp{max-width:220px}
+</style>
+</head>
+<body class="aurora">
+<div class="wrap">
+  <div class="item">
+    <span class="caption cap">Celular, 360 px</span>
+    <div class="frame compact">
+      <h2 class="section-title headline">Frentes da vida</h2>
+      <div class="card demo"><p class="body-sm">Conteúdo da seção começa um vão de 16 abaixo do título.</p></div>
+    </div>
+  </div>
+  <div class="item">
+    <span class="caption cap">Desktop, com ação "Ver tudo" separada do título</span>
+    <div class="frame wide">
+      <div class="section-head"><h2 class="section-title headline">Objetivos ativos</h2><button class="btn ghost sm" type="button">Ver tudo</button></div>
+      <div class="card demo"><p class="body-sm">Estudo de inglês, Treino e Reserva de emergência.</p></div>
+    </div>
+  </div>
+  <div class="item">
+    <span class="caption cap">Título longo: no máximo 2 linhas, com reticências</span>
+    <div class="frame compact clamp">
+      <h2 class="section-title headline">Próximas atividades combinadas para a semana inteira de estudos e treinos</h2>
+    </div>
+  </div>
+</div>
+</body>
+</html>
