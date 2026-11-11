@@ -31,3 +31,9 @@ server/.env
 
 # Dumps de crash do bash no Windows
 *.stackdump
+
+# Claude Code / n8n (local)
+docs/metricas/execucoes.csv
+.claude/settings.local.json
+infra/n8n/.env
+infra/n8n/certs/
