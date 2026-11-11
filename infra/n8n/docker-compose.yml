@@ -1,0 +1,81 @@
+# Laboratório local do n8n do Lume (D13). Só para uso local: nada aqui é stack de produção.
+# Sobe com: node infra/n8n/lume-n8n.mjs up   (valida o .env e espera os healthchecks)
+name: lume-n8n
+
+services:
+  db:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    # Sem "ports": o banco só é acessível pela rede interna do compose.
+    environment:
+      POSTGRES_DB: ${LUME_N8N_DB_NAME:-n8n}
+      POSTGRES_USER: ${LUME_N8N_DB_USER:-n8n}
+      POSTGRES_PASSWORD: ${LUME_N8N_DB_PASSWORD:?defina LUME_N8N_DB_PASSWORD}
+      TZ: America/Sao_Paulo
+    volumes:
+      - lume_n8n_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  n8n:
+    # Versão FIXA da linha estável 2.x (ver README, "Versão fixada"). Nunca usar latest/next.
+    image: n8nio/n8n:2.47.3
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${LUME_N8N_PORT:-5678}:5678"
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: db
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: ${LUME_N8N_DB_NAME:-n8n}
+      DB_POSTGRESDB_USER: ${LUME_N8N_DB_USER:-n8n}
+      DB_POSTGRESDB_PASSWORD: ${LUME_N8N_DB_PASSWORD}
+      N8N_ENCRYPTION_KEY: ${LUME_N8N_ENCRYPTION_KEY:?defina LUME_N8N_ENCRYPTION_KEY}
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      TZ: America/Sao_Paulo
+      N8N_HOST: localhost
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:${LUME_N8N_PORT:-5678}/
+      # Laboratório em http://localhost (sem HTTPS): cookie seguro bloquearia o login. NÃO usar false em produção.
+      N8N_SECURE_COOKIE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_TEMPLATES_ENABLED: "false"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      # API pública LIGADA (N8N_PUBLIC_API_DISABLED fica ausente = false) para importar/gerenciar workflows por script.
+      N8N_PUBLIC_API_SWAGGERUI_DISABLED: "true"
+      # O histórico de execuções é a trilha visual do desenvolvimento: guarda 30 dias (720 h).
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "720"
+      # Read/Write Files só enxerga estas pastas (separador ;).
+      N8N_RESTRICT_FILE_ACCESS_TO: /data/automations;/home/node/.n8n-files
+      # Token dos hooks do Claude Code (header do webhook). Visível aos workflows via $env.
+      LUME_N8N_TOKEN: ${LUME_N8N_TOKEN:?defina LUME_N8N_TOKEN}
+      # Rede com inspeção SSL (antivírus/proxy): o Node confia na raiz salva em certs/extra-ca.pem.
+      # Arquivo ausente = só um aviso no log.
+      NODE_EXTRA_CA_CERTS: /opt/custom-certificates/extra-ca.pem
+    volumes:
+      - lume_n8n_data:/home/node/.n8n
+      - ./certs:/opt/custom-certificates:ro
+      # Workflows versionados no repositório, somente leitura, para importação via CLI.
+      - ./../../automations:/data/automations:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5678/healthz/readiness').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  lume_n8n_pgdata:
+    name: lume_n8n_pgdata
+  lume_n8n_data:
+    name: lume_n8n_data
