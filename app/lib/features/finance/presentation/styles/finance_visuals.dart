@@ -24,11 +24,11 @@ abstract final class FinanceVisuals {
 
   static Color recurring(RecurringTone tone) => switch (tone) {
     RecurringTone.blue => AppPalette.blue,
-    RecurringTone.yellow => AppPalette.yellow,
+    RecurringTone.yellow => AppPalette.dataYellow,
     RecurringTone.green => AppPalette.green,
     RecurringTone.orange => AppPalette.orange,
-    RecurringTone.mint => AppPalette.mint,
-    RecurringTone.purple => AppPalette.purple,
+    RecurringTone.mint => AppPalette.dataMint,
+    RecurringTone.purple => AppPalette.dataPurple,
   };
 
   static Color spendingBar(SpendingTone tone, AppColors colors) => switch (tone) {
@@ -50,15 +50,16 @@ abstract final class FinanceVisuals {
     SpendingCategory.cafe => Icons.local_cafe_rounded,
   };
 
-  static Color spendingCategoryIconColor(SpendingCategory category) => switch (category) {
-    SpendingCategory.restaurants => AppPalette.blue,
-    SpendingCategory.subscriptions => AppPalette.onCard,
-    SpendingCategory.cafe => AppPalette.red,
-  };
+  static Color spendingCategoryIconColor(SpendingCategory category, AppColors colors) =>
+      switch (category) {
+        SpendingCategory.restaurants => AppPalette.blue,
+        SpendingCategory.subscriptions => AppPalette.appleIconOnWhite,
+        SpendingCategory.cafe => colors.danger,
+      };
 
   static Color spendingCategoryWell(SpendingCategory category, AppColors colors) =>
       switch (category) {
         SpendingCategory.subscriptions => Colors.white,
-        SpendingCategory.restaurants || SpendingCategory.cafe => colors.background,
+        SpendingCategory.restaurants || SpendingCategory.cafe => colors.bg,
       };
 }

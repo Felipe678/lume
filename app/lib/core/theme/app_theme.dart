@@ -18,7 +18,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       fontFamily: fontFamily,
-      scaffoldBackgroundColor: colors.background,
+      scaffoldBackgroundColor: colors.bg,
       extensions: [colors],
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {

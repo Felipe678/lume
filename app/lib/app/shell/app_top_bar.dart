@@ -18,7 +18,7 @@ class AppTopBar extends StatelessWidget {
     final colors = AppColors.of(context);
     return Container(
       height: 64,
-      color: colors.topBar,
+      color: colors.topbar,
       padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 20),
       child: Row(
         children: [
@@ -53,7 +53,7 @@ class AppTopBar extends StatelessWidget {
                   const CircleAvatar(
                     radius: 16,
                     backgroundColor: AppPalette.orange,
-                    child: Icon(Icons.person_rounded, size: 20, color: AppPalette.onCard),
+                    child: Icon(Icons.person_rounded, size: 20, color: AppPalette.onOrange),
                   ),
                   Icon(Icons.arrow_drop_down_rounded, color: colors.textMuted),
                 ],

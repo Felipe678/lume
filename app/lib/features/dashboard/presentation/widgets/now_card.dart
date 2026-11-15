@@ -14,23 +14,23 @@ class NowCard extends StatelessWidget {
     fontSize: 11,
     fontWeight: FontWeight.w700,
     letterSpacing: 1.4,
-    color: AppPalette.cardForeground,
+    color: AppPalette.cardFg,
   );
   static const TextStyle _title = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.4,
-    color: AppPalette.cardForeground,
+    color: AppPalette.cardFg,
   );
-  static final TextStyle _subtitle = TextStyle(
+  static const TextStyle _subtitle = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w500,
-    color: AppPalette.cardForeground.withValues(alpha: 0.72),
+    color: AppPalette.cardFgMuted,
   );
   static const TextStyle _meta = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w600,
-    color: AppPalette.cardForeground,
+    color: AppPalette.cardFg,
   );
 
   final TodayAgenda agenda;
@@ -113,8 +113,8 @@ class NowCard extends StatelessWidget {
           child: LinearProgressIndicator(
             value: current.progressAt(now),
             minHeight: 6,
-            color: AppPalette.cardForeground,
-            backgroundColor: AppPalette.cardForeground.withValues(alpha: 0.15),
+            color: AppPalette.cardFg,
+            backgroundColor: AppPalette.cardFg.withValues(alpha: 0.15),
             semanticsLabel: 'Progresso da atividade atual',
           ),
         ),

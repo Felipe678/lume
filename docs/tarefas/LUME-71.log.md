@@ -44,6 +44,7 @@ Resultado: concluído. 15 cenários; 2 de impacto alto (linhas 1 e 2). Linha 1 m
 - **Não commitado:** `docs/tarefas/_atual` (LUME-71), `docs/tarefas/LUME-71.md`, `docs/tarefas/LUME-71.log.md` e `docs/tarefas/_retomada.md`. O `retomada.md` da raiz fica fora de commit.
 - **Fora da tarefa:** o commit `fabf366` (planning do Sprint 1) ainda não teve push.
 - **Ambiente:** Flutter em `C:\src\flutter\bin` (no Bash: `export PATH="/c/src/flutter/bin:/c/Program Files/nodejs:$PATH"`). App web: `cd app && node tool/dev_server.mjs 5500`. O dev server foi parado.
+- **Superado em 15/11/2026:** este bloco ficou defasado. O plano foi aprovado em 11/11 às 13:30, a tarefa foi entregue (`1919a77`) e o PR #3 foi mesclado; a LUME-71 está em Feito no Jira. O `fabf366` já foi enviado. Nada aqui precisa ser retomado.
 
 ### Aprovação · 11/11/2026 13:30
 Felipe retomou ("pode voltar a desenvolver agora"). Plano aprovado com a opção recomendada da linha 1: `AppPageTransitionsBuilder` (fade de `instant` com reduzir movimento) entra na LUME-71. Despacho manual dos 3 passos (o workflow `executar-plano` ainda não teve a opção `agentType` confirmada).
