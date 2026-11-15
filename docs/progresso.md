@@ -20,3 +20,4 @@ dd/MM/yyyy · LUME-<n> · <tipo> · <texto curto> [pendente-sync]
 11/11/2026 · - · decisao · LUME Sprint 1 (11/11–17/11) planejado no board 36 (sprint 40): LUME-71, 68, 70, 72, 73 (32 h, capacidade 5 h/dia); E0.1 estimada em 93 h; sprint iniciado com meta no Jira
 11/11/2026 · LUME-71 · entrega · AppMotion e reduzir movimento (menu e páginas); 141 testes; commit 1919a77 no PR #3 (aguarda merge); entrada da tela fica para a LUME-72
 11/11/2026 · LUME-71 · feito · PR #3 mesclado na main; GitGuardian apontou falso positivo em infra/n8n/docker-compose.yml (senha exigida do ambiente via ${VAR:?})
+15/11/2026 · LUME-68 · entrega · Tokens de cor v2 em AppColors (28 campos) e AppPalette com os valores do tokens.json; renomeações sem compatibilidade; hex solto fora do tema; teste de contraste mínimo nos dois temas; 260 testes verdes; commit 829bdda no PR #4 (aguarda merge); custo 4,09M ponderados (8x o plano, acima do teto de 2x: ver log)

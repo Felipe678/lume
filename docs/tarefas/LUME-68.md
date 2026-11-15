@@ -1,8 +1,8 @@
 # LUME-68 · Tokens de cor v2 em AppColors e AppPalette (dark + light)
 
 - **Jira:** LUME-68 (épico LUME-67). Relacionada: LUME-27 (link "relates to" já existe). Tema claro provisório até a LUME-23; testes completos na LUME-78.
-- **Etapa atual:** commit
-- **Atualizado em:** 15/11/2026 07:10
+- **Etapa atual:** concluida (PR #4 aguardando merge)
+- **Atualizado em:** 15/11/2026 07:25
 - **Orçamento (ponderado):** 500.000
 - **Gasto até agora:** `node scripts/dev/metricas.mjs --tarefa LUME-68`
 - **UI:** sim (o design confere o DS; não há tela nova, só tokens)

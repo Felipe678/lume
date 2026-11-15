@@ -66,3 +66,10 @@ Texto para `docs/pendencias.md`:
 - Sem defeito de produção.
 - `app_top_bar.dart:55-56`: ícone de perfil usa `onOrange` sobre `CircleAvatar` com `backgroundColor: AppPalette.orange` (preenchimento). Correto; o par está coberto no `contrast_test`.
 - Lacunas para a LUME-78: matriz completa de contraste (hoje há texto sobre 8 fundos e `*-ink`/danger sobre bg/surface/surfaceRaised/chip/heroBand), golden por tema. `*-ink` no tema claro sobre chip/heroBand fica abaixo de 4,5:1 (não exigido; pendência de DS).
+
+## Fechamento · 15/11/2026 07:25
+- **Resultado:** concluída; PR #4 (https://github.com/Felipe678/lume/pull/4) aguardando merge. Jira em "Fazendo" até o merge. CI local: `flutter analyze` limpo e 260 testes verdes (conferido pela sessão principal, não só pelos agentes).
+- **Custo (metricas.mjs):** 4.092.468 ponderados, 13 execuções, 134 chamadas. Referência do plano 500.000 (8x); passou do teto de 2x (1.000.000). Por agente: techlead 26% (2 execuções), arquitetura 25% (3), qa-automacao 23% (4), edge-cases 14%, ops-gestor 5%, design 4%.
+- **Causa provável (não verificada a fundo):** a tarefa era pequena no código (2 arquivos de tema e 10 consumidores), mas o workflow rodou 2 rodadas de correção, e o `dev-qa-automacao` entrou 4 vezes (o script sinalizou "possível loop") e o arquitetura 3 vezes. O review só bloqueou por documentação (`docs/pendencias.md`), que a sessão principal resolveu em minutos. Quando uma pendência é só de documentação, não precisa de nova rodada de agentes de código.
+- **Desvios aceitos:** `app/test/helpers/tokens_json.dart` fora da lista de caminhos exclusivos (utilitário compartilhado pelos dois testes de valores); `spendingCategoryIconColor` ganhou o parâmetro `AppColors`.
+- **Contagem de testes:** os relatórios divergiram (194 e 260); valeu a execução da sessão principal: 260.
