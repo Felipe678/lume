@@ -12,9 +12,9 @@ class CardChip extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppPalette.chipGradient,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: const Color(0xFFA8A8A8), width: 0.8),
+        border: Border.all(color: AppPalette.cardChipBorder, width: 0.8),
       ),
-      child: const CustomPaint(painter: CardChipPainter(lineColor: Color(0xFF9A9A9A))),
+      child: const CustomPaint(painter: CardChipPainter(lineColor: AppPalette.cardChipLine)),
     );
   }
 }

@@ -40,7 +40,7 @@ class TopCategoryTile extends StatelessWidget {
               child: Icon(
                 FinanceVisuals.spendingCategoryIcon(spending.category),
                 size: 22,
-                color: FinanceVisuals.spendingCategoryIconColor(spending.category),
+                color: FinanceVisuals.spendingCategoryIconColor(spending.category, colors),
               ),
             ),
             const SizedBox(height: 28),

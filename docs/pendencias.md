@@ -29,3 +29,13 @@
 - [ ] **Toque duplo em Módulos empilha dois menus.** Guardar a rota aberta no `AppTopBar`. Dono: `dev-frontend-arquitetura`.
 - [ ] **Sistema liga reduzir movimento com o menu aberto:** a rota mantém o modo em que abriu; a próxima abertura lê o novo (aceito). Dono: —.
 - [ ] **Troca de página reduzida mantém a duração da plataforma;** só o fade termina em `instant` (via `Interval`). Aceito: a duração da rota não varia por flag no Flutter 3.47. Dono: —.
+
+## Design System v2 · cores (LUME-68)
+- [ ] **Tema claro: *-ink (cyan, orange, green, blue) abaixo de 4,5:1 sobre `chip` e `heroBand`** (teste de contraste). Ajustar token ou evitar o par. Dono: `dev-designer`.
+- [ ] **Sem token no DS:** `badgeRed`, `badgeBlue`, `badgeNeutral`, `mastercardRed`, `mastercardYellow`, `chipGradient`, `appleIconOnWhite`, `cardChipBorder`, `cardChipLine`. Hoje ficam em `app_palette.dart`, na seção "sem token no DS". Definir tokens ou aprovar como exceção. Dono: `dev-designer`.
+- [ ] **Borda do tile selecionado do menu usa `AppPalette.violet` (2,7:1, abaixo de 3:1)** em `module_menu_tile.dart:37`. Trocar por `violetInk` na tarefa do menu. Dono: `dev-designer`.
+- [ ] **Categoria "café" em vermelho de erro** (`finance_visuals.dart:56`, `colors.danger`): o DS reserva `danger` a erro ou ação destrutiva, e o produto não pune. Definir cor de categoria própria, sem criar token por conta própria. Dono: `dev-designer`.
+- [ ] **`blue`, `cyan` e `green` como ícone ou texto sobre fundo escuro** (`finance_visuals.dart:54`): o DS pede os `*Ink`. Migrar com a matriz de contraste da LUME-78. Dono: `dev-designer`.
+- [ ] **`ThemeData` sem `colorScheme`** (`app_theme.dart`): só `bg` entra em `scaffoldBackgroundColor`; os widgets Material herdam o M3 padrão e não consomem os tokens. Tratar na LUME-23 e nas tarefas de componente. Dono: `dev-frontend-arquitetura`.
+- [ ] **`Colors.white`/`Colors.black` fixos (9 usos)** que deveriam virar `scrim`, `onViolet` etc. Mudam o visual (ex.: `barrierColor` de 25% para 60%); migrar nas tarefas de componente. Dono: `dev-frontend-design`.
+- [ ] **Matriz completa de contraste, goldens e fonte 1,3×** ficam na LUME-78; o helper `app/test/helpers/contrast.dart` já existe. Dono: `dev-qa-automacao`.

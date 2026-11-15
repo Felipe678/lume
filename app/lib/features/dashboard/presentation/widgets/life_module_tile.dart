@@ -32,7 +32,7 @@ class LifeModuleTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: available ? AppPalette.violet : colors.background,
+              color: available ? AppPalette.violet : colors.bg,
               borderRadius: BorderRadius.circular(9),
             ),
             child: Icon(

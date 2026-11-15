@@ -58,7 +58,7 @@ class CreditCardVisual extends StatelessWidget {
   }
 
   Widget _content() {
-    const onCard = AppPalette.cardForeground;
+    const onCard = AppPalette.cardFg;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -101,7 +101,7 @@ class CreditCardVisual extends StatelessWidget {
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
         letterSpacing: -0.5,
-        color: AppPalette.cardForeground,
+        color: AppPalette.cardFg,
       ),
     );
   }
